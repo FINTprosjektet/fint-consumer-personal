@@ -1,0 +1,89 @@
+buildscript {
+    apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.1/dependencies.gradle'
+    ext {
+        springBootVersion = springBootVersion
+    }
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath('org.ajoberstar:gradle-git:1.6.0')
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'maven'
+
+import org.ajoberstar.grgit.Grgit
+import org.apache.tools.ant.filters.ReplaceTokens
+
+jar {
+    version = Grgit.open().head().id.take(7)
+    baseName = 'fint-consumer-skeleton'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+task wrapper(type: Wrapper) {
+    gradleVersion = gradleVersion
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+    maven {
+        url "http://dl.bintray.com/fint/maven"
+    }
+}
+
+def modelVersions = [
+        event: '0.0.11'
+]
+
+dependencies {
+    compile('no.fint:fint-events:0.0.24')
+    compile("no.fint:fint-event-model:${modelVersions['event']}")
+    compile('no.fint:fint-audit-mongo-plugin:0.0.12')
+    compile('com.github.fakemongo:fongo:2.0.12')
+
+    compile('org.projectlombok:lombok')
+    compile('no.fint:fint-cache:0.0.2')
+    compile("com.github.springfox.loader:springfox-loader:${springfoxLoaderVersion}")
+    compile('io.github.benas:random-beans:3.3.0')
+
+    compile('org.springframework.boot:spring-boot-starter-web')
+    runtime('org.springframework.boot:spring-boot-devtools')
+
+    testCompile('cglib:cglib-nodep:3.2.4')
+    testCompile("org.spockframework:spock-spring:${spockSpringVersion}")
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+afterEvaluate {
+    configure(processResources) {
+        filesMatching('**/*.yml') {
+            filter(ReplaceTokens, tokens: [version: jar.version])
+            filter(ReplaceTokens, tokens: [eventModelVersion: modelVersions['event']])
+        }
+    }
+}
+
+bootRun {
+    systemProperties System.properties
+}
+
+test {
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+    }
+}
+
+task runAll(type: Exec) {
+    commandLine 'npm', 'run', 'all', '--prefix=test-clients'
+}

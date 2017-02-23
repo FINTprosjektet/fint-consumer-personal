@@ -1,0 +1,6 @@
+fint:
+ events:
+  orgs: rogfk.no
+
+ audit:
+  test-mode: true
