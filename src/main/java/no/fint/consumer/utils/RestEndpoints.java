@@ -4,4 +4,5 @@ public enum RestEndpoints {
     ;
 
     public static final String PERSONALRESSURS = "/administrasjon/personal/personalressurs";
+    public static final String PERSON = "/administrasjon/personal/person";
 }
