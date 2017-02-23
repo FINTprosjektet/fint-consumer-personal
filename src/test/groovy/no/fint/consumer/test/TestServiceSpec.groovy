@@ -1,7 +1,7 @@
 package no.fint.consumer.test
 
 import no.fint.audit.FintAuditService
-import no.fint.consumer.service.CacheService
+import no.fint.consumer.CacheService
 import spock.lang.Specification
 
 class TestServiceSpec extends Specification {

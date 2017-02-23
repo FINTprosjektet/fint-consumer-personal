@@ -1,19 +1,32 @@
 package no.fint.consumer.service
 
-import no.fint.consumer.test.TestObject
+import com.google.common.collect.ImmutableMap
+import com.google.common.collect.Lists
+import no.fint.cache.FintCache
+import no.fint.consumer.CacheService
+import no.fint.consumer.utils.CacheUri
+import no.fint.felles.Identifikator
+import no.fint.felles.Person
 import spock.lang.Specification
 
 class CacheServiceSpec extends Specification {
     private CacheService cacheService
+    private String cacheUri
 
     void setup() {
-        cacheService = new CacheService()
-        cacheService.init()
+        cacheUri = CacheUri.create('rogfk.no', 'person');
+
+        FintCache<Person> cache = new FintCache<>()
+        cacheService = new CacheService(caches: ImmutableMap.of(cacheUri, cache))
+        cacheService.update(cacheUri, Lists.newArrayList(
+                new Person(foedselsnummer: new Identifikator(identifikatorverdi: '123')),
+                new Person(foedselsnummer: new Identifikator(identifikatorverdi: '234'))
+        ))
     }
 
     def "Get last updated"() {
         when:
-        def lastUpdated = cacheService.getLastUpdated('rogfk.no')
+        def lastUpdated = cacheService.getLastUpdated(cacheUri)
 
         then:
         lastUpdated != null
@@ -21,21 +34,21 @@ class CacheServiceSpec extends Specification {
 
     def "Get all persisted objects"() {
         when:
-        def objects = cacheService.getAll('rogfk.no')
+        def objects = cacheService.getAll(cacheUri)
 
         then:
         objects.size() == 2
     }
 
-    def "Get all objects with orgId, return empty when no cache is found"() {
+    def "Get all objects with cacheUri, return empty when no cache is found"() {
         when:
-        def objects = cacheService.getAll('unknown-org')
+        def objects = cacheService.getAll('unknown-uri')
 
         then:
         objects.size() == 0
     }
 
-    def "Get all objects with orgId, return empty when null orgId"() {
+    def "Get all objects with cacheUri, return empty when null cacheUri"() {
         when:
         def objects = cacheService.getAll(null)
 
@@ -43,17 +56,17 @@ class CacheServiceSpec extends Specification {
         objects.size() == 0
     }
 
-    def "Get all objects with orgId and timestamp"() {
+    def "Get all objects with cacheUri and timestamp"() {
         when:
-        def objects = cacheService.getAll('rogfk.no', (System.currentTimeMillis() - 5000L))
+        def objects = cacheService.getAll(cacheUri, (System.currentTimeMillis() - 5000L))
 
         then:
         objects.size() == 2
     }
 
-    def "Get all objects with orgId and timestamp, return empty when no cache is found"() {
+    def "Get all objects with cacheUri and timestamp, return empty when no cache is found"() {
         when:
-        def objects = cacheService.getAll('unknown-org', 0L)
+        def objects = cacheService.getAll('unknown-uri', 0L)
 
         then:
         objects.size() == 0
@@ -61,11 +74,11 @@ class CacheServiceSpec extends Specification {
 
     def "Update cache"() {
         when:
-        cacheService.update('rogfk.no', [new TestObject('test3'), new TestObject('test4'), new TestObject('test5')])
-        def objects = cacheService.getAll('rogfk.no')
+        cacheService.update(cacheUri, [new Person(foedselsnummer: new Identifikator(identifikatorverdi: '345'))])
+        def objects = cacheService.getAll(cacheUri)
 
         then:
-        objects.size() == 3
+        objects.size() == 1
     }
 
 
