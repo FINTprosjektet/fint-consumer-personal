@@ -1,5 +1,5 @@
 springfox:
- title: 'FINT Consumer Skeleton'
+ title: 'FINT Consumer Personal'
  version: '@version@'
 
 event-model-version: '@eventModelVersion@'
