@@ -43,12 +43,14 @@ repositories {
 }
 
 def modelVersions = [
-        event: '0.0.11'
+        event: '0.0.11',
+        personal: '1.0.0.RC2'
 ]
 
 dependencies {
     compile('no.fint:fint-events:0.0.24')
     compile("no.fint:fint-event-model:${modelVersions['event']}")
+    compile("no.fint:fint-model-personal-java:${modelVersions['personal']}")
     compile('no.fint:fint-audit-mongo-plugin:0.0.12')
     compile('com.github.fakemongo:fongo:2.0.12')
 
