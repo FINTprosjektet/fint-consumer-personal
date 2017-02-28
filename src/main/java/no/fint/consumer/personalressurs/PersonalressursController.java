@@ -26,7 +26,6 @@ import java.util.List;
 @RequestMapping(value = RestEndpoints.PERSONALRESSURS, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class PersonalressursController {
 
-
     @Autowired
     private PersonalressursCacheService cacheService;
 
@@ -47,7 +46,7 @@ public class PersonalressursController {
         log.info("Client: {}", client);
         log.info("SinceTimeStamp: {}", sinceTimeStamp);
 
-        Event event = new Event(orgId, "employee", "GET_ALL_EMPLOYEES", client);
+        Event event = new Event(orgId, "administrasjon/personal", "GET_ALL_EMPLOYEES", client);
         fintAuditService.audit(event, true);
 
         event.setStatus(Status.CACHE);

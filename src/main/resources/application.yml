@@ -3,3 +3,4 @@ springfox:
  version: '@version@'
 
 event-model-version: '@eventModelVersion@'
+relation-id-base: https://api.felleskomponent.no/relations/

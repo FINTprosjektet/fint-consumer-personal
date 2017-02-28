@@ -1,4 +1,5 @@
-package no.fint.consumer.person;
+package no.fint.consumer.arbeidsforhold;
+
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.FintAuditService;
@@ -6,7 +7,6 @@ import no.fint.consumer.utils.CacheUri;
 import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.Event;
 import no.fint.event.model.Status;
-import no.fint.felles.Person;
 import no.fint.personal.Arbeidsforhold;
 import no.fint.personal.Personalressurs;
 import no.fint.relations.annotations.FintRelation;
@@ -18,38 +18,37 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
-@FintSelfId(self = Person.class, id = "foedselsnummer.identifikatorverdi")
+@FintSelfId(self = Arbeidsforhold.class, id = "stillingsnummer")
 @FintRelation(objectLink = Personalressurs.class, id = "ansattnummer.identifikatorverdi")
 @Slf4j
 @RestController
-@RequestMapping(value = RestEndpoints.PERSON, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-public class PersonController {
+@RequestMapping(value = RestEndpoints.EMPLOYMENT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+public class ArbeidsforholdController {
 
     @Autowired
     private FintAuditService fintAuditService;
 
     @Autowired
-    private PersonCacheService cacheService;
+    private ArbeidsforholdCacheService cacheService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity getAllPersoner(@RequestHeader("x-org-id") String orgId, @RequestHeader("x-client") String client, @RequestParam(required = false) Long sinceTimeStamp) {
+    public ResponseEntity getAllArbeidsforhold(@RequestHeader("x-org-id") String orgId, @RequestHeader("x-client") String client, @RequestParam(required = false) Long sinceTimeStamp) {
         log.info("OrgId: {}", orgId);
         log.info("Client: {}", client);
         log.info("SinceTimeStamp: {}", sinceTimeStamp);
 
-        Event event = new Event(orgId, "administrasjon/personal", "GET_ALL_PERSONER", client);
+        Event event = new Event(orgId, "administrasjon/personal", "GET_ALL_EMPLOYMENTS", client);
         fintAuditService.audit(event, true);
 
         event.setStatus(Status.CACHE);
         fintAuditService.audit(event, true);
 
-        String cacheUri = CacheUri.create(orgId, "person");
-        List<Person> personer;
+        String cacheUri = CacheUri.create(orgId, "arbeidsforhold");
+        List<Arbeidsforhold> employments;
         if (sinceTimeStamp == null) {
-            personer = cacheService.getAll(cacheUri);
+            employments = cacheService.getAll(cacheUri);
         } else {
-            personer = cacheService.getAll(cacheUri, sinceTimeStamp);
+            employments = cacheService.getAll(cacheUri, sinceTimeStamp);
         }
 
         event.setStatus(Status.CACHE_RESPONSE);
@@ -58,6 +57,6 @@ public class PersonController {
         event.setStatus(Status.SENT_TO_CLIENT);
         fintAuditService.audit(event, false);
 
-        return ResponseEntity.ok(personer);
+        return ResponseEntity.ok(employments);
     }
 }

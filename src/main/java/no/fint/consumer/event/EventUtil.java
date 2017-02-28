@@ -2,7 +2,7 @@ package no.fint.consumer.event;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.FintAuditService;
-import no.fint.consumer.personalressurs.PersonalressursSubscriber;
+import no.fint.consumer.service.SubscriberService;
 import no.fint.event.model.Event;
 import no.fint.event.model.Status;
 import no.fint.events.FintEvents;
@@ -25,7 +25,7 @@ public class EventUtil {
     @PostConstruct
     public void init() {
         fintEvents.setDefaultType(Event.class);
-        fintEvents.registerUpstreamListener(PersonalressursSubscriber.class);
+        fintEvents.registerUpstreamListener(SubscriberService.class);
     }
 
     public Optional<Event> sendAndReceive(Event event) {
