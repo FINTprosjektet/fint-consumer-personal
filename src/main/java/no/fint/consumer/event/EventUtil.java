@@ -24,6 +24,7 @@ public class EventUtil {
 
     @PostConstruct
     public void init() {
+        fintEvents.setDefaultType(Event.class);
         fintEvents.registerUpstreamListener(PersonalressursSubscriber.class);
     }
 

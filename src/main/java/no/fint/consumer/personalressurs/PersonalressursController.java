@@ -2,6 +2,8 @@ package no.fint.consumer.personalressurs;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.FintAuditService;
+import no.fint.consumer.admin.AdminService;
+import no.fint.consumer.admin.Health;
 import no.fint.consumer.utils.CacheUri;
 import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.Event;
@@ -31,13 +33,21 @@ public class PersonalressursController {
     @Autowired
     private FintAuditService fintAuditService;
 
+    @Autowired
+    private AdminService adminService;
+
+    @RequestMapping(value = "/health", method = RequestMethod.GET)
+    public Health sendHealth(@RequestHeader("x-org-id") String orgId, @RequestHeader("x-client") String client) {
+        return adminService.healthCheck(orgId, client);
+    }
+
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity getPersonalressurser(@RequestHeader("x-org-id") String orgId, @RequestHeader("x-client") String client, @RequestParam(required = false) Long sinceTimeStamp) {
         log.info("OrgId: {}", orgId);
         log.info("Client: {}", client);
         log.info("SinceTimeStamp: {}", sinceTimeStamp);
 
-        Event event = new Event(orgId, "employee", "GET_ALL_PERSONALRESSURSER", client);
+        Event event = new Event(orgId, "employee", "GET_ALL_EMPLOYEES", client);
         fintAuditService.audit(event, true);
 
         event.setStatus(Status.CACHE);
