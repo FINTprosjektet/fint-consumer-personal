@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.fint.cache.FintCache;
 import no.fint.consumer.CacheService;
 import no.fint.consumer.utils.CacheUri;
+import no.fint.felles.Identifikator;
 import no.fint.personal.Personalressurs;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +16,17 @@ import javax.annotation.PostConstruct;
 public class PersonalressursCacheService extends CacheService<Personalressurs> {
     @PostConstruct
     public void init() {
+        Identifikator identifikator = new Identifikator();
+        identifikator.setIdentifikatorverdi("123");
+
+        Personalressurs personalressurs = new Personalressurs();
+        personalressurs.setAnsattnummer(identifikator);
+
         FintCache<Personalressurs> cache = new FintCache<>();
-        cache.update(Lists.newArrayList(new Personalressurs()));
+        cache.update(Lists.newArrayList(personalressurs));
 
         String cacheUri = CacheUri.create("rogfk.no", "personalressurs");
         caches.put(cacheUri, cache);
-        super.update(cacheUri, Lists.newArrayList(new Personalressurs()));
     }
 
 }

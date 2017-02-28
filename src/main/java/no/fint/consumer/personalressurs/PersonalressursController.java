@@ -6,13 +6,19 @@ import no.fint.consumer.utils.CacheUri;
 import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.Event;
 import no.fint.event.model.Status;
+import no.fint.personal.Arbeidsforhold;
 import no.fint.personal.Personalressurs;
+import no.fint.relations.annotations.FintRelation;
+import no.fint.relations.annotations.FintSelfId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@FintSelfId(self = Personalressurs.class, id = "ansattnummer.identifikatorverdi")
+@FintRelation(objectLink = Arbeidsforhold.class, id = "stillingsnummer")
 @Slf4j
 @RestController
 @RequestMapping(value = RestEndpoints.PERSONALRESSURS, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -26,7 +32,7 @@ public class PersonalressursController {
     private FintAuditService fintAuditService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<Personalressurs> getPersonalressurser(@RequestHeader("x-org-id") String orgId, @RequestHeader("x-client") String client, @RequestParam(required = false) Long sinceTimeStamp) {
+    public ResponseEntity getPersonalressurser(@RequestHeader("x-org-id") String orgId, @RequestHeader("x-client") String client, @RequestParam(required = false) Long sinceTimeStamp) {
         log.info("OrgId: {}", orgId);
         log.info("Client: {}", client);
         log.info("SinceTimeStamp: {}", sinceTimeStamp);
@@ -51,7 +57,7 @@ public class PersonalressursController {
         event.setStatus(Status.SENT_TO_CLIENT);
         fintAuditService.audit(event, false);
 
-        return personalressurser;
+        return ResponseEntity.ok(personalressurser);
     }
 
 }

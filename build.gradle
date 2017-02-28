@@ -48,6 +48,8 @@ def modelVersions = [
 ]
 
 dependencies {
+    compile('no.fint:fint-relation-model:0.0.1')
+    compile('no.fint:fint-relations:0.0.2')
     compile('no.fint:fint-events:0.0.24')
     compile("no.fint:fint-event-model:${modelVersions['event']}")
     compile("no.fint:fint-model-personal-java:${modelVersions['personal']}")

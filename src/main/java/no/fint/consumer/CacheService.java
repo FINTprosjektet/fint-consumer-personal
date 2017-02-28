@@ -17,7 +17,7 @@ public class CacheService<T> {
         return fintCache.getLastUpdated();
     }
 
-    private Optional<Cache<T>> getCache(String cacheUri) {
+    public Optional<Cache<T>> getCache(String cacheUri) {
         if (cacheUri == null) {
             return Optional.empty();
         }
