@@ -23,7 +23,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 jar {
     version = Grgit.open().head().id.take(7)
-    baseName = 'fint-consumer-skeleton'
+    baseName = 'fint-consumer-personal'
 }
 
 sourceCompatibility = 1.8
