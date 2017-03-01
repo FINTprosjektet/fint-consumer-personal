@@ -61,6 +61,7 @@ dependencies {
     compile("com.github.springfox.loader:springfox-loader:${springfoxLoaderVersion}")
     compile('io.github.benas:random-beans:3.3.0')
 
+    compile('org.springframework.cloud:spring-cloud-starter-config')
     compile('org.springframework.boot:spring-boot-starter-web')
     runtime('org.springframework.boot:spring-boot-devtools')
 
@@ -75,6 +76,12 @@ afterEvaluate {
             filter(ReplaceTokens, tokens: [version: jar.version])
             filter(ReplaceTokens, tokens: [eventModelVersion: modelVersions['event']])
         }
+    }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:Camden.SR5"
     }
 }
 

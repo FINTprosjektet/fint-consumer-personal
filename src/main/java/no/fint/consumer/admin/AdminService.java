@@ -1,15 +1,16 @@
 package no.fint.consumer.admin;
 
 import no.fint.consumer.event.EventUtil;
-import no.fint.consumer.personalressurs.PersonalressursCacheService;
 import no.fint.event.model.Event;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@RefreshScope
 @Service
 public class AdminService {
 
