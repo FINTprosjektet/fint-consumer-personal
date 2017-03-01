@@ -9,6 +9,7 @@ import no.fint.consumer.utils.CacheUri;
 import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.Event;
 import no.fint.event.model.Status;
+import no.fint.felles.Person;
 import no.fint.personal.Arbeidsforhold;
 import no.fint.personal.Personalressurs;
 import no.fint.relations.annotations.FintRelation;
@@ -24,7 +25,12 @@ import java.util.Map;
 import java.util.Optional;
 
 @FintSelfId(self = Personalressurs.class, id = "ansattnummer.identifikatorverdi")
-@FintRelation(objectLink = Arbeidsforhold.class, id = "stillingsnummer")
+@FintRelations(
+        rels = {
+            @FintRelation(objectLink = Arbeidsforhold.class, id = "stillingsnummer"),
+            @FintRelation(objectLink = Person.class, id = "foedselsnummer.identifikatorverdi")
+        }
+)
 @Slf4j
 @RestController
 @RequestMapping(value = RestEndpoints.PERSONALRESSURS, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

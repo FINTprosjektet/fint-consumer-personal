@@ -23,10 +23,18 @@ public class PersonalRessursLinkMapper implements FintLinkMapper {
 
     @Override
     public Link createRelation(Relation relation) {
-        Optional<String> rightKey = relationCacheService.getKey(relation.getType(), relation.getLeftKey());
-        if (rightKey.isPresent()) {
-            return new Link(baseUrl + "/administrasjon/personal/arbeidsforhold/" + rightKey.get(), "arbeidsforhold");
+        if(relation.getType().endsWith("arbeidsforhold")) {
+            Optional<String> rightKey = relationCacheService.getKey(relation.getType(), relation.getLeftKey());
+            if (rightKey.isPresent()) {
+                return new Link(baseUrl + "/administrasjon/personal/arbeidsforhold/" + rightKey.get(), "arbeidsforhold");
+            }
+        } else if(relation.getType().endsWith("person")) {
+            Optional<String> rightKey = relationCacheService.getKey(relation.getType(), relation.getLeftKey());
+            if (rightKey.isPresent()) {
+                return new Link(baseUrl + "/administrasjon/personal/person/" + rightKey.get(), "person");
+            }
         }
+
         return null;
     }
 
