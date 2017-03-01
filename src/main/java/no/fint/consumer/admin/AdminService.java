@@ -1,6 +1,7 @@
 package no.fint.consumer.admin;
 
 import no.fint.consumer.event.EventUtil;
+import no.fint.consumer.personalressurs.PersonalressursCacheService;
 import no.fint.event.model.Event;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
