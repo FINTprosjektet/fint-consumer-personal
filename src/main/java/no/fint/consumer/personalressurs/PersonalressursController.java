@@ -76,9 +76,9 @@ public class PersonalressursController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity getPersonalressurs(@RequestHeader(value = "x-org-id", defaultValue = "mock.no") String orgId,
-                                             @RequestHeader(value = "x-client", defaultValue = "mock") String client,
-                                             @PathVariable String id) {
+    public ResponseEntity getPersonalressurs(@PathVariable String id,
+                                             @RequestHeader(value = "x-org-id", defaultValue = "mock.no") String orgId,
+                                             @RequestHeader(value = "x-client", defaultValue = "mock") String client) {
         log.info("OrgId: {}", orgId);
         log.info("Client: {}", client);
 
