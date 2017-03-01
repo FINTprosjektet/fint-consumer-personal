@@ -3,9 +3,9 @@ package no.fint.consumer.utils;
 public enum RestEndpoints {
     ;
 
-    public static final String PERSONALRESSURS = "/administrasjon/personal/personalressurs";
-    public static final String PERSON = "/administrasjon/personal/person";
-    public static final String EMPLOYMENT = "/administrasjon/personal/arbeidsforhold";
-    public static final String RELATION = "/administrasjon/personal/relations";
-    public static final String PERSONAL = "/administrasjon/personal";
+    public static final String PERSONALRESSURS = "/personalressurs";
+    public static final String PERSON = "/person";
+    public static final String EMPLOYMENT = "/arbeidsforhold";
+    public static final String RELATION = "/relations";
+    public static final String PERSONAL = "/";
 }
