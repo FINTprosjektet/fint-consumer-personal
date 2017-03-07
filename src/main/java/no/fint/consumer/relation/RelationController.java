@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Slf4j
+@CrossOrigin
 @RestController
 @RequestMapping(value = RestEndpoints.RELATION, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class RelationController {

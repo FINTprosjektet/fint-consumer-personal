@@ -24,6 +24,7 @@ import java.util.Optional;
 @FintSelfId(self = Person.class, id = "foedselsnummer.identifikatorverdi")
 @FintRelation(objectLink = Personalressurs.class, id = "ansattnummer.identifikatorverdi")
 @Slf4j
+@CrossOrigin
 @RestController
 @RequestMapping(value = RestEndpoints.PERSON, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class PersonController {

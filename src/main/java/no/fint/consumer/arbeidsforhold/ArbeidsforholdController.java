@@ -24,6 +24,7 @@ import java.util.Optional;
 @FintSelfId(self = Arbeidsforhold.class, id = "stillingsnummer")
 @FintRelation(objectLink = Personalressurs.class, id = "ansattnummer.identifikatorverdi")
 @Slf4j
+@CrossOrigin
 @RestController
 @RequestMapping(value = RestEndpoints.EMPLOYMENT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class ArbeidsforholdController {

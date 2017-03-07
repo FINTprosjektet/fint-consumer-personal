@@ -32,6 +32,7 @@ import java.util.Optional;
         }
 )
 @Slf4j
+@CrossOrigin
 @RestController
 @RequestMapping(value = RestEndpoints.PERSONALRESSURS, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class PersonalressursController {
