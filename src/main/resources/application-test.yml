@@ -4,3 +4,6 @@ fint:
 
  audit:
   test-mode: true
+
+ relations:
+  force-https: false

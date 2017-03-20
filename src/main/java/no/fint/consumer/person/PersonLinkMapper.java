@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@FintLinkMapper
+@FintLinkMapper(leftObject = Person.class, leftId = "foedselsnummer.identifikatorverdi")
 @Component
 public class PersonLinkMapper {
 
@@ -24,7 +24,7 @@ public class PersonLinkMapper {
     @Autowired
     private RelationCacheService relationCacheService;
 
-    @FintLinkRelation(leftObject = Person.class, leftId = "foedselsnummer.identifikatorverdi", rightObject = Personalressurs.class, rightId = "ansattnummer.identifikatorverdi")
+    @FintLinkRelation(rightObject = Personalressurs.class, rightId = "ansattnummer.identifikatorverdi")
     public List<Link> createRelation(Relation relation) {
         List<String> rightKeys = relationCacheService.getKey(relation.getType(), relation.getLeftKey());
         return rightKeys.stream().map(rightKey -> new Link(baseUrl + "/administrasjon/personal/personalressurs/" + rightKey)).collect(Collectors.toList());
