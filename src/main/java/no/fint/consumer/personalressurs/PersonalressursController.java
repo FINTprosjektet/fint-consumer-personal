@@ -3,8 +3,6 @@ package no.fint.consumer.personalressurs;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.FintAuditService;
-import no.fint.consumer.admin.AdminService;
-import no.fint.consumer.admin.Health;
 import no.fint.consumer.utils.CacheUri;
 import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.Event;
@@ -13,7 +11,6 @@ import no.fint.felles.Person;
 import no.fint.personal.Arbeidsforhold;
 import no.fint.personal.Personalressurs;
 import no.fint.relations.annotations.FintRelation;
-import no.fint.relations.annotations.FintRelations;
 import no.fint.relations.annotations.FintSelfId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -25,12 +22,8 @@ import java.util.Map;
 import java.util.Optional;
 
 @FintSelfId(self = Personalressurs.class, id = "ansattnummer.identifikatorverdi")
-@FintRelations(
-        rels = {
-            @FintRelation(objectLink = Arbeidsforhold.class, id = "stillingsnummer"),
-            @FintRelation(objectLink = Person.class, id = "foedselsnummer.identifikatorverdi")
-        }
-)
+@FintRelation(objectLink = Arbeidsforhold.class, id = "stillingsnummer")
+@FintRelation(objectLink = Person.class, id = "foedselsnummer.identifikatorverdi")
 @Slf4j
 @CrossOrigin
 @RestController
@@ -42,7 +35,6 @@ public class PersonalressursController {
 
     @Autowired
     private FintAuditService fintAuditService;
-
 
 
     @RequestMapping(value = "/last-updated", method = RequestMethod.GET)
@@ -111,10 +103,9 @@ public class PersonalressursController {
                 (Personalressurs personalressurs) -> personalressurs.getAnsattnummer().getIdentifikatorverdi().equals(id)
         ).findFirst();
 
-        if(personalressursOptional.isPresent()) {
+        if (personalressursOptional.isPresent()) {
             return ResponseEntity.ok(personalressursOptional.get());
-        }
-        else {
+        } else {
             return ResponseEntity.notFound().build();
         }
 

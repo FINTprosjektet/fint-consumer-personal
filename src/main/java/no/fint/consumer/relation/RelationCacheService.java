@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -39,11 +39,11 @@ public class RelationCacheService extends CacheService<Relation> {
         eventUtil.send(event);
     }
 
-    public Optional<String> getKey(String type, String leftKey) {
+    public List<String> getKey(String type, String leftKey) {
         Cache<Relation> cache = caches.get(CacheUri.create("mock.no", "relation"));
         List<CacheObject<Relation>> cacheObjects = cache.get();
         return cacheObjects.stream().filter(cacheObject -> isRelation(type, leftKey, cacheObject))
-                .map(cacheObject -> cacheObject.getObject().getRightKey()).findFirst();
+                .map(cacheObject -> cacheObject.getObject().getRightKey()).collect(Collectors.toList());
     }
 
     private boolean isRelation(String type, String leftKey, CacheObject<Relation> cacheObject) {

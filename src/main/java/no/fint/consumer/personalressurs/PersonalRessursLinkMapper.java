@@ -1,45 +1,40 @@
 package no.fint.consumer.personalressurs;
 
 import no.fint.consumer.relation.RelationCacheService;
+import no.fint.felles.Person;
+import no.fint.personal.Arbeidsforhold;
 import no.fint.personal.Personalressurs;
 import no.fint.relation.model.Relation;
-import no.fint.relations.FintLinkMapper;
+import no.fint.relations.annotations.mapper.FintLinkMapper;
+import no.fint.relations.annotations.mapper.FintLinkRelation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
+@FintLinkMapper
 @Component
-public class PersonalRessursLinkMapper implements FintLinkMapper {
+public class PersonalRessursLinkMapper {
 
     @Value("${link-mapper-base-url:http://localhost:8080}")
     private String baseUrl;
 
-
     @Autowired
     private RelationCacheService relationCacheService;
 
-    @Override
-    public Link createRelation(Relation relation) {
-        if(relation.getType().endsWith("arbeidsforhold")) {
-            Optional<String> rightKey = relationCacheService.getKey(relation.getType(), relation.getLeftKey());
-            if (rightKey.isPresent()) {
-                return new Link(baseUrl + "/administrasjon/personal/arbeidsforhold/" + rightKey.get(), "arbeidsforhold");
-            }
-        } else if(relation.getType().endsWith("person")) {
-            Optional<String> rightKey = relationCacheService.getKey(relation.getType(), relation.getLeftKey());
-            if (rightKey.isPresent()) {
-                return new Link(baseUrl + "/administrasjon/personal/person/" + rightKey.get(), "person");
-            }
-        }
-
-        return null;
+    @FintLinkRelation(leftObject = Personalressurs.class, leftId = "ansattnummer.identifikatorverdi", rightObject = Arbeidsforhold.class, rightId = "stillingsnummer")
+    public List<Link> createArbeidsforholdRelation(Relation relation) {
+        List<String> rightKeys = relationCacheService.getKey(relation.getType(), relation.getLeftKey());
+        return rightKeys.stream().map(rightKey -> new Link(baseUrl + "/administrasjon/personal/arbeidsforhold/" + rightKey)).collect(Collectors.toList());
     }
 
-    @Override
-    public Class<?> type() {
-        return Personalressurs.class;
+    @FintLinkRelation(leftObject = Personalressurs.class, leftId = "ansattnummer.identifikatorverdi", rightObject = Person.class, rightId = "foedselsnummer.identifikatorverdi")
+    public List<Link> createPersonRelation(Relation relation) {
+        List<String> rightKeys = relationCacheService.getKey(relation.getType(), relation.getLeftKey());
+        return rightKeys.stream().map(rightKey -> new Link(baseUrl + "/administrasjon/personal/person/" + rightKey)).collect(Collectors.toList());
     }
+
 }
