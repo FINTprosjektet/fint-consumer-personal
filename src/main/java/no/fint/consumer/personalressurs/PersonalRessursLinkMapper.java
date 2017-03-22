@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Component
 public class PersonalRessursLinkMapper {
 
-    @Value("${link-mapper-base-url:http://localhost:8080}")
+    @Value("${link-mapper-base-url:https://dokumentasjon.felleskomponent.no/relasjoner}")
     private String baseUrl;
 
     @Autowired
@@ -28,13 +28,13 @@ public class PersonalRessursLinkMapper {
     @FintLinkRelation(rightObject = Arbeidsforhold.class, rightId = "stillingsnummer")
     public List<Link> createArbeidsforholdRelation(Relation relation) {
         List<String> rightKeys = relationCacheService.getKey(relation.getType(), relation.getLeftKey());
-        return rightKeys.stream().map(rightKey -> new Link(baseUrl + "/administrasjon/personal/arbeidsforhold/" + rightKey)).collect(Collectors.toList());
+        return rightKeys.stream().map(rightKey -> new Link(baseUrl + "/administrasjon/personal/arbeidsforhold/" + rightKey, "arbeidsforhold")).collect(Collectors.toList());
     }
 
     @FintLinkRelation(rightObject = Person.class, rightId = "foedselsnummer.identifikatorverdi")
     public List<Link> createPersonRelation(Relation relation) {
         List<String> rightKeys = relationCacheService.getKey(relation.getType(), relation.getLeftKey());
-        return rightKeys.stream().map(rightKey -> new Link(baseUrl + "/administrasjon/personal/person/" + rightKey)).collect(Collectors.toList());
+        return rightKeys.stream().map(rightKey -> new Link(baseUrl + "/administrasjon/personal/person/" + rightKey, "person")).collect(Collectors.toList());
     }
 
 }

@@ -43,7 +43,7 @@ repositories {
 }
 
 def modelVersions = [
-        event: '0.0.11',
+        event   : '0.0.11',
         personal: '1.0.0.RC2'
 ]
 

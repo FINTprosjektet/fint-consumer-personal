@@ -1,9 +1,11 @@
 fint:
  events:
-  orgs: rogfk.no
+  orgs: mock.no
 
  audit:
   test-mode: true
 
  relations:
   force-https: false
+
+link-mapper-base-url: http://localhost:8080
