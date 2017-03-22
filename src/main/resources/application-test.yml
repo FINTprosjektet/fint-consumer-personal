@@ -7,3 +7,5 @@ fint:
 
  relations:
   force-https: false
+
+link-mapper-base-url: http://localhost:8080
