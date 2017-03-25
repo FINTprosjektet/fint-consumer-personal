@@ -3,3 +3,5 @@ springfox:
  version: '@version@'
 
 event-model-version: '@eventModelVersion@'
+personal-model-version: '@personalModelVersion@'
+relation-model-version: '@relationModelVersion@'
