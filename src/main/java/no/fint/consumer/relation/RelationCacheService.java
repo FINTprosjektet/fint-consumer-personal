@@ -8,7 +8,7 @@ import no.fint.consumer.CacheService;
 import no.fint.consumer.event.EventUtil;
 import no.fint.consumer.utils.CacheUri;
 import no.fint.event.model.Event;
-import no.fint.relation.model.Relation;
+import no.fint.model.relation.Relation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -43,11 +43,11 @@ public class RelationCacheService extends CacheService<Relation> {
         Cache<Relation> cache = caches.get(CacheUri.create("mock.no", "relation"));
         List<CacheObject<Relation>> cacheObjects = cache.get();
         return cacheObjects.stream().filter(cacheObject -> isRelation(type, leftKey, cacheObject))
-                .map(cacheObject -> cacheObject.getObject().getRightKey()).collect(Collectors.toList());
+                .map(cacheObject -> cacheObject.getObject().getRelated()).collect(Collectors.toList());
     }
 
     private boolean isRelation(String type, String leftKey, CacheObject<Relation> cacheObject) {
-        return cacheObject.getObject().getType().equals(type) && cacheObject.getObject().getLeftKey().equals(leftKey);
+        return cacheObject.getObject().getType().equals(type) && cacheObject.getObject().getMain().equals(leftKey);
     }
 
 }

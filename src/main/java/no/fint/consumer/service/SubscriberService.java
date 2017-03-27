@@ -8,10 +8,10 @@ import no.fint.consumer.personalressurs.PersonalressursCacheService;
 import no.fint.consumer.relation.RelationCacheService;
 import no.fint.consumer.utils.CacheUri;
 import no.fint.event.model.Event;
-import no.fint.felles.Person;
-import no.fint.personal.Arbeidsforhold;
-import no.fint.personal.Personalressurs;
-import no.fint.relation.model.Relation;
+import no.fint.model.administrasjon.personal.Arbeidsforhold;
+import no.fint.model.administrasjon.personal.Personalressurs;
+import no.fint.model.felles.Person;
+import no.fint.model.relation.Relation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

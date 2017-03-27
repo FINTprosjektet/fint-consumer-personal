@@ -7,11 +7,9 @@ import no.fint.consumer.utils.CacheUri;
 import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.Event;
 import no.fint.event.model.Status;
-import no.fint.felles.Person;
-import no.fint.personal.Arbeidsforhold;
-import no.fint.personal.Personalressurs;
+import no.fint.model.administrasjon.personal.Personalressurs;
 import no.fint.relations.annotations.FintRelation;
-import no.fint.relations.annotations.FintSelfId;
+import no.fint.relations.annotations.FintSelf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@FintSelfId(self = Personalressurs.class, id = "ansattnummer.identifikatorverdi")
-@FintRelation(objectLink = Arbeidsforhold.class, id = "stillingsnummer")
-@FintRelation(objectLink = Person.class, id = "foedselsnummer.identifikatorverdi")
+@FintSelf(self = Personalressurs.class, id = "ansattnummer.identifikatorverdi")
+@FintRelation("REL_ID_ARBEIDSFORHOLD")
+@FintRelation("REL_ID_PERSON")
 @Slf4j
 @CrossOrigin
 @RestController

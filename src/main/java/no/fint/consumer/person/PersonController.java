@@ -7,10 +7,9 @@ import no.fint.consumer.utils.CacheUri;
 import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.Event;
 import no.fint.event.model.Status;
-import no.fint.felles.Person;
-import no.fint.personal.Personalressurs;
+import no.fint.model.felles.Person;
 import no.fint.relations.annotations.FintRelation;
-import no.fint.relations.annotations.FintSelfId;
+import no.fint.relations.annotations.FintSelf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +20,8 @@ import java.util.Map;
 import java.util.Optional;
 
 
-@FintSelfId(self = Person.class, id = "foedselsnummer.identifikatorverdi")
-@FintRelation(objectLink = Personalressurs.class, id = "ansattnummer.identifikatorverdi")
+@FintSelf(self = Person.class, id = "foedselsnummer.identifikatorverdi")
+@FintRelation(value = "REL_ID_PERSONALRESSURS", mainProperty = "ansattnummer.identifikatorverdi")
 @Slf4j
 @CrossOrigin
 @RestController
@@ -96,7 +95,7 @@ public class PersonController {
         fintAuditService.audit(event, false);
 
         Optional<Person> personOptional = personer.stream().filter(
-                (Person person) -> person.getFoedselsnummer().getIdentifikatorverdi().equals(id)
+                (Person person) -> person.getFodselsnummer().getIdentifikatorverdi().equals(id)
         ).findFirst();
 
         if (personOptional.isPresent()) {

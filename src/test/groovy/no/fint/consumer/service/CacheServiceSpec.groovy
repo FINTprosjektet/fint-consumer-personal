@@ -5,8 +5,8 @@ import com.google.common.collect.Lists
 import no.fint.cache.FintCache
 import no.fint.consumer.CacheService
 import no.fint.consumer.utils.CacheUri
-import no.fint.felles.Identifikator
-import no.fint.felles.Person
+import no.fint.model.felles.Identifikator
+import no.fint.model.felles.Person
 import spock.lang.Specification
 
 class CacheServiceSpec extends Specification {
@@ -19,8 +19,8 @@ class CacheServiceSpec extends Specification {
         FintCache<Person> cache = new FintCache<>()
         cacheService = new CacheService(caches: ImmutableMap.of(cacheUri, cache))
         cacheService.update(cacheUri, Lists.newArrayList(
-                new Person(foedselsnummer: new Identifikator(identifikatorverdi: '123')),
-                new Person(foedselsnummer: new Identifikator(identifikatorverdi: '234'))
+                new Person(fodselsnummer: new Identifikator(identifikatorverdi: '123')),
+                new Person(fodselsnummer: new Identifikator(identifikatorverdi: '234'))
         ))
     }
 
@@ -74,7 +74,7 @@ class CacheServiceSpec extends Specification {
 
     def "Update cache"() {
         when:
-        cacheService.update(cacheUri, [new Person(foedselsnummer: new Identifikator(identifikatorverdi: '345'))])
+        cacheService.update(cacheUri, [new Person(fodselsnummer: new Identifikator(identifikatorverdi: '345'))])
         def objects = cacheService.getAll(cacheUri)
 
         then:

@@ -6,7 +6,7 @@ import no.fint.consumer.CacheService;
 import no.fint.consumer.event.EventUtil;
 import no.fint.consumer.utils.CacheUri;
 import no.fint.event.model.Event;
-import no.fint.personal.Personalressurs;
+import no.fint.model.administrasjon.personal.Personalressurs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

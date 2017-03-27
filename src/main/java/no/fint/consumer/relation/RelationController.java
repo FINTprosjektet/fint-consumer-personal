@@ -6,7 +6,7 @@ import no.fint.consumer.utils.CacheUri;
 import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.Event;
 import no.fint.event.model.Status;
-import no.fint.relation.model.Relation;
+import no.fint.model.relation.Relation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

@@ -2,9 +2,8 @@ package no.fint.consumer.arbeidsforhold;
 
 import no.fint.consumer.FintPersonalProps;
 import no.fint.consumer.relation.RelationCacheService;
-import no.fint.personal.Arbeidsforhold;
-import no.fint.personal.Personalressurs;
-import no.fint.relation.model.Relation;
+import no.fint.model.administrasjon.personal.Arbeidsforhold;
+import no.fint.model.relation.Relation;
 import no.fint.relations.annotations.mapper.FintLinkMapper;
 import no.fint.relations.annotations.mapper.FintLinkRelation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@FintLinkMapper(leftObject = Arbeidsforhold.class, leftId = "stillingsnummer")
+@FintLinkMapper(Arbeidsforhold.class)
 @Component
 public class ArbeidsforholdLinkMapper {
 
@@ -24,9 +23,9 @@ public class ArbeidsforholdLinkMapper {
     @Autowired
     private RelationCacheService relationCacheService;
 
-    @FintLinkRelation(rightObject = Personalressurs.class, rightId = "ansattnummer.identifikatorverdi")
+    @FintLinkRelation("REL_ID_PERSONALRESSURS")
     public List<Link> createRelation(Relation relation) {
-        List<String> rightKeys = relationCacheService.getKey(relation.getType(), relation.getLeftKey());
+        List<String> rightKeys = relationCacheService.getKey(relation.getType(), relation.getMain());
         return rightKeys.stream().map(rightKey -> new Link(
                 fintPersonalProps.getLinkMapperBaseUrl() + "/administrasjon/personal/personalressurs/" + rightKey,
                 "personalressurs")).collect(Collectors.toList());

@@ -8,10 +8,9 @@ import no.fint.consumer.utils.CacheUri;
 import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.Event;
 import no.fint.event.model.Status;
-import no.fint.personal.Arbeidsforhold;
-import no.fint.personal.Personalressurs;
+import no.fint.model.administrasjon.personal.Arbeidsforhold;
 import no.fint.relations.annotations.FintRelation;
-import no.fint.relations.annotations.FintSelfId;
+import no.fint.relations.annotations.FintSelf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@FintSelfId(self = Arbeidsforhold.class, id = "stillingsnummer")
-@FintRelation(objectLink = Personalressurs.class, id = "ansattnummer.identifikatorverdi")
+@FintSelf(self = Arbeidsforhold.class, id = "stillingsnummer")
+@FintRelation(value = "REL_ID_PERSONALRESSURS", mainProperty = "ansattnummer.identifikatorverdi")
 @Slf4j
 @CrossOrigin
 @RestController
@@ -34,7 +33,6 @@ public class ArbeidsforholdController {
 
     @Autowired
     private ArbeidsforholdCacheService cacheService;
-
 
 
     @RequestMapping(value = "/last-updated", method = RequestMethod.GET)
@@ -100,10 +98,9 @@ public class ArbeidsforholdController {
                 (Arbeidsforhold arbeidsforhold) -> arbeidsforhold.getStillingsnummer().equals(id)
         ).findFirst();
 
-        if(arbeidsforholdOptional.isPresent()) {
+        if (arbeidsforholdOptional.isPresent()) {
             return ResponseEntity.ok(arbeidsforholdOptional.get());
-        }
-        else {
+        } else {
             return ResponseEntity.notFound().build();
         }
     }
