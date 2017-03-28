@@ -38,11 +38,11 @@ public class SubscriberService {
     private ArbeidsforholdCacheService arbeidsforholdCacheService;
 
     public void receive(Event event) {
-        if (event.getAction().equals("GET_ALL_EMPLOYEES")) {
+        if (event.getAction().equals("GET_ALL_PERSONALRESSURS")) {
             List<?> employees = event.getData();
             List<Personalressurs> personalressursList = employees.stream().map(employee -> objectMapper.convertValue(employee, Personalressurs.class)).collect(Collectors.toList());
             personalressursCacheService.getCache(CacheUri.create(event.getOrgId(), "personalressurs")).ifPresent(cache -> cache.update(personalressursList));
-        } else if (event.getAction().equals("GET_ALL_PERSONS")) {
+        } else if (event.getAction().equals("GET_ALL_PERSON")) {
             List<?> persons = event.getData();
             List<Person> personList = persons.stream().map(person -> objectMapper.convertValue(person, Person.class)).collect(Collectors.toList());
             personCacheService.getCache(CacheUri.create(event.getOrgId(), "person")).ifPresent(cache -> cache.update(personList));
@@ -50,7 +50,7 @@ public class SubscriberService {
             List<?> relations = event.getData();
             List<Relation> relationList = relations.stream().map(relation -> objectMapper.convertValue(relation, Relation.class)).collect(Collectors.toList());
             relationCacheService.getCache(CacheUri.create(event.getOrgId(), "relation")).ifPresent(cache -> cache.update(relationList));
-        } else if (event.getAction().equals("GET_ALL_EMPLOYMENTS")) {
+        } else if (event.getAction().equals("GET_ALL_ARBEIDSFORHOLD")) {
             List<?> employments = event.getData();
             List<Arbeidsforhold> employmentList = employments.stream().map(employment -> objectMapper.convertValue(employment, Arbeidsforhold.class)).collect(Collectors.toList());
             arbeidsforholdCacheService.getCache(CacheUri.create(event.getOrgId(), "arbeidsforhold")).ifPresent(cache -> cache.update(employmentList));
