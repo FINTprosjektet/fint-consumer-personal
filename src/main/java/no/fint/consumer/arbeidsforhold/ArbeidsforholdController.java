@@ -72,7 +72,7 @@ public class ArbeidsforholdController {
         return ResponseEntity.ok(employments);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id:.+}", method = RequestMethod.GET)
     public ResponseEntity getArbeidsforhold(@PathVariable String id,
                                             @RequestHeader(value = "x-org-id") String orgId,
                                             @RequestHeader(value = "x-client") String client) {

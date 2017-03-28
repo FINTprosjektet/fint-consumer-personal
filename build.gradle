@@ -45,7 +45,7 @@ repositories {
 def modelVersions = [
         event   : '0.0.11',
         relation: '0.0.10',
-        administrasjon: '1.0.0-rc.2.7'
+        administrasjon: '1.0.0-rc.2.8'
 ]
 
 dependencies {
