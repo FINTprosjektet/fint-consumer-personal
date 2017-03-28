@@ -46,7 +46,7 @@ public class SubscriberService {
             List<?> persons = event.getData();
             List<Person> personList = persons.stream().map(person -> objectMapper.convertValue(person, Person.class)).collect(Collectors.toList());
             personCacheService.getCache(CacheUri.create(event.getOrgId(), "person")).ifPresent(cache -> cache.update(personList));
-        } else if (event.getAction().equals("GET_RELATIONS")) {
+        } else if (event.getAction().equals("GET_ALL_RELATIONS")) {
             List<?> relations = event.getData();
             List<Relation> relationList = relations.stream().map(relation -> objectMapper.convertValue(relation, Relation.class)).collect(Collectors.toList());
             relationCacheService.getCache(CacheUri.create(event.getOrgId(), "relation")).ifPresent(cache -> cache.update(relationList));
