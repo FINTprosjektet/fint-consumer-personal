@@ -76,6 +76,7 @@ public class ArbeidsforholdController {
     public ResponseEntity getArbeidsforhold(@PathVariable String id,
                                             @RequestHeader(value = "x-org-id") String orgId,
                                             @RequestHeader(value = "x-client") String client) {
+        log.info("Id: {}", id);
         log.info("OrgId: {}", orgId);
         log.info("Client: {}", client);
 
