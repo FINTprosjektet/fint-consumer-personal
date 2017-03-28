@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@FintSelf(self = Personalressurs.class, id = "ansattnummer.identifikatorverdi")
+@FintSelf(Personalressurs.class)
 @FintRelation("REL_ID_ARBEIDSFORHOLD")
 @FintRelation("REL_ID_PERSON")
 @Slf4j

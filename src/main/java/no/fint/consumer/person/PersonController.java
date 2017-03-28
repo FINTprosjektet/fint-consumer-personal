@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.Optional;
 
 
-@FintSelf(self = Person.class, id = "fodselsnummer.identifikatorverdi")
-@FintRelation(value = "REL_ID_PERSONALRESSURS", mainProperty = "fodselsnummer.identifikatorverdi")
+@FintSelf(Person.class)
+@FintRelation("REL_ID_PERSONALRESSURS")
 @Slf4j
 @CrossOrigin
 @RestController

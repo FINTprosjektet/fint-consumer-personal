@@ -1,6 +1,6 @@
 module.exports = {
     corrId: '',
-    action: 'GET_ALL_EMPLOYMENTS',
+    action: 'GET_ALL_ARBEIDSFORHOLD',
     status: 'UPSTREAM_QUEUE',
     time: new Date().getTime(),
     orgId: '',

@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@FintSelf(self = Arbeidsforhold.class, id = "stillingsnummer")
-@FintRelation(value = "REL_ID_PERSONALRESSURS", mainProperty = "systemId.identifikatorverdi")
+@FintSelf(Arbeidsforhold.class)
+@FintRelation("REL_ID_PERSONALRESSURS")
 @Slf4j
 @CrossOrigin
 @RestController

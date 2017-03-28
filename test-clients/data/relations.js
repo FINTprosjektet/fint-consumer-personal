@@ -1,6 +1,6 @@
 module.exports = {
     corrId: '',
-    action: 'GET_RELATIONS',
+    action: 'GET_ALL_RELATIONS',
     status: 'UPSTREAM_QUEUE',
     time: new Date().getTime(),
     orgId: '',

@@ -35,7 +35,7 @@ const consumeMsg = (channel) => {
         channel.publish('', msg.properties.replyTo, new Buffer(JSON.stringify(health)), { 'contentType': 'application/json' })
       } else {
         let replyMessage = {}
-        if (event.action === 'GET_RELATIONS') {
+        if (event.action === 'GET_ALL_RELATIONS') {
           replyMessage = relations
         } else if (event.action === 'GET_ALL_PERSONALRESSURS') {
           replyMessage = employees
