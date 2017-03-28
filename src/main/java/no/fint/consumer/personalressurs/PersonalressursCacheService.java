@@ -38,7 +38,7 @@ public class PersonalressursCacheService extends CacheService<Personalressurs> {
     public void getAllStaffResources() {
         Arrays.stream(orgs).forEach(orgId -> {
             log.info("Populating employee cache for {}", orgId);
-            Event event = new Event(orgId, "administrasjon/personal", "GET_ALL_EMPLOYEES", "CACHE_SERVICE");
+            Event event = new Event(orgId, "administrasjon/personal", "GET_ALL_PERSONALRESSURS", "CACHE_SERVICE");
             eventUtil.send(event);
         });
     }

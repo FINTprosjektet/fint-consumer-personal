@@ -38,7 +38,7 @@ public class PersonCacheService extends CacheService<Person> {
     public void getAllPersons() {
         Arrays.stream(orgs).forEach(orgId -> {
             log.info("Populating person cache for {}", orgId);
-            Event event = new Event(orgId, "administrasjon/personal", "GET_ALL_PERSONS", "CACHE_SERVICE");
+            Event event = new Event(orgId, "administrasjon/personal", "GET_ALL_PERSON", "CACHE_SERVICE");
             eventUtil.send(event);
         });
     }

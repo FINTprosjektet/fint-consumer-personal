@@ -44,7 +44,7 @@ public class RelationCacheService extends CacheService<Relation> {
     public void getAllRelations() {
         Arrays.stream(orgs).forEach(orgId -> {
             log.info("Populating relation cache for {}", orgId);
-            Event event = new Event(orgId, "administrasjon/personal", "GET_RELATIONS", "CACHE_SERVICE");
+            Event event = new Event(orgId, "administrasjon/personal", "GET_ALL_RELATIONS", "CACHE_SERVICE");
             eventUtil.send(event);
         });
     }

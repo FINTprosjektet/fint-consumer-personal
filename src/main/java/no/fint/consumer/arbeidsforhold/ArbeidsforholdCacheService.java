@@ -38,7 +38,7 @@ public class ArbeidsforholdCacheService extends CacheService<Arbeidsforhold> {
     public void getAllEmployments() {
         Arrays.stream(orgs).forEach(orgId -> {
             log.info("Populating employment cache for {}", orgId);
-            Event event = new Event(orgId, "administrasjon/personal", "GET_ALL_EMPLOYMENTS", "CACHE_SERVICE");
+            Event event = new Event(orgId, "administrasjon/personal", "GET_ALL_ARBEIDSFORHOLD", "CACHE_SERVICE");
             eventUtil.send(event);
         });
     }
