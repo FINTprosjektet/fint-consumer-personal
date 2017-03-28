@@ -28,7 +28,7 @@ public class PersonalRessursLinkMapper {
         List<String> relatedValues = relationCacheService.getKey(relation.getType(), relation.getMain());
         return relatedValues.stream().map(related -> new Link(
                 fintPersonalProps.getLinkMapperBaseUrl() + "/arbeidsforhold/" + related,
-                relation.getRelationType().getRelationName())).collect(Collectors.toList());
+                relation.getType())).collect(Collectors.toList());
     }
 
     @FintLinkRelation("REL_ID_PERSON")
@@ -36,7 +36,7 @@ public class PersonalRessursLinkMapper {
         List<String> relatedValues = relationCacheService.getKey(relation.getType(), relation.getMain());
         return relatedValues.stream().map(related -> new Link(
                 fintPersonalProps.getLinkMapperBaseUrl() + "/person/" + related,
-                relation.getRelationType().getRelationName())).collect(Collectors.toList());
+                relation.getType())).collect(Collectors.toList());
     }
 
 }

@@ -28,7 +28,7 @@ public class PersonLinkMapper {
         List<String> relatedValues = relationCacheService.getKey(relation.getType(), relation.getMain());
         return relatedValues.stream().map(related -> new Link(
                 fintPersonalProps.getLinkMapperBaseUrl() + "/personalressurs/" + related,
-                relation.getRelationType().getRelationName())).collect(Collectors.toList());
+                relation.getType())).collect(Collectors.toList());
     }
 
 }
