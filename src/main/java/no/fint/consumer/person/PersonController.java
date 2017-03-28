@@ -49,7 +49,7 @@ public class PersonController {
         log.info("Client: {}", client);
         log.info("SinceTimeStamp: {}", sinceTimeStamp);
 
-        Event event = new Event(orgId, "administrasjon/personal", "GET_ALL_PERSONER", client);
+        Event event = new Event(orgId, "administrasjon/personal", "GET_ALL_PERSON", client);
         fintAuditService.audit(event, true);
 
         event.setStatus(Status.CACHE);

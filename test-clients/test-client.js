@@ -37,11 +37,11 @@ const consumeMsg = (channel) => {
         let replyMessage = {}
         if (event.action === 'GET_RELATIONS') {
           replyMessage = relations
-        } else if (event.action === 'GET_ALL_EMPLOYEES') {
+        } else if (event.action === 'GET_ALL_PERSONALRESSURS') {
           replyMessage = employees
-        } else if (event.action === 'GET_ALL_PERSONS') {
+        } else if (event.action === 'GET_ALL_PERSON') {
           replyMessage = persons
-        } else if (event.action === 'GET_ALL_EMPLOYMENTS') {
+        } else if (event.action === 'GET_ALL_ARBEIDSFORHOLD') {
           replyMessage = employments
         }
 

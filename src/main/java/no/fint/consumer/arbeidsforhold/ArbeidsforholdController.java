@@ -49,7 +49,7 @@ public class ArbeidsforholdController {
         log.info("Client: {}", client);
         log.info("SinceTimeStamp: {}", sinceTimeStamp);
 
-        Event event = new Event(orgId, "administrasjon/personal", "GET_ALL_EMPLOYMENTS", client);
+        Event event = new Event(orgId, "administrasjon/personal", "GET_ALL_ARBEIDSFORHOLD", client);
         fintAuditService.audit(event, true);
 
         event.setStatus(Status.CACHE);
@@ -79,7 +79,7 @@ public class ArbeidsforholdController {
         log.info("OrgId: {}", orgId);
         log.info("Client: {}", client);
 
-        Event event = new Event(orgId, "administrasjon/personal", "GET_EMPLOYMENT", client);
+        Event event = new Event(orgId, "administrasjon/personal", "GET_ARBEIDSFORHOLD", client);
         fintAuditService.audit(event, true);
 
         event.setStatus(Status.CACHE);
