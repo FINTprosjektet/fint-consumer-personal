@@ -5,6 +5,7 @@ import no.fint.consumer.utils.CacheUri
 import no.fint.consumer.utils.RestEndpoints
 import no.fint.event.model.Event
 import no.fint.model.felles.Person
+import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
@@ -29,7 +30,10 @@ class PersonControllerSpec extends Specification {
 
     def "Get all personer"() {
         when:
-        def response = mockMvc.perform(get(RestEndpoints.PERSON).header('x-org-id', 'rogfk.no').header('x-client', 'vfs'))
+        def response = mockMvc.perform(get(RestEndpoints.PERSON)
+                .header('x-org-id', 'rogfk.no')
+                .header('x-client', 'vfs')
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE))
 
         then:
         4 * fintAuditService.audit(_ as Event, _ as Boolean)
