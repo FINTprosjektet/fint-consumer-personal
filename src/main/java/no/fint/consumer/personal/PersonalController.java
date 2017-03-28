@@ -18,8 +18,8 @@ public class PersonalController {
     private AdminService adminService;
 
     @RequestMapping(value = "/health", method = RequestMethod.GET)
-    public Health sendHealth(@RequestHeader(value = "x-org-id", defaultValue = "mock.no") String orgId,
-                             @RequestHeader(value = "x-client", defaultValue = "mock") String client) {
+    public Health sendHealth(@RequestHeader(value = "x-org-id") String orgId,
+                             @RequestHeader(value = "x-client") String client) {
         return adminService.healthCheck(orgId, client);
     }
 }

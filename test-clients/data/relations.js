@@ -9,24 +9,24 @@ module.exports = {
     message: null,
     data: [
         {
-            type: 'https://api.felleskomponent.no/rel/person.foedselsnummer.identifikatorverdi:personalressurs.ansattnummer.identifikatorverdi',
-            leftKey: '204194497763',
-            rightKey: '10001'
+            type: 'urn:fint.no:person:personalressurs:person.fodselsnummer:personalressurs.ansattnummer',
+            main: '204194497763',
+            related: '10025'
         },
         {
-            type: 'https://api.felleskomponent.no/rel/personalressurs.ansattnummer.identifikatorverdi:person.foedselsnummer.identifikatorverdi',
-            leftKey: '10001',
-            rightKey: '204194497763'
+            type: 'urn:fint.no:personalressurs:person:personalressurs.ansattnummer:person.fodselsnummer',
+            main: '10025',
+            related: '204194497763'
         },
         {
-            type: 'https://api.felleskomponent.no/rel/arbeidsforhold.stillingsnummer:personalressurs.ansattnummer.identifikatorverdi',
-            leftKey: '1ff37755-6d6f-4245-be12-855137b88d4e',
-            rightKey: '10001'
+            type: 'urn:fint.no:arbeidsforhold:personalressurs:arbeidsforhold.systemid:personalressurs.ansattnummer',
+            main: '6db6fcd3-3edc-43b4-b0d4-07adb71d486e',
+            related: '10025'
         },
         {
-            type: 'https://api.felleskomponent.no/rel/personalressurs.ansattnummer.identifikatorverdi:arbeidsforhold.stillingsnummer',
-            leftKey: '10001',
-            rightKey: '1ff37755-6d6f-4245-be12-855137b88d4e'
+            type: 'urn:fint.no:personalressurs:arbeidsforhold:personalressurs.ansattnummer:arbeidsforhold.systemid',
+            main: '10025',
+            related: '6db6fcd3-3edc-43b4-b0d4-07adb71d486e'
         }
     ]
 }

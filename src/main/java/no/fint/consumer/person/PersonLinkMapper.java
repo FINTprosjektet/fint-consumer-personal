@@ -25,10 +25,10 @@ public class PersonLinkMapper {
 
     @FintLinkRelation(value = "REL_ID_PERSONALRESSURS")
     public List<Link> createRelation(Relation relation) {
-        List<String> rightKeys = relationCacheService.getKey(relation.getType(), relation.getMain());
-        return rightKeys.stream().map(rightKey -> new Link(
-                fintPersonalProps.getLinkMapperBaseUrl() + "/administrasjon/personal/personalressurs/" + rightKey,
-                "personalressurs")).collect(Collectors.toList());
+        List<String> relatedValues = relationCacheService.getKey(relation.getType(), relation.getMain());
+        return relatedValues.stream().map(related -> new Link(
+                fintPersonalProps.getLinkMapperBaseUrl() + "/personalressurs/" + related,
+                relation.getRelationType().getRelationName())).collect(Collectors.toList());
     }
 
 }

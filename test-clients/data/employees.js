@@ -12,10 +12,6 @@ module.exports = {
             brukernavn: {
                 identifikatorverdi: 'u10025'
             },
-            personalressurskategori: {
-                kode: 'F',
-                navn: 'Fast ansatt'
-            },
             systemId: {
                 identifikatorverdi: 'a5ac4795-f14e-4973-b388-695b2ec3b4d6'
             },

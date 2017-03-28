@@ -77,7 +77,7 @@ afterEvaluate {
         filesMatching('**/*.yml') {
             filter(ReplaceTokens, tokens: [version: jar.version])
             filter(ReplaceTokens, tokens: [eventModelVersion: modelVersions['event']])
-            filter(ReplaceTokens, tokens: [personalModelVersion: modelVersions['personal']])
+            filter(ReplaceTokens, tokens: [administrasjonModelVersion: modelVersions['administrasjon']])
             filter(ReplaceTokens, tokens: [relationModelVersion: modelVersions['relation']])
         }
     }

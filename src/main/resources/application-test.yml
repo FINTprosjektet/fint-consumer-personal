@@ -8,4 +8,12 @@ fint:
  relations:
   force-https: false
 
+ consumer:
+  cache:
+   initialDelay:
+    employment: 1000
+    person: 2000
+    staffresource: 3000
+    relation: 4000
+
 link-mapper-base-url: http://localhost:8080

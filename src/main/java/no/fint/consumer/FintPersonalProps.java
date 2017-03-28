@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class FintPersonalProps {
 
     @Getter
-    @Value("${link-mapper-base-url:https://api.felleskomponent.no/mocks}")
+    @Value("${link-mapper-base-url:https://api.felleskomponent.no/administrasjon/personal}")
     private String linkMapperBaseUrl;
 
 

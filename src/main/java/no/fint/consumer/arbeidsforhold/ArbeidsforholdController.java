@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @FintSelf(self = Arbeidsforhold.class, id = "stillingsnummer")
-@FintRelation(value = "REL_ID_PERSONALRESSURS", mainProperty = "ansattnummer.identifikatorverdi")
+@FintRelation(value = "REL_ID_PERSONALRESSURS", mainProperty = "systemId.identifikatorverdi")
 @Slf4j
 @CrossOrigin
 @RestController
@@ -36,14 +36,14 @@ public class ArbeidsforholdController {
 
 
     @RequestMapping(value = "/last-updated", method = RequestMethod.GET)
-    public Map<String, String> getLastUpdated(@RequestHeader(value = "x-org-id", defaultValue = "mock.no") String orgId) {
+    public Map<String, String> getLastUpdated(@RequestHeader(value = "x-org-id") String orgId) {
         String lastUpdated = Long.toString(cacheService.getLastUpdated(CacheUri.create(orgId, "arbeidsforhold")));
         return ImmutableMap.of("lastUpdated", lastUpdated);
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity getAllArbeidsforhold(@RequestHeader(value = "x-org-id", defaultValue = "mock.no") String orgId,
-                                               @RequestHeader(value = "x-client", defaultValue = "mock") String client,
+    public ResponseEntity getAllArbeidsforhold(@RequestHeader(value = "x-org-id") String orgId,
+                                               @RequestHeader(value = "x-client") String client,
                                                @RequestParam(required = false) Long sinceTimeStamp) {
         log.info("OrgId: {}", orgId);
         log.info("Client: {}", client);
@@ -74,8 +74,8 @@ public class ArbeidsforholdController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity getArbeidsforhold(@PathVariable String id,
-                                            @RequestHeader(value = "x-org-id", defaultValue = "mock.no") String orgId,
-                                            @RequestHeader(value = "x-client", defaultValue = "mock") String client) {
+                                            @RequestHeader(value = "x-org-id") String orgId,
+                                            @RequestHeader(value = "x-client") String client) {
         log.info("OrgId: {}", orgId);
         log.info("Client: {}", client);
 
@@ -95,7 +95,7 @@ public class ArbeidsforholdController {
         fintAuditService.audit(event, false);
 
         Optional<Arbeidsforhold> arbeidsforholdOptional = employments.stream().filter(
-                (Arbeidsforhold arbeidsforhold) -> arbeidsforhold.getStillingsnummer().equals(id)
+                (Arbeidsforhold arbeidsforhold) -> arbeidsforhold.getSystemId().getIdentifikatorverdi().equals(id)
         ).findFirst();
 
         if (arbeidsforholdOptional.isPresent()) {

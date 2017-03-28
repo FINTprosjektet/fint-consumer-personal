@@ -19,12 +19,9 @@ module.exports = {
             postadresse: {
                 adresse: 'Veien 92',
                 postnummer: '5500',
-                poststed: 'Haugesund',
-                land: {
-                    kode: 'NO'
-                }
+                poststed: 'Haugesund'
             },
-            foedselsnummer: {
+            fodselsnummer: {
                 identifikatorverdi: '204194497763'
             },
             navn: {
@@ -32,21 +29,11 @@ module.exports = {
                 etternavn: 'Flytt',
                 mellomnavn: 'Åre'
             },
-            kjoenn: {
-                kode: '1',
-                beskrivelse: 'mann'
-            },
-            foedselsdato: 415321200000,
-            statsborgerskap: {
-                kode: 'NO'
-            },
+            fodselsdato: 415321200000,
             bostedsadresse: {
                 adresse: 'Veien 92',
                 postnummer: '5500',
-                poststed: 'Haugesund',
-                land: {
-                    kode: 'NO'
-                }
+                poststed: 'Haugesund'
             }
         }
     ]

@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.Optional;
 
 
-@FintSelf(self = Person.class, id = "foedselsnummer.identifikatorverdi")
-@FintRelation(value = "REL_ID_PERSONALRESSURS", mainProperty = "ansattnummer.identifikatorverdi")
+@FintSelf(self = Person.class, id = "fodselsnummer.identifikatorverdi")
+@FintRelation(value = "REL_ID_PERSONALRESSURS", mainProperty = "fodselsnummer.identifikatorverdi")
 @Slf4j
 @CrossOrigin
 @RestController
@@ -36,14 +36,14 @@ public class PersonController {
 
 
     @RequestMapping(value = "/last-updated", method = RequestMethod.GET)
-    public Map<String, String> getLastUpdated(@RequestHeader(value = "x-org-id", defaultValue = "mock.no") String orgId) {
+    public Map<String, String> getLastUpdated(@RequestHeader(value = "x-org-id") String orgId) {
         String lastUpdated = Long.toString(cacheService.getLastUpdated(CacheUri.create(orgId, "person")));
         return ImmutableMap.of("lastUpdated", lastUpdated);
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity getAllPersoner(@RequestHeader(value = "x-org-id", defaultValue = "mock.no") String orgId,
-                                         @RequestHeader(value = "x-client", defaultValue = "mock") String client,
+    public ResponseEntity getAllPersoner(@RequestHeader(value = "x-org-id") String orgId,
+                                         @RequestHeader(value = "x-client") String client,
                                          @RequestParam(required = false) Long sinceTimeStamp) {
         log.info("OrgId: {}", orgId);
         log.info("Client: {}", client);
@@ -74,8 +74,8 @@ public class PersonController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity getPerson(@PathVariable String id,
-                                    @RequestHeader(value = "x-org-id", defaultValue = "mock.no") String orgId,
-                                    @RequestHeader(value = "x-client", defaultValue = "mock") String client) {
+                                    @RequestHeader(value = "x-org-id") String orgId,
+                                    @RequestHeader(value = "x-client") String client) {
         log.info("OrgId: {}", orgId);
         log.info("Client: {}", client);
 

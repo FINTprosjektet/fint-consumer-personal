@@ -36,14 +36,14 @@ public class PersonalressursController {
 
 
     @RequestMapping(value = "/last-updated", method = RequestMethod.GET)
-    public Map<String, String> getLastUpdated(@RequestHeader(value = "x-org-id", defaultValue = "mock.no") String orgId) {
+    public Map<String, String> getLastUpdated(@RequestHeader(value = "x-org-id") String orgId) {
         String lastUpdated = Long.toString(cacheService.getLastUpdated(CacheUri.create(orgId, "personalressurs")));
         return ImmutableMap.of("lastUpdated", lastUpdated);
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity getPersonalressurser(@RequestHeader(value = "x-org-id", defaultValue = "mock.no") String orgId,
-                                               @RequestHeader(value = "x-client", defaultValue = "mock") String client,
+    public ResponseEntity getPersonalressurser(@RequestHeader(value = "x-org-id") String orgId,
+                                               @RequestHeader(value = "x-client") String client,
                                                @RequestParam(required = false) Long sinceTimeStamp) {
         log.info("OrgId: {}", orgId);
         log.info("Client: {}", client);
@@ -74,8 +74,8 @@ public class PersonalressursController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity getPersonalressurs(@PathVariable String id,
-                                             @RequestHeader(value = "x-org-id", defaultValue = "mock.no") String orgId,
-                                             @RequestHeader(value = "x-client", defaultValue = "mock") String client) {
+                                             @RequestHeader(value = "x-org-id") String orgId,
+                                             @RequestHeader(value = "x-client") String client) {
         log.info("OrgId: {}", orgId);
         log.info("Client: {}", client);
 
