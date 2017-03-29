@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 @CrossOrigin
 @RestController
-@RequestMapping(value = RestEndpoints.RELATION, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(value = RestEndpoints.RELATION, produces = {"application/hal+json", "application/ld+json", MediaType.APPLICATION_JSON_UTF8_VALUE})
 public class RelationController {
 
     @Autowired
