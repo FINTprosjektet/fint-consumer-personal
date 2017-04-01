@@ -22,7 +22,7 @@ import java.util.Optional;
 @Slf4j
 @CrossOrigin
 @RestController
-@RequestMapping(value = RestEndpoints.EMPLOYMENT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(value = RestEndpoints.EMPLOYMENT, produces = {"application/hal+json", "application/ld+json", MediaType.APPLICATION_JSON_UTF8_VALUE})
 public class ArbeidsforholdController {
 
     @Autowired

@@ -21,7 +21,7 @@ import java.util.Optional;
 @Slf4j
 @CrossOrigin
 @RestController
-@RequestMapping(value = RestEndpoints.PERSONALRESSURS, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(value = RestEndpoints.PERSONALRESSURS, produces = {"application/hal+json", "application/ld+json", MediaType.APPLICATION_JSON_UTF8_VALUE})
 public class PersonalressursController {
 
     @Autowired

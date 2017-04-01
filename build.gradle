@@ -44,8 +44,8 @@ repositories {
 
 def modelVersions = [
         event   : '0.0.11',
-        relation: '0.0.16',
-        administrasjon: '1.0.0-rc.2.13'
+        relation: '0.0.18',
+        administrasjon: '1.0.0-rc.2.15'
 ]
 
 dependencies {
@@ -53,7 +53,7 @@ dependencies {
     compile("no.fint:fint-administrasjon-model-java:${modelVersions['administrasjon']}")
     compile("no.fint:fint-event-model:${modelVersions['event']}")
 
-    compile('no.fint:fint-relations:0.0.11')
+    compile('no.fint:fint-relations:0.0.12')
     compile('no.fint:fint-events:0.0.24')
     compile('no.fint:fint-audit-mongo-plugin:0.0.12')
     compile('no.fint:fint-cache:0.0.2')
