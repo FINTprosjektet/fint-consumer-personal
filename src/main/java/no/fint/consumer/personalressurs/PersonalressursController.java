@@ -8,8 +8,7 @@ import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.Event;
 import no.fint.event.model.Status;
 import no.fint.model.administrasjon.personal.Personalressurs;
-import no.fint.relations.annotations.FintRelation;
-import no.fint.relations.annotations.FintSelf;
+import no.fint.relations.annotations.FintRelations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@FintSelf(Personalressurs.class)
-@FintRelation("REL_ID_ARBEIDSFORHOLD")
-@FintRelation("REL_ID_PERSON")
 @Slf4j
 @CrossOrigin
 @RestController
@@ -34,13 +30,14 @@ public class PersonalressursController {
     @Autowired
     private FintAuditService fintAuditService;
 
-
+    @FintRelations
     @RequestMapping(value = "/last-updated", method = RequestMethod.GET)
     public Map<String, String> getLastUpdated(@RequestHeader(value = "x-org-id") String orgId) {
         String lastUpdated = Long.toString(cacheService.getLastUpdated(CacheUri.create(orgId, "personalressurs")));
         return ImmutableMap.of("lastUpdated", lastUpdated);
     }
 
+    @FintRelations
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity getPersonalressurser(@RequestHeader(value = "x-org-id") String orgId,
                                                @RequestHeader(value = "x-client") String client,
@@ -72,6 +69,7 @@ public class PersonalressursController {
         return ResponseEntity.ok(personalressurser);
     }
 
+    @FintRelations
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity getPersonalressurs(@PathVariable String id,
                                              @RequestHeader(value = "x-org-id") String orgId,

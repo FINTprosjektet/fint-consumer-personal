@@ -8,8 +8,7 @@ import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.Event;
 import no.fint.event.model.Status;
 import no.fint.model.felles.Person;
-import no.fint.relations.annotations.FintRelation;
-import no.fint.relations.annotations.FintSelf;
+import no.fint.relations.annotations.FintRelations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +19,6 @@ import java.util.Map;
 import java.util.Optional;
 
 
-@FintSelf(Person.class)
-@FintRelation("REL_ID_PERSONALRESSURS")
 @Slf4j
 @CrossOrigin
 @RestController
@@ -34,13 +31,14 @@ public class PersonController {
     @Autowired
     private PersonCacheService cacheService;
 
-
+    @FintRelations
     @RequestMapping(value = "/last-updated", method = RequestMethod.GET)
     public Map<String, String> getLastUpdated(@RequestHeader(value = "x-org-id") String orgId) {
         String lastUpdated = Long.toString(cacheService.getLastUpdated(CacheUri.create(orgId, "person")));
         return ImmutableMap.of("lastUpdated", lastUpdated);
     }
 
+    @FintRelations
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity getAllPersoner(@RequestHeader(value = "x-org-id") String orgId,
                                          @RequestHeader(value = "x-client") String client,
@@ -72,6 +70,7 @@ public class PersonController {
         return ResponseEntity.ok(personer);
     }
 
+    @FintRelations
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity getPerson(@PathVariable String id,
                                     @RequestHeader(value = "x-org-id") String orgId,
