@@ -9,7 +9,9 @@ import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.Event;
 import no.fint.event.model.Status;
 import no.fint.model.administrasjon.personal.Arbeidsforhold;
+import no.fint.model.relation.FintResource;
 import no.fint.relations.annotations.FintRelations;
+import no.fint.relations.annotations.FintSelf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +21,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@FintSelf(type = Arbeidsforhold.class, property = "systemId")
 @Slf4j
 @CrossOrigin
 @RestController
-@RequestMapping(value = RestEndpoints.EMPLOYMENT, produces = {"application/hal+json", "application/ld+json", MediaType.APPLICATION_JSON_UTF8_VALUE})
+@RequestMapping(value = RestEndpoints.EMPLOYMENT, produces = {"application/hal+json", MediaType.APPLICATION_JSON_UTF8_VALUE})
 public class ArbeidsforholdController {
 
     @Autowired
@@ -31,7 +34,6 @@ public class ArbeidsforholdController {
     @Autowired
     private ArbeidsforholdCacheService cacheService;
 
-    @FintRelations
     @RequestMapping(value = "/last-updated", method = RequestMethod.GET)
     public Map<String, String> getLastUpdated(@RequestHeader(value = "x-org-id") String orgId) {
         String lastUpdated = Long.toString(cacheService.getLastUpdated(CacheUri.create(orgId, "arbeidsforhold")));
@@ -54,7 +56,7 @@ public class ArbeidsforholdController {
         fintAuditService.audit(event, true);
 
         String cacheUri = CacheUri.create(orgId, "arbeidsforhold");
-        List<Arbeidsforhold> employments;
+        List<FintResource<Arbeidsforhold>> employments;
         if (sinceTimeStamp == null) {
             employments = cacheService.getAll(cacheUri);
         } else {
@@ -71,7 +73,7 @@ public class ArbeidsforholdController {
     }
 
     @FintRelations
-    @RequestMapping(value = "/{id:.+}", method = RequestMethod.GET)
+    @RequestMapping(value = {"/systemId/{id:.+}", "/systemid/{id:.+}"}, method = RequestMethod.GET)
     public ResponseEntity getArbeidsforhold(@PathVariable String id,
                                             @RequestHeader(value = "x-org-id") String orgId,
                                             @RequestHeader(value = "x-client") String client) {
@@ -86,7 +88,7 @@ public class ArbeidsforholdController {
         fintAuditService.audit(event, true);
 
         String cacheUri = CacheUri.create(orgId, "arbeidsforhold");
-        List<Arbeidsforhold> employments = cacheService.getAll(cacheUri);
+        List<FintResource<Arbeidsforhold>> employments = cacheService.getAll(cacheUri);
 
         event.setStatus(Status.CACHE_RESPONSE);
         fintAuditService.audit(event, true);
@@ -94,8 +96,8 @@ public class ArbeidsforholdController {
         event.setStatus(Status.SENT_TO_CLIENT);
         fintAuditService.audit(event, false);
 
-        Optional<Arbeidsforhold> arbeidsforholdOptional = employments.stream().filter(
-                (Arbeidsforhold arbeidsforhold) -> arbeidsforhold.getSystemId().getIdentifikatorverdi().equals(id)
+        Optional<FintResource<Arbeidsforhold>> arbeidsforholdOptional = employments.stream().filter(
+                arbeidsforhold -> arbeidsforhold.getConvertedResource().getSystemId().getIdentifikatorverdi().equals(id)
         ).findFirst();
 
         if (arbeidsforholdOptional.isPresent()) {

@@ -7,6 +7,7 @@ import no.fint.consumer.event.EventUtil;
 import no.fint.consumer.utils.CacheUri;
 import no.fint.event.model.Event;
 import no.fint.model.administrasjon.personal.Arbeidsforhold;
+import no.fint.model.relation.FintResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,7 +18,7 @@ import java.util.Arrays;
 
 @Slf4j
 @Service
-public class ArbeidsforholdCacheService extends CacheService<Arbeidsforhold> {
+public class ArbeidsforholdCacheService extends CacheService<FintResource<Arbeidsforhold>> {
 
     @Autowired
     private EventUtil eventUtil;
@@ -28,7 +29,7 @@ public class ArbeidsforholdCacheService extends CacheService<Arbeidsforhold> {
     @PostConstruct
     public void init() {
         Arrays.stream(orgs).forEach(orgId -> {
-            FintCache<Arbeidsforhold> cache = new FintCache<>();
+            FintCache<FintResource<Arbeidsforhold>> cache = new FintCache<>();
             String cacheUri = CacheUri.create(orgId, "arbeidsforhold");
             caches.put(cacheUri, cache);
         });

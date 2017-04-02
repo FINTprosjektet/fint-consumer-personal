@@ -2,6 +2,10 @@ springfox:
  title: 'FINT Consumer Personal'
  version: '@version@'
 
+local:
+ server:
+  port: 8080
+
 event-model-version: '@eventModelVersion@'
 administrasjon-model-version: '@administrasjonModelVersion@'
 relation-model-version: '@relationModelVersion@'

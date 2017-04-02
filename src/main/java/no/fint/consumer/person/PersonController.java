@@ -8,7 +8,9 @@ import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.Event;
 import no.fint.event.model.Status;
 import no.fint.model.felles.Person;
+import no.fint.model.relation.FintResource;
 import no.fint.relations.annotations.FintRelations;
+import no.fint.relations.annotations.FintSelf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +21,11 @@ import java.util.Map;
 import java.util.Optional;
 
 
+@FintSelf(type = Person.class, property = "fodselsnummer")
 @Slf4j
 @CrossOrigin
 @RestController
-@RequestMapping(value = RestEndpoints.PERSON, produces = {"application/hal+json", "application/ld+json", MediaType.APPLICATION_JSON_UTF8_VALUE})
+@RequestMapping(value = RestEndpoints.PERSON, produces = {"application/hal+json", MediaType.APPLICATION_JSON_UTF8_VALUE})
 public class PersonController {
 
     @Autowired
@@ -31,7 +34,6 @@ public class PersonController {
     @Autowired
     private PersonCacheService cacheService;
 
-    @FintRelations
     @RequestMapping(value = "/last-updated", method = RequestMethod.GET)
     public Map<String, String> getLastUpdated(@RequestHeader(value = "x-org-id") String orgId) {
         String lastUpdated = Long.toString(cacheService.getLastUpdated(CacheUri.create(orgId, "person")));
@@ -54,7 +56,7 @@ public class PersonController {
         fintAuditService.audit(event, true);
 
         String cacheUri = CacheUri.create(orgId, "person");
-        List<Person> personer;
+        List<FintResource<Person>> personer;
         if (sinceTimeStamp == null) {
             personer = cacheService.getAll(cacheUri);
         } else {
@@ -71,7 +73,7 @@ public class PersonController {
     }
 
     @FintRelations
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/fodselsnummer/{id}", method = RequestMethod.GET)
     public ResponseEntity getPerson(@PathVariable String id,
                                     @RequestHeader(value = "x-org-id") String orgId,
                                     @RequestHeader(value = "x-client") String client) {
@@ -85,7 +87,7 @@ public class PersonController {
         fintAuditService.audit(event, true);
 
         String cacheUri = CacheUri.create(orgId, "person");
-        List<Person> personer = cacheService.getAll(cacheUri);
+        List<FintResource<Person>> personer = cacheService.getAll(cacheUri);
 
         event.setStatus(Status.CACHE_RESPONSE);
         fintAuditService.audit(event, true);
@@ -93,8 +95,8 @@ public class PersonController {
         event.setStatus(Status.SENT_TO_CLIENT);
         fintAuditService.audit(event, false);
 
-        Optional<Person> personOptional = personer.stream().filter(
-                (Person person) -> person.getFodselsnummer().getIdentifikatorverdi().equals(id)
+        Optional<FintResource<Person>> personOptional = personer.stream().filter(
+                person -> person.getConvertedResource().getFodselsnummer().getIdentifikatorverdi().equals(id)
         ).findFirst();
 
         if (personOptional.isPresent()) {
