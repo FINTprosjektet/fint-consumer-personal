@@ -35,28 +35,31 @@ public class SubscriberService {
     @Autowired
     private ArbeidsforholdCacheService arbeidsforholdCacheService;
 
-    @SuppressWarnings("unchecked")
     public void receive(Event event) {
         log.info("Event: {}", event.getAction());
-        EventActions action = EventActions.valueOf(event.getAction());
+        try {
+            EventActions action = EventActions.valueOf(event.getAction());
 
-        if (action == EventActions.GET_ALL_PERSONALRESSURS) {
-            List<?> employees = event.getData();
-            List<FintResource> convertedList = employees.stream().map(employee -> objectMapper.convertValue(employee, FintResource.class)).collect(Collectors.toList());
-            List<FintResource<Personalressurs>> personalressursList = mapFintResource(Personalressurs.class, convertedList);
-            personalressursCacheService.getCache(CacheUri.create(event.getOrgId(), "personalressurs")).ifPresent(cache -> cache.update(personalressursList));
-        } else if (action == EventActions.GET_ALL_PERSON) {
-            List<?> persons = event.getData();
-            List<FintResource> convertedList = persons.stream().map(person -> objectMapper.convertValue(person, FintResource.class)).collect(Collectors.toList());
-            List<FintResource<Person>> personList = mapFintResource(Person.class, convertedList);
-            personCacheService.getCache(CacheUri.create(event.getOrgId(), "person")).ifPresent(cache -> cache.update(personList));
-        } else if (action == EventActions.GET_ALL_ARBEIDSFORHOLD) {
-            List<?> employments = event.getData();
-            List<FintResource> convertedList = employments.stream().map(employment -> objectMapper.convertValue(employment, FintResource.class)).collect(Collectors.toList());
-            List<FintResource<Arbeidsforhold>> arbeidsforholdList = mapFintResource(Arbeidsforhold.class, convertedList);
-            arbeidsforholdCacheService.getCache(CacheUri.create(event.getOrgId(), "arbeidsforhold")).ifPresent(cache -> cache.update(arbeidsforholdList));
-        } else {
-            log.warn("Unhandled event: {}", event.getAction());
+            if (action == EventActions.GET_ALL_PERSONALRESSURS) {
+                List<?> employees = event.getData();
+                List<FintResource> convertedList = employees.stream().map(employee -> objectMapper.convertValue(employee, FintResource.class)).collect(Collectors.toList());
+                List<FintResource<Personalressurs>> personalressursList = mapFintResource(Personalressurs.class, convertedList);
+                personalressursCacheService.getCache(CacheUri.create(event.getOrgId(), "personalressurs")).ifPresent(cache -> cache.update(personalressursList));
+            } else if (action == EventActions.GET_ALL_PERSON) {
+                List<?> persons = event.getData();
+                List<FintResource> convertedList = persons.stream().map(person -> objectMapper.convertValue(person, FintResource.class)).collect(Collectors.toList());
+                List<FintResource<Person>> personList = mapFintResource(Person.class, convertedList);
+                personCacheService.getCache(CacheUri.create(event.getOrgId(), "person")).ifPresent(cache -> cache.update(personList));
+            } else if (action == EventActions.GET_ALL_ARBEIDSFORHOLD) {
+                List<?> employments = event.getData();
+                List<FintResource> convertedList = employments.stream().map(employment -> objectMapper.convertValue(employment, FintResource.class)).collect(Collectors.toList());
+                List<FintResource<Arbeidsforhold>> arbeidsforholdList = mapFintResource(Arbeidsforhold.class, convertedList);
+                arbeidsforholdCacheService.getCache(CacheUri.create(event.getOrgId(), "arbeidsforhold")).ifPresent(cache -> cache.update(arbeidsforholdList));
+            } else {
+                log.warn("Unhandled event: {}", event.getAction());
+            }
+        } catch (IllegalArgumentException e) {
+            log.error("Unhandled event: " + event.getAction(), e);
         }
     }
 

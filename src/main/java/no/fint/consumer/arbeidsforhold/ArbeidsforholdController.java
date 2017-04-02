@@ -41,6 +41,15 @@ public class ArbeidsforholdController {
         return ImmutableMap.of("lastUpdated", lastUpdated);
     }
 
+    @RequestMapping(value = "/cache", method = RequestMethod.GET)
+    public Map<String, String> getCacheInfo(@RequestHeader(value = "x-org-id") String orgId) {
+        List<FintResource<Arbeidsforhold>> arbeidsforhold = cacheService.getAll(CacheUri.create(orgId, "arbeidsforhold"));
+        List<FintResource<Arbeidsforhold>> content = arbeidsforhold.subList(0, 10);
+        return ImmutableMap.of(
+                "size", "" + arbeidsforhold.size(),
+                "content", content.toString());
+    }
+
     @FintRelations
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity getAllArbeidsforhold(@RequestHeader(value = "x-org-id") String orgId,
