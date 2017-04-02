@@ -3,6 +3,7 @@ package no.fint.consumer.person;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.cache.FintCache;
 import no.fint.consumer.CacheService;
+import no.fint.consumer.event.EventActions;
 import no.fint.consumer.event.EventUtil;
 import no.fint.consumer.utils.CacheUri;
 import no.fint.event.model.Event;
@@ -39,7 +40,7 @@ public class PersonCacheService extends CacheService<FintResource<Person>> {
     public void getAllPersons() {
         Arrays.stream(orgs).forEach(orgId -> {
             log.info("Populating person cache for {}", orgId);
-            Event event = new Event(orgId, "administrasjon/personal", "GET_ALL_PERSON", "CACHE_SERVICE");
+            Event event = new Event(orgId, "administrasjon/personal", EventActions.GET_ALL_PERSON.name(), "CACHE_SERVICE");
             eventUtil.send(event);
         });
     }

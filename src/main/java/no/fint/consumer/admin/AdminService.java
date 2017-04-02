@@ -1,5 +1,6 @@
 package no.fint.consumer.admin;
 
+import no.fint.consumer.event.EventActions;
 import no.fint.consumer.event.EventUtil;
 import no.fint.event.model.Event;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class AdminService {
     private String title;
 
     public Health healthCheck(String orgId, String client) {
-        Event event = new Event(orgId, title, "HEALTH", client);
+        Event event = new Event(orgId, title, EventActions.HEALTH.name(), client);
         Optional<Event> upstreamEvent = eventUtil.sendAndReceive(event);
         if (upstreamEvent.isPresent()) {
             List data = upstreamEvent.get().getData();

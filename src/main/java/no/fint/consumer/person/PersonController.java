@@ -3,6 +3,7 @@ package no.fint.consumer.person;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.FintAuditService;
+import no.fint.consumer.event.EventActions;
 import no.fint.consumer.utils.CacheUri;
 import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.Event;
@@ -49,7 +50,7 @@ public class PersonController {
         log.info("Client: {}", client);
         log.info("SinceTimeStamp: {}", sinceTimeStamp);
 
-        Event event = new Event(orgId, "administrasjon/personal", "GET_ALL_PERSON", client);
+        Event event = new Event(orgId, "administrasjon/personal", EventActions.GET_ALL_PERSON.name(), client);
         fintAuditService.audit(event, true);
 
         event.setStatus(Status.CACHE);
@@ -80,7 +81,7 @@ public class PersonController {
         log.info("OrgId: {}", orgId);
         log.info("Client: {}", client);
 
-        Event event = new Event(orgId, "administrasjon/personal", "GET_PERSON", client);
+        Event event = new Event(orgId, "administrasjon/personal", EventActions.GET_PERSON.name(), client);
         fintAuditService.audit(event, true);
 
         event.setStatus(Status.CACHE);

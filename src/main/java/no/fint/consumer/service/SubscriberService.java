@@ -3,6 +3,7 @@ package no.fint.consumer.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.consumer.arbeidsforhold.ArbeidsforholdCacheService;
+import no.fint.consumer.event.EventActions;
 import no.fint.consumer.person.PersonCacheService;
 import no.fint.consumer.personalressurs.PersonalressursCacheService;
 import no.fint.consumer.utils.CacheUri;
@@ -37,17 +38,19 @@ public class SubscriberService {
     @SuppressWarnings("unchecked")
     public void receive(Event event) {
         log.info("Event: {}", event.getAction());
-        if (event.getAction().equals("GET_ALL_PERSONALRESSURS")) {
+        EventActions action = EventActions.valueOf(event.getAction());
+
+        if (action == EventActions.GET_ALL_PERSONALRESSURS) {
             List<?> employees = event.getData();
             List<FintResource> convertedList = employees.stream().map(employee -> objectMapper.convertValue(employee, FintResource.class)).collect(Collectors.toList());
             List<FintResource<Personalressurs>> personalressursList = mapFintResource(Personalressurs.class, convertedList);
             personalressursCacheService.getCache(CacheUri.create(event.getOrgId(), "personalressurs")).ifPresent(cache -> cache.update(personalressursList));
-        } else if (event.getAction().equals("GET_ALL_PERSON")) {
+        } else if (action == EventActions.GET_ALL_PERSON) {
             List<?> persons = event.getData();
             List<FintResource> convertedList = persons.stream().map(person -> objectMapper.convertValue(person, FintResource.class)).collect(Collectors.toList());
             List<FintResource<Person>> personList = mapFintResource(Person.class, convertedList);
             personCacheService.getCache(CacheUri.create(event.getOrgId(), "person")).ifPresent(cache -> cache.update(personList));
-        } else if (event.getAction().equals("GET_ALL_ARBEIDSFORHOLD")) {
+        } else if (action == EventActions.GET_ALL_ARBEIDSFORHOLD) {
             List<?> employments = event.getData();
             List<FintResource> convertedList = employments.stream().map(employment -> objectMapper.convertValue(employment, FintResource.class)).collect(Collectors.toList());
             List<FintResource<Arbeidsforhold>> arbeidsforholdList = mapFintResource(Arbeidsforhold.class, convertedList);
