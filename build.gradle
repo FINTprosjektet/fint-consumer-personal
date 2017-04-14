@@ -1,5 +1,5 @@
 buildscript {
-    apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.2/dependencies.gradle'
+    apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.6/dependencies.gradle'
     ext {
         springBootVersion = springBootVersion
     }
@@ -9,7 +9,6 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath('org.ajoberstar:gradle-git:1.6.0')
     }
 }
 
@@ -17,20 +16,23 @@ apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'maven'
+apply plugin: 'project-report'
 
-import org.ajoberstar.grgit.Grgit
-import org.apache.tools.ant.filters.ReplaceTokens
-
+apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.6/version.gradle'
 jar {
-    version = Grgit.open().head().id.take(7)
+    version = createVersion()
     baseName = 'fint-consumer-personal'
 }
 
 sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
-task wrapper(type: Wrapper) {
-    gradleVersion = gradleVersion
+import org.apache.tools.ant.filters.ReplaceTokens
+afterEvaluate {
+    configure(processResources) {
+        filesMatching('**/*.yml') {
+            filter(ReplaceTokens, tokens: [version: jar.version])
+        }
+    }
 }
 
 repositories {
@@ -42,21 +44,16 @@ repositories {
     }
 }
 
-def modelVersions = [
-        event   : '0.0.11',
-        relation: '0.0.20',
-        administrasjon: '1.0.0-rc.2.17'
-]
-
 dependencies {
-    compile("no.fint:fint-relation-model:${modelVersions['relation']}")
-    compile("no.fint:fint-administrasjon-model-java:${modelVersions['administrasjon']}")
-    compile("no.fint:fint-event-model:${modelVersions['event']}")
+    compile('no.fint:fint-relation-model:0.0.22')
+    compile('no.fint:fint-administrasjon-model-java:1.0.1-rc.1')
+    compile('no.fint:fint-event-model:0.0.11')
 
-    compile('no.fint:fint-relations:0.0.16')
+    compile('no.fint:fint-relations:0.0.19')
     compile('no.fint:fint-events:0.0.24')
     compile('no.fint:fint-audit-mongo-plugin:0.0.12')
     compile('no.fint:fint-cache:0.0.2')
+    compile('no.fint:fint-dependencies:0.0.2')
 
     compile('com.github.fakemongo:fongo:2.0.12')
     compile('org.projectlombok:lombok')
@@ -72,15 +69,8 @@ dependencies {
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
-afterEvaluate {
-    configure(processResources) {
-        filesMatching('**/*.yml') {
-            filter(ReplaceTokens, tokens: [version: jar.version])
-            filter(ReplaceTokens, tokens: [eventModelVersion: modelVersions['event']])
-            filter(ReplaceTokens, tokens: [administrasjonModelVersion: modelVersions['administrasjon']])
-            filter(ReplaceTokens, tokens: [relationModelVersion: modelVersions['relation']])
-        }
-    }
+task wrapper(type: Wrapper) {
+    gradleVersion = gradleVersion
 }
 
 dependencyManagement {
@@ -98,3 +88,5 @@ test {
         events 'passed', 'skipped', 'failed'
     }
 }
+
+apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.6/dependencyReport.gradle'
