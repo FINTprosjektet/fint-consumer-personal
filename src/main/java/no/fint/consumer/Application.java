@@ -2,6 +2,7 @@ package no.fint.consumer;
 
 import com.github.springfox.loader.EnableSpringfox;
 import no.fint.audit.EnableFintAudit;
+import no.fint.dependencies.FintDependenciesController;
 import no.fint.dependencies.annotations.EnableFintDependencies;
 import no.fint.events.EnableFintEvents;
 import no.fint.relations.annotations.EnableFintRelations;
@@ -14,7 +15,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableFintEvents
 @EnableFintAudit
 @EnableScheduling
-@EnableSpringfox
+@EnableSpringfox(includeControllers = FintDependenciesController.class)
 @SpringBootApplication
 public class Application {
 

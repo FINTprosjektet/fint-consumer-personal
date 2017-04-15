@@ -9,5 +9,8 @@
     "amqplib": "^0.5.1",
     "concurrently": "^3.4.0",
     "sleep": "^5.1.0"
+  },
+  "devDependencies": {
+    "standard": "^10.0.2"
   }
 }

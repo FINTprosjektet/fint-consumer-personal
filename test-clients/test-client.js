@@ -31,7 +31,7 @@ const consumeMsg = (channel) => {
       if (event.action === 'HEALTH') {
         health.corrId = event.corrId
         health.orgId = event.orgId
-        channel.publish('', msg.properties.replyTo, new Buffer(JSON.stringify(health)), { 'contentType': 'application/json' })
+        channel.publish('', msg.properties.replyTo, Buffer.from(JSON.stringify(health)), { 'contentType': 'application/json' })
       } else {
         let replyMessage = {}
         if (event.action === 'GET_ALL_PERSONALRESSURS') {
@@ -44,7 +44,7 @@ const consumeMsg = (channel) => {
 
         replyMessage.corrId = event.corrId
         replyMessage.orgId = event.orgId
-        channel.publish('', `${config.orgId}.upstream`, new Buffer(JSON.stringify(replyMessage)), { 'contentType': 'application/json' })
+        channel.publish('', `${config.orgId}.upstream`, Buffer.from(JSON.stringify(replyMessage)), { 'contentType': 'application/json' })
       }
 
       channel.ack(msg)
