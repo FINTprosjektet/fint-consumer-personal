@@ -12,6 +12,10 @@ buildscript {
     }
 }
 
+plugins {
+    id 'com.github.kt3k.coveralls' version '2.6.3'
+}
+
 apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'org.springframework.boot'
