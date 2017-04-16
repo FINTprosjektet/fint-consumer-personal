@@ -14,13 +14,7 @@ module.exports = {
         fodselsnummer: {
           identifikatorverdi: '204194497763'
         }
-      },
-      relasjoner: [
-        {
-          relationName: 'personalressurs',
-          link: '{no.fint.model.administrasjon.personal.Arbeidsforhold}/personalressurs/ansattnummer/10025'
-        }
-      ]
+      }
     }
   ]
 }

@@ -5,8 +5,9 @@ import no.fint.model.administrasjon.organisasjon.Organisasjonselement;
 import no.fint.model.administrasjon.personal.Arbeidsforhold;
 import no.fint.model.administrasjon.personal.Personalressurs;
 import no.fint.model.felles.Person;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Map;
@@ -14,21 +15,22 @@ import java.util.Map;
 @Configuration
 public class Config {
 
-    private static final String contextRoot = "/administrasjons/personal";
+    @Value("${server.contextPath:}")
+    private String contextPath;
 
     @Qualifier("linkMapper")
-    @Autowired
-    private Map<String, String> linkMapper() {
+    @Bean
+    public Map<String, String> linkMapper() {
         return ImmutableMap.of(
-                Personalressurs.class.getName(), personalPath("/personalressurs"),
-                Arbeidsforhold.class.getName(), personalPath("/arbeidsforhold"),
-                Person.class.getName(), personalPath("/person"),
+                Personalressurs.class.getName(), fullPath("/personalressurs"),
+                Arbeidsforhold.class.getName(), fullPath("/arbeidsforhold"),
+                Person.class.getName(), fullPath("/person"),
                 Organisasjonselement.class.getName(), "/administrasjon/organisasjon/organisasjonselement"
         );
     }
 
-    private String personalPath(String path) {
-        return String.format("%s%s", contextRoot, path);
+    private String fullPath(String path) {
+        return String.format("%s%s", contextPath, path);
     }
 
 }

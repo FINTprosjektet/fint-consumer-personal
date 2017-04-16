@@ -17,7 +17,7 @@ module.exports = {
       relasjoner: [
         {
           relationName: 'person',
-          link: '{no.fint.model.felles.Person}/person/fodselsnummer/204194497763'
+          link: '${no.fint.model.felles.Person}/fodselsnummer/204194497763'
         }
       ]
     }

@@ -22,8 +22,8 @@ module.exports = {
       },
       relasjoner: [
         {
-          relationName: 'person',
-          link: '{no.fint.model.administrasjon.personal.Arbeidsforhold}/personalressurs/ansattnummer/10025'
+          relationName: 'personalressurs',
+          link: '${no.fint.model.administrasjon.personal.Personalressurs}/ansattnummer/10025'
         }
       ]
     }
