@@ -36,7 +36,7 @@ public class PersonalressursCacheService extends CacheService<FintResource<Perso
         });
     }
 
-    @Scheduled(initialDelayString = "${fint.consumer.cache.initialDelay.staffresource:30000}", fixedRateString = "${fint.consumer.cache.fixedRate.staffresource:55000}")
+    @Scheduled(initialDelayString = "${fint.consumer.cache.initialDelay.personalressurs:30000}", fixedRateString = "${fint.consumer.cache.fixedRate.personalressurs:55000}")
     public void getAllStaffResources() {
         Arrays.stream(orgs).forEach(orgId -> {
             log.info("Populating employee cache for {}", orgId);

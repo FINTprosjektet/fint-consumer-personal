@@ -11,9 +11,8 @@ fint:
  consumer:
   cache:
    initialDelay:
-    employment: 1000
+    arbeidsforhold: 1000
     person: 2000
-    staffresource: 3000
-    relation: 4000
+    personalressurs: 3000
 
 link-mapper-base-url: http://localhost:8080

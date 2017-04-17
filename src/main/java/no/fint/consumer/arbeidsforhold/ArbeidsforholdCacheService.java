@@ -35,7 +35,7 @@ public class ArbeidsforholdCacheService extends CacheService<FintResource<Arbeid
         });
     }
 
-    @Scheduled(initialDelayString = "${fint.consumer.cache.initialDelay.employment:50000}", fixedRateString = "${fint.consumer.cache.fixedRate.employment:55000}")
+    @Scheduled(initialDelayString = "${fint.consumer.cache.initialDelay.arbeidsforhold:50000}", fixedRateString = "${fint.consumer.cache.fixedRate.arbeidsforhold:55000}")
     public void getAllEmployments() {
         Arrays.stream(orgs).forEach(orgId -> {
             log.info("Populating employment cache for {}", orgId);
