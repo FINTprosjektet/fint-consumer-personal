@@ -36,9 +36,9 @@ public class ArbeidsforholdCacheService extends CacheService<FintResource<Arbeid
     }
 
     @Scheduled(initialDelayString = "${fint.consumer.cache.initialDelay.arbeidsforhold:50000}", fixedRateString = "${fint.consumer.cache.fixedRate.arbeidsforhold:55000}")
-    public void getAllEmployments() {
+    public void populateCacheAllArbeidsforhold() {
         Arrays.stream(orgs).forEach(orgId -> {
-            log.info("Populating employment cache for {}", orgId);
+            log.info("Populating arbeidsforhold cache for {}", orgId);
             Event event = new Event(orgId, "administrasjon/personal", "GET_ALL_ARBEIDSFORHOLD", "CACHE_SERVICE");
             consumerEventUtil.send(event);
         });
