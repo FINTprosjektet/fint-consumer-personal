@@ -1,7 +1,7 @@
 package no.fint.consumer.admin;
 
 import no.fint.consumer.event.EventActions;
-import no.fint.consumer.event.EventUtil;
+import no.fint.consumer.event.ConsumerEventUtil;
 import no.fint.event.model.Event;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,14 +16,14 @@ import java.util.Optional;
 public class AdminService {
 
     @Autowired
-    private EventUtil eventUtil;
+    private ConsumerEventUtil consumerEventUtil;
 
     @Value("${springfox.title}")
     private String title;
 
     public Health healthCheck(String orgId, String client) {
         Event event = new Event(orgId, title, EventActions.HEALTH.name(), client);
-        Optional<Event> upstreamEvent = eventUtil.sendAndReceive(event);
+        Optional<Event> upstreamEvent = consumerEventUtil.sendAndReceive(event);
         if (upstreamEvent.isPresent()) {
             List data = upstreamEvent.get().getData();
             if (data.size() > 0) {

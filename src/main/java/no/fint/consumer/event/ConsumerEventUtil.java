@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-public class EventUtil {
+public class ConsumerEventUtil {
 
     @Autowired
     private FintEvents fintEvents;

@@ -1,16 +1,16 @@
 package no.fint.consumer.admin
 
-import no.fint.consumer.event.EventUtil
+import no.fint.consumer.event.ConsumerEventUtil
 import no.fint.event.model.Event
 import spock.lang.Specification
 
 class AdminServiceSpec extends Specification {
     private AdminService adminService
-    private EventUtil eventUtil
+    private ConsumerEventUtil consumerEventUtil
 
     void setup() {
-        eventUtil = Mock(EventUtil)
-        adminService = new AdminService(eventUtil: eventUtil)
+        consumerEventUtil = Mock(ConsumerEventUtil)
+        adminService = new AdminService(consumerEventUtil: consumerEventUtil)
     }
 
     def "Return 'No response received' when empty response from Event queue"() {
@@ -18,7 +18,7 @@ class AdminServiceSpec extends Specification {
         def health = adminService.healthCheck('orgId', 'client')
 
         then:
-        1 * eventUtil.sendAndReceive(_ as Event) >> Optional.empty()
+        1 * consumerEventUtil.sendAndReceive(_ as Event) >> Optional.empty()
         health.corrId != null
         health.status == 'No response received'
     }
@@ -28,7 +28,7 @@ class AdminServiceSpec extends Specification {
         def health = adminService.healthCheck('orgId', 'client')
 
         then:
-        1 * eventUtil.sendAndReceive(_ as Event) >> Optional.of(new Event(corrId: 'corrId'))
+        1 * consumerEventUtil.sendAndReceive(_ as Event) >> Optional.of(new Event(corrId: 'corrId'))
         health.corrId == 'corrId'
         health.status == 'Empty data'
     }
@@ -38,7 +38,7 @@ class AdminServiceSpec extends Specification {
         def health = adminService.healthCheck('orgId', 'client')
 
         then:
-        1 * eventUtil.sendAndReceive(_ as Event) >> Optional.of(new Event(corrId: 'corrId', data: ['test']))
+        1 * consumerEventUtil.sendAndReceive(_ as Event) >> Optional.of(new Event(corrId: 'corrId', data: ['test']))
         health.corrId == 'corrId'
         health.status == 'test'
     }

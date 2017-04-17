@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.fint.cache.FintCache;
 import no.fint.consumer.CacheService;
 import no.fint.consumer.event.EventActions;
-import no.fint.consumer.event.EventUtil;
+import no.fint.consumer.event.ConsumerEventUtil;
 import no.fint.consumer.utils.CacheUri;
 import no.fint.event.model.Event;
 import no.fint.model.administrasjon.personal.Personalressurs;
@@ -22,7 +22,7 @@ import java.util.Arrays;
 public class PersonalressursCacheService extends CacheService<FintResource<Personalressurs>> {
 
     @Autowired
-    private EventUtil eventUtil;
+    private ConsumerEventUtil consumerEventUtil;
 
     @Value("${fint.events.orgs:mock.no}")
     private String[] orgs;
@@ -41,7 +41,7 @@ public class PersonalressursCacheService extends CacheService<FintResource<Perso
         Arrays.stream(orgs).forEach(orgId -> {
             log.info("Populating employee cache for {}", orgId);
             Event event = new Event(orgId, "administrasjon/personal", EventActions.GET_ALL_PERSONALRESSURS.name(), "CACHE_SERVICE");
-            eventUtil.send(event);
+            consumerEventUtil.send(event);
         });
     }
 
