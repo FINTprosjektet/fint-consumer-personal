@@ -47,6 +47,9 @@ repositories {
     maven {
         url "http://dl.bintray.com/fint/maven"
     }
+    maven {
+        url  "http://dl.bintray.com/jarlehansen/maven"
+    }
 }
 
 dependencies {
