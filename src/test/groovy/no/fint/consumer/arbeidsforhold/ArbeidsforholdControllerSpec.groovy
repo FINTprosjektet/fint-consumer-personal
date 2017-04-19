@@ -1,10 +1,9 @@
 package no.fint.consumer.arbeidsforhold
 
-import no.fint.consumer.utils.MockMvcSpecification
+import com.github.spock.spring.utils.MockMvcSpecification
 import no.fint.consumer.utils.RestEndpoints
 import org.hamcrest.CoreMatchers
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 class ArbeidsforholdControllerSpec extends MockMvcSpecification {
     private ArbeidsforholdController controller
@@ -14,7 +13,7 @@ class ArbeidsforholdControllerSpec extends MockMvcSpecification {
     void setup() {
         cacheService = Mock(ArbeidsforholdCacheService)
         controller = new ArbeidsforholdController(cacheService: cacheService)
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build()
+        mockMvc = standaloneSetup(controller)
     }
 
     def "Get last updated"() {
