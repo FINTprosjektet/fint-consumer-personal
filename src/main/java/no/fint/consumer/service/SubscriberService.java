@@ -9,6 +9,7 @@ import no.fint.consumer.personalressurs.PersonalressursCacheService;
 import no.fint.consumer.utils.CacheUri;
 import no.fint.event.model.Event;
 import no.fint.event.model.EventUtil;
+import no.fint.events.annotations.FintEventListener;
 import no.fint.model.administrasjon.personal.Arbeidsforhold;
 import no.fint.model.administrasjon.personal.Personalressurs;
 import no.fint.model.felles.Person;
@@ -31,6 +32,7 @@ public class SubscriberService {
     @Autowired
     private ArbeidsforholdCacheService arbeidsforholdCacheService;
 
+    @FintEventListener
     public void receive(Event event) {
         log.info("Event: {}", event.getAction());
         try {

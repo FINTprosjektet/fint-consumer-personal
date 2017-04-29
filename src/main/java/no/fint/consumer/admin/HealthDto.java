@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Health {
+public class HealthDto {
     private String corrId;
     private String status;
 }

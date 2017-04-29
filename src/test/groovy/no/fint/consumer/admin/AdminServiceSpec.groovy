@@ -18,7 +18,7 @@ class AdminServiceSpec extends Specification {
         def health = adminService.healthCheck('orgId', 'client')
 
         then:
-        1 * consumerEventUtil.sendAndReceive(_ as Event) >> Optional.empty()
+        1 * consumerEventUtil.healthCheck(_ as Event) >> Optional.empty()
         health.corrId != null
         health.status == 'No response received'
     }
@@ -28,7 +28,7 @@ class AdminServiceSpec extends Specification {
         def health = adminService.healthCheck('orgId', 'client')
 
         then:
-        1 * consumerEventUtil.sendAndReceive(_ as Event) >> Optional.of(new Event(corrId: 'corrId'))
+        1 * consumerEventUtil.healthCheck(_ as Event) >> Optional.of(new Event(corrId: 'corrId'))
         health.corrId == 'corrId'
         health.status == 'Empty data'
     }
@@ -38,7 +38,7 @@ class AdminServiceSpec extends Specification {
         def health = adminService.healthCheck('orgId', 'client')
 
         then:
-        1 * consumerEventUtil.sendAndReceive(_ as Event) >> Optional.of(new Event(corrId: 'corrId', data: ['test']))
+        1 * consumerEventUtil.healthCheck(_ as Event) >> Optional.of(new Event(corrId: 'corrId', data: ['test']))
         health.corrId == 'corrId'
         health.status == 'test'
     }

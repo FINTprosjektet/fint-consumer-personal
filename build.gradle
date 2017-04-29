@@ -32,6 +32,7 @@ jar {
 sourceCompatibility = 1.8
 
 import org.apache.tools.ant.filters.ReplaceTokens
+
 afterEvaluate {
     configure(processResources) {
         filesMatching('**/*.yml') {
@@ -47,7 +48,7 @@ repositories {
         url "http://dl.bintray.com/fint/maven"
     }
     maven {
-        url  "http://dl.bintray.com/jarlehansen/maven"
+        url "http://dl.bintray.com/jarlehansen/maven"
     }
 }
 
@@ -57,7 +58,7 @@ dependencies {
     compile('no.fint:fint-event-model:0.0.12')
 
     compile('no.fint:fint-relations:0.0.19')
-    compile('no.fint:fint-events:0.0.25')
+    compile('no.fint:fint-events:0.1.0')
     compile('no.fint:fint-audit-mongo-plugin:0.0.12')
     compile('no.fint:fint-cache:0.0.3')
     compile('no.fint:fint-dependencies:0.0.3')
@@ -66,7 +67,6 @@ dependencies {
     compile('org.projectlombok:lombok')
     compile("com.github.springfox.loader:springfox-loader:${springfoxLoaderVersion}")
 
-    compile('org.springframework.cloud:spring-cloud-starter-config')
     compile('org.springframework.boot:spring-boot-starter-web')
     runtime('org.springframework.boot:spring-boot-devtools')
 

@@ -4,7 +4,7 @@ import com.github.springfox.loader.EnableSpringfox;
 import no.fint.audit.EnableFintAudit;
 import no.fint.dependencies.FintDependenciesController;
 import no.fint.dependencies.annotations.EnableFintDependencies;
-import no.fint.events.EnableFintEvents;
+import no.fint.events.annotations.EnableFintEvents;
 import no.fint.relations.annotations.EnableFintRelations;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
