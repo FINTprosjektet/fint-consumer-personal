@@ -16,8 +16,8 @@ public class TestHealthCheck implements HealthCheck<Event<String>> {
         Event<String> health = new Event<>();
         health.setCorrId(event.getCorrId());
         health.setOrgId(event.getOrgId());
+        health.setAction(event.getAction());
 
-        health.setAction("HEALTH");
         health.setStatus(Status.TEMP_UPSTREAM_QUEUE);
         health.setTime(System.currentTimeMillis());
         health.setSource("fk");
