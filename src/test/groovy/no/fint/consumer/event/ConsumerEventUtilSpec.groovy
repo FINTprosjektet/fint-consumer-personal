@@ -4,7 +4,7 @@ import no.fint.audit.FintAuditService
 import no.fint.event.model.Event
 import no.fint.events.FintEvents
 import no.fint.events.FintEventsHealth
-import no.fint.events.Health
+import no.fint.events.HealthCheck
 import spock.lang.Specification
 
 class ConsumerEventUtilSpec extends Specification {
@@ -12,15 +12,15 @@ class ConsumerEventUtilSpec extends Specification {
     private FintEvents fintEvents
     private FintEventsHealth fintEventsHealth
     private FintAuditService fintAuditService
-    private Health health
+    private HealthCheck healthCheck
 
     void setup() {
-        health = Mock(Health)
+        healthCheck = Mock(HealthCheck)
 
         fintEvents = Mock(FintEvents)
         fintAuditService = Mock(FintAuditService)
         fintEventsHealth = Mock(FintEventsHealth) {
-            registerClient() >> health
+            registerClient() >> healthCheck
         }
         consumerEventUtil = new ConsumerEventUtil(fintEvents: fintEvents, fintEventsHealth: fintEventsHealth, fintAuditService: fintAuditService)
     }
@@ -35,7 +35,7 @@ class ConsumerEventUtilSpec extends Specification {
 
         then:
         3 * fintAuditService.audit(_ as Event, _ as Boolean)
-        1 * health.healthCheck(event) >> event
+        1 * healthCheck.check(event) >> event
         response.isPresent()
     }
 }

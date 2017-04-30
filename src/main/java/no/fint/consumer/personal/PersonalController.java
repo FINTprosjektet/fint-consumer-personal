@@ -2,7 +2,7 @@ package no.fint.consumer.personal;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.consumer.admin.AdminService;
-import no.fint.consumer.admin.HealthDto;
+import no.fint.consumer.admin.Health;
 import no.fint.consumer.utils.RestEndpoints;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -18,8 +18,8 @@ public class PersonalController {
     private AdminService adminService;
 
     @RequestMapping(value = "/health", method = RequestMethod.GET)
-    public HealthDto sendHealth(@RequestHeader(value = "x-org-id") String orgId,
-                                @RequestHeader(value = "x-client") String client) {
+    public Health sendHealth(@RequestHeader(value = "x-org-id") String orgId,
+                             @RequestHeader(value = "x-client") String client) {
         return adminService.healthCheck(orgId, client);
     }
 }

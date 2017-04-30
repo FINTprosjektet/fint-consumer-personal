@@ -58,7 +58,7 @@ dependencies {
     compile('no.fint:fint-event-model:0.0.12')
 
     compile('no.fint:fint-relations:0.0.19')
-    compile('no.fint:fint-events:0.1.0')
+    compile('no.fint:fint-events:0.1.1')
     compile('no.fint:fint-audit-mongo-plugin:0.0.12')
     compile('no.fint:fint-cache:0.0.3')
     compile('no.fint:fint-dependencies:0.0.3')
@@ -97,3 +97,9 @@ jacocoTestReport {
 }
 
 apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.8/dependencyReport.gradle'
+
+task runAll(type: Exec) {
+    commandLine 'sh', './gradlew', '-p', 'test-provider', 'bootRun', '-Dspring.profiles.active=test'
+}
+
+runAll.mustRunAfter bootRun

@@ -7,7 +7,7 @@ import no.fint.event.model.Event;
 import no.fint.event.model.Status;
 import no.fint.events.FintEvents;
 import no.fint.events.FintEventsHealth;
-import no.fint.events.Health;
+import no.fint.events.HealthCheck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,12 +27,12 @@ public class ConsumerEventUtil {
     @Autowired
     private FintAuditService fintAuditService;
 
-    private Health<Event> health;
+    private HealthCheck<Event> healthCheck;
 
     @PostConstruct
     public void init() {
         fintEvents.registerUpstreamListener("mock.no", SubscriberService.class);
-        health = fintEventsHealth.registerClient();
+        healthCheck = fintEventsHealth.registerClient();
     }
 
     public Optional<Event> healthCheck(Event event) {
@@ -42,7 +42,7 @@ public class ConsumerEventUtil {
         fintAuditService.audit(event, true);
 
         log.info("Sending replyTo event {} to {}", event.getAction(), event.getOrgId());
-        Event response = health.healthCheck(event);
+        Event response = healthCheck.check(event);
         event.setStatus(Status.SENT_TO_CLIENT);
         fintAuditService.audit(event, true);
 

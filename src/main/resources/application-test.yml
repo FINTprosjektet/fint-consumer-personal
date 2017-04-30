@@ -1,6 +1,6 @@
 fint:
  events:
-  orgs: mock.no
+  test-mode: true
 
  audit:
   test-mode: true
