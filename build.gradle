@@ -97,9 +97,3 @@ jacocoTestReport {
 }
 
 apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.8/dependencyReport.gradle'
-
-task runAll(type: Exec) {
-    commandLine 'sh', './gradlew', '-p', 'test-provider', 'bootRun', '-Dspring.profiles.active=test'
-}
-
-runAll.mustRunAfter bootRun
