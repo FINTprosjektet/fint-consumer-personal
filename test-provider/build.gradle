@@ -30,7 +30,7 @@ dependencies {
     compile('no.fint:fint-administrasjon-model-java:1.0.1')
     compile('no.fint:fint-event-model:0.0.12')
 
-    compile('no.fint:fint-events:0.1.1')
+    compile('no.fint:fint-events:0.1.4')
 
     compile('org.springframework.boot:spring-boot-starter-web')
     compileOnly('org.projectlombok:lombok')
