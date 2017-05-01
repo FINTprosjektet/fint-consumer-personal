@@ -21,7 +21,7 @@ public class Application {
 
     @PostConstruct
     public void init() {
-        fintEvents.registerDownstreamListener("mock.no", TestListener.class);
+        fintEvents.registerDownstreamListener(TestListener.class, "mock.no");
         fintEventsHealth.registerServer(TestHealthCheck.class);
     }
 
