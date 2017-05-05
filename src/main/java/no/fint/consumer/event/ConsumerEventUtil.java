@@ -31,7 +31,7 @@ public class ConsumerEventUtil {
 
     @PostConstruct
     public void init() {
-        fintEvents.registerUpstreamListener("mock.no", SubscriberService.class);
+        fintEvents.registerUpstreamListener(SubscriberService.class, "mock.no");
         healthCheck = fintEventsHealth.registerClient();
     }
 
