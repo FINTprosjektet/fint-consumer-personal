@@ -47,9 +47,6 @@ repositories {
     maven {
         url "http://dl.bintray.com/fint/maven"
     }
-    maven {
-        url "http://dl.bintray.com/jarlehansen/maven"
-    }
 }
 
 dependencies {
@@ -70,8 +67,8 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
     runtime('org.springframework.boot:spring-boot-devtools')
 
+    testCompile('no.fint:fint-test-utils:0.0.2')
     testCompile('cglib:cglib-nodep:3.2.5')
-    testCompile('com.github.spock.spring.utils:spock-spring-utils:0.0.2')
     testCompile("org.spockframework:spock-spring:${spockSpringVersion}")
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }

@@ -1,7 +1,7 @@
 package no.fint.consumer.arbeidsforhold
 
-import com.github.spock.spring.utils.MockMvcSpecification
 import no.fint.consumer.utils.RestEndpoints
+import no.fint.test.utils.MockMvcSpecification
 import org.hamcrest.CoreMatchers
 import org.springframework.test.web.servlet.MockMvc
 
