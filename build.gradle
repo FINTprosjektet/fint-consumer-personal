@@ -1,5 +1,5 @@
 buildscript {
-    apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.8/dependencies.gradle'
+    apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.9/dependencies.gradle'
     ext {
         springBootVersion = springBootVersion
     }
@@ -23,7 +23,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'maven'
 apply plugin: 'jacoco'
 
-apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.8/version.gradle'
+apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.9/version.gradle'
 jar {
     version = createVersion()
     baseName = 'fint-consumer-personal'
@@ -55,7 +55,7 @@ dependencies {
     compile('no.fint:fint-event-model:0.0.12')
 
     compile('no.fint:fint-relations:0.0.19')
-    compile('no.fint:fint-events:0.1.9')
+    compile('no.fint:fint-events:0.1.10')
     compile('no.fint:fint-audit-mongo-plugin:0.0.12')
     compile('no.fint:fint-cache:0.0.3')
     compile('no.fint:fint-dependencies:0.0.3')
@@ -67,9 +67,10 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
     runtime('org.springframework.boot:spring-boot-devtools')
 
-    testCompile('no.fint:fint-test-utils:0.0.2')
+    testCompile('no.fint:fint-test-utils:0.0.3')
     testCompile('cglib:cglib-nodep:3.2.5')
     testCompile("org.spockframework:spock-spring:${spockSpringVersion}")
+    testCompile("org.spockframework:spock-core:${spockSpringVersion}")
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
@@ -93,4 +94,4 @@ jacocoTestReport {
     }
 }
 
-apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.8/dependencyReport.gradle'
+apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.9/dependencyReport.gradle'
