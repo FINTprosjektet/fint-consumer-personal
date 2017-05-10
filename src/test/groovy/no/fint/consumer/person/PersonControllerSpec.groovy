@@ -36,7 +36,7 @@ class PersonControllerSpec extends Specification {
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE))
 
         then:
-        4 * fintAuditService.audit(_ as Event, _ as Boolean)
+        4 * fintAuditService.audit(_ as Event)
         1 * cacheService.getAll(CacheUri.create('rogfk.no', 'person')) >> [new Person(), new Person()]
         response.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))

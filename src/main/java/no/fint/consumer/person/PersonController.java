@@ -51,10 +51,10 @@ public class PersonController {
         log.info("SinceTimeStamp: {}", sinceTimeStamp);
 
         Event event = new Event(orgId, "administrasjon/personal", EventActions.GET_ALL_PERSON.name(), client);
-        fintAuditService.audit(event, true);
+        fintAuditService.audit(event);
 
         event.setStatus(Status.CACHE);
-        fintAuditService.audit(event, true);
+        fintAuditService.audit(event);
 
         String cacheUri = CacheUri.create(orgId, "person");
         List<FintResource<Person>> personer;
@@ -65,10 +65,10 @@ public class PersonController {
         }
 
         event.setStatus(Status.CACHE_RESPONSE);
-        fintAuditService.audit(event, true);
+        fintAuditService.audit(event);
 
         event.setStatus(Status.SENT_TO_CLIENT);
-        fintAuditService.audit(event, false);
+        fintAuditService.audit(event);
 
         return ResponseEntity.ok(personer);
     }
@@ -82,19 +82,19 @@ public class PersonController {
         log.info("Client: {}", client);
 
         Event event = new Event(orgId, "administrasjon/personal", EventActions.GET_PERSON.name(), client);
-        fintAuditService.audit(event, true);
+        fintAuditService.audit(event);
 
         event.setStatus(Status.CACHE);
-        fintAuditService.audit(event, true);
+        fintAuditService.audit(event);
 
         String cacheUri = CacheUri.create(orgId, "person");
         List<FintResource<Person>> personer = cacheService.getAll(cacheUri);
 
         event.setStatus(Status.CACHE_RESPONSE);
-        fintAuditService.audit(event, true);
+        fintAuditService.audit(event);
 
         event.setStatus(Status.SENT_TO_CLIENT);
-        fintAuditService.audit(event, false);
+        fintAuditService.audit(event);
 
         Optional<FintResource<Person>> personOptional = personer.stream().filter(
                 person -> person.getConvertedResource().getFodselsnummer().getIdentifikatorverdi().equals(id)

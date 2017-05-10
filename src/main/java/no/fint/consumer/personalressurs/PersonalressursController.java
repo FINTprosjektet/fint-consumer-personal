@@ -50,10 +50,10 @@ public class PersonalressursController {
         log.info("SinceTimeStamp: {}", sinceTimeStamp);
 
         Event event = new Event(orgId, "administrasjon/personal", EventActions.GET_ALL_PERSONALRESSURS.name(), client);
-        fintAuditService.audit(event, true);
+        fintAuditService.audit(event);
 
         event.setStatus(Status.CACHE);
-        fintAuditService.audit(event, true);
+        fintAuditService.audit(event);
 
         String cacheUri = CacheUri.create(orgId, "personalressurs");
         List<FintResource<Personalressurs>> personalressurser;
@@ -64,10 +64,10 @@ public class PersonalressursController {
         }
 
         event.setStatus(Status.CACHE_RESPONSE);
-        fintAuditService.audit(event, true);
+        fintAuditService.audit(event);
 
         event.setStatus(Status.SENT_TO_CLIENT);
-        fintAuditService.audit(event, false);
+        fintAuditService.audit(event);
 
         return ResponseEntity.ok(personalressurser);
     }
@@ -81,10 +81,10 @@ public class PersonalressursController {
         log.info("Client: {}", client);
 
         Event event = new Event(orgId, "administrasjon/personal", EventActions.GET_PERSONALRESSURS.name(), client);
-        fintAuditService.audit(event, true);
+        fintAuditService.audit(event);
 
         event.setStatus(Status.CACHE);
-        fintAuditService.audit(event, true);
+        fintAuditService.audit(event);
 
         String cacheUri = CacheUri.create(orgId, "personalressurs");
         List<FintResource<Personalressurs>> personalressurser;
@@ -92,10 +92,10 @@ public class PersonalressursController {
         personalressurser = cacheService.getAll(cacheUri);
 
         event.setStatus(Status.CACHE_RESPONSE);
-        fintAuditService.audit(event, true);
+        fintAuditService.audit(event);
 
         event.setStatus(Status.SENT_TO_CLIENT);
-        fintAuditService.audit(event, false);
+        fintAuditService.audit(event);
 
 
         Optional<FintResource<Personalressurs>> personalressursOptional = personalressurser.stream().filter(

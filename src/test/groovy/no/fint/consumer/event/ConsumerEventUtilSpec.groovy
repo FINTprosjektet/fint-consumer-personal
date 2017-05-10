@@ -34,7 +34,7 @@ class ConsumerEventUtilSpec extends Specification {
         def response = consumerEventUtil.healthCheck(event)
 
         then:
-        3 * fintAuditService.audit(_ as Event, _ as Boolean)
+        3 * fintAuditService.audit(_ as Event)
         1 * healthCheck.check(event) >> event
         response.isPresent()
     }
