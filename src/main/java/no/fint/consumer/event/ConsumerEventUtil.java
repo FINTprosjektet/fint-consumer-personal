@@ -43,8 +43,8 @@ public class ConsumerEventUtil {
 
         log.info("Sending replyTo event {} to {}", event.getAction(), event.getOrgId());
         Event response = healthCheck.check(event);
-        event.setStatus(Status.SENT_TO_CLIENT);
-        fintAuditService.audit(event);
+        response.setStatus(Status.SENT_TO_CLIENT);
+        fintAuditService.audit(response);
 
         return Optional.of(response);
     }
