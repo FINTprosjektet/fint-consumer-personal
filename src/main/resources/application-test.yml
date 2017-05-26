@@ -2,6 +2,7 @@ fint:
  events:
   test-mode: true
   queue-endpoint-enabled: true
+  orgIds: 'mock.no'
 
  audit:
   test-mode: true

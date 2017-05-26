@@ -1,2 +1,6 @@
 server:
  port: 8090
+
+fint:
+ events:
+  orgIds: 'mock.no'
