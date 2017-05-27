@@ -3,7 +3,7 @@ package no.fint.consumer.personalressurs;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.cache.FintCache;
 import no.fint.consumer.CacheService;
-import no.fint.consumer.event.EventActions;
+import no.fint.consumer.event.Actions;
 import no.fint.consumer.event.ConsumerEventUtil;
 import no.fint.consumer.utils.CacheUri;
 import no.fint.event.model.Event;
@@ -40,7 +40,7 @@ public class PersonalressursCacheService extends CacheService<FintResource<Perso
     public void getAllStaffResources() {
         Arrays.stream(orgs).forEach(orgId -> {
             log.info("Populating employee cache for {}", orgId);
-            Event event = new Event(orgId, "administrasjon/personal", EventActions.GET_ALL_PERSONALRESSURS.name(), "CACHE_SERVICE");
+            Event event = new Event(orgId, "administrasjon/personal", Actions.GET_ALL_PERSONALRESSURS.name(), "CACHE_SERVICE");
             consumerEventUtil.send(event);
         });
     }

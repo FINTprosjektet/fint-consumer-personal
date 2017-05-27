@@ -5,6 +5,7 @@ import no.fint.data.ArbeidsforholdService;
 import no.fint.data.PersonService;
 import no.fint.data.PersonalressursService;
 import no.fint.event.model.Event;
+import no.fint.event.model.Health;
 import no.fint.event.model.Status;
 import no.fint.events.FintEvents;
 import no.fint.events.FintEventsHealth;
@@ -37,8 +38,8 @@ public class TestListener {
     @FintEventListener(type = QueueType.DOWNSTREAM)
     public void recieve(Event event) {
         if (event.isHealthCheck()) {
-            Event<String> healthCheckResponse = new Event<>(event);
-            healthCheckResponse.setData(Lists.newArrayList("Reply from test-client"));
+            Event<Health> healthCheckResponse = new Event<>(event);
+            healthCheckResponse.addData(new Health("Reply from test-client"));
             healthCheckResponse.setStatus(Status.TEMP_UPSTREAM_QUEUE);
             fintEventsHealth.respondHealthCheck(healthCheckResponse.getCorrId(), healthCheckResponse);
         } else {

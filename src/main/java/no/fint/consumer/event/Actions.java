@@ -1,7 +1,6 @@
 package no.fint.consumer.event;
 
-public enum EventActions {
-    HEALTH,
+public enum Actions {
     GET_ALL_PERSONALRESSURS,
     GET_PERSONALRESSURS,
     GET_ALL_PERSON,
