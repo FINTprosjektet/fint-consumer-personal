@@ -38,7 +38,7 @@ public class TestListener {
     @FintEventListener(type = QueueType.DOWNSTREAM)
     public void recieve(Event event) {
         if (event.isHealthCheck()) {
-            event.addObject(new Health("Reply from test-client"));
+            event.addObject(new Health("test-provider", "Reply from test-client"));
             event.setStatus(Status.TEMP_UPSTREAM_QUEUE);
             fintEventsHealth.respondHealthCheck(event.getCorrId(), event);
         } else {

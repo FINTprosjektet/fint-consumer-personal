@@ -32,10 +32,13 @@ public class ConsumerEventUtil {
 
         log.info("Sending health check to {}", event.getOrgId());
         Event response = fintEventsHealth.sendHealthCheck(event.getOrgId(), event.getCorrId(), event);
-        response.setStatus(Status.SENT_TO_CLIENT);
-        fintAuditService.audit(response);
-
-        return Optional.of(response);
+        if (response == null) {
+            return Optional.empty();
+        } else {
+            response.setStatus(Status.SENT_TO_CLIENT);
+            fintAuditService.audit(response);
+            return Optional.of(response);
+        }
     }
 
     public void send(Event event) {
