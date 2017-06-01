@@ -5,7 +5,7 @@ import no.fint.consumer.event.ConsumerEventUtil;
 import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.DefaultActions;
 import no.fint.event.model.Event;
-import no.fint.event.model.Health;
+import no.fint.event.model.health.Health;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
