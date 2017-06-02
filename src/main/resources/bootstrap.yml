@@ -1,6 +1,0 @@
-spring:
-  application:
-    name: ${APPLICATION_CONFIG_NAME:}
-  cloud:
-    config:
-      uri: http://fint-config-server:8888

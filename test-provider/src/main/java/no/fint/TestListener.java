@@ -5,7 +5,7 @@ import no.fint.data.ArbeidsforholdService;
 import no.fint.data.PersonService;
 import no.fint.data.PersonalressursService;
 import no.fint.event.model.Event;
-import no.fint.event.model.Health;
+import no.fint.event.model.health.Health;
 import no.fint.event.model.Status;
 import no.fint.events.FintEvents;
 import no.fint.events.FintEventsHealth;

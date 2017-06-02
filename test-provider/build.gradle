@@ -11,6 +11,10 @@ buildscript {
     }
 }
 
+plugins {
+    id 'com.github.ben-manes.versions' version '0.15.0'
+}
+
 apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 
@@ -28,9 +32,9 @@ repositories {
 dependencies {
     compile('no.fint:fint-relation-model:0.0.22')
     compile('no.fint:fint-administrasjon-model-java:1.0.1')
-    compile('no.fint:fint-event-model:0.0.20')
+    compile('no.fint:fint-event-model:0.0.23')
 
-    compile('no.fint:fint-events:0.1.23')
+    compile('no.fint:fint-events:0.1.31')
 
     compile('org.springframework.boot:spring-boot-starter-web')
     compileOnly('org.projectlombok:lombok')
