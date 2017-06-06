@@ -1,0 +1,119 @@
+version: '3'
+
+services:
+  provider:
+   image: fint/provider:latest
+   ports:
+     - "8400:8080"
+   environment:
+    TZ: Europe/Oslo
+    springfox.title: "Play-With-FINT Person Provider"
+    fint.events.orgIds: "pwf.no"
+    fint.events.component: pwf
+    fint.events.env: pwf
+    fint.events.redisson.addresses: "redis://redis:6379"
+    fint.events.redisson.use-linux-native-epoll: "true"
+    fint.events.reddison.dns-monitoring: "true"
+    fint.audit.mongo.hostname: fint-mongodb
+    fint.audit.mongo.databasename: fint-audit-pwf
+   deploy:
+    placement:
+     constraints:
+      - node.role == worker
+    replicas: 1
+    restart_policy:
+     condition: on-failure
+     delay: 5s
+     max_attempts: 3
+     window: 120s
+   networks:
+    - fint_shared
+    - fint_pwf
+   depends_on:
+    - redis
+
+  consumer:
+   image: fint/consumer-personal:latest
+   ports:
+     - "8401:8080"
+   environment:
+    TZ: Europe/Oslo
+    server.context-path: /
+    springfox.title: "Play-With-FINT Personal Consumer"
+    fint.events.orgIds: "pwf.no"
+    fint.events.component: pwf
+    fint.events.env: pwf
+    fint.events.redisson.addresses: "redis://redis:6379"
+    fint.events.redisson.use-linux-native-epoll: "true"
+    fint.events.reddison.dns-monitoring: "true"
+    fint.relations.default-base-url: "https://play-with-fint.felleskomponent.no"
+    fint.audit.mongo.hostname: fint-mongodb
+    fint.audit.mongo.databasename: fint-audit-pwf
+   deploy:
+    placement:
+     constraints:
+      - node.role == worker
+    replicas: 1
+    restart_policy:
+     condition: on-failure
+     delay: 5s
+     max_attempts: 3
+     window: 120s
+   networks:
+    - fint_shared
+    - fint_pwf
+   depends_on:
+    - redis
+    - provider
+
+#  health-adapter:
+#     image: fint/health-adapter:latest
+#     #ports:
+#     #  - "8402:8080"
+#     environment:
+#      TZ: Europe/Oslo
+#      springfox.title: "Play-With-FINT Health Adapter"
+#      fint.adapter.organizations: fint.health
+#      fint.adapter.sse-endpoint: https://play-with-fint.felleskomponent.no/provider/sse/%s
+#      fint.adapter.status-endpoint: https://play-with-fint.felleskomponent.no/provider/status
+#      fint.adapter.response-endpoint: https://play-with-fint.felleskomponent.no/provider/response
+#     deploy:
+#      placement:
+#       constraints:
+#        - node.role == worker
+#      replicas: 1
+#      restart_policy:
+#       condition: on-failure
+#       delay: 5s
+#       max_attempts: 3
+#       window: 120s
+#     #networks:
+#     # - fint_shared
+#     # - fint_pwf
+#     depends_on:
+#      - redis
+#      - provider
+
+  redis:
+    image: redis:3.2.8-alpine
+    environment:
+      TZ: Europe/Oslo
+    deploy:
+     placement:
+      constraints:
+       - node.role == worker
+     replicas: 1
+     restart_policy:
+      condition: on-failure
+      delay: 5s
+      max_attempts: 3
+      window: 120s
+    networks:
+     - fint_pwf
+
+networks:
+ fint_pwf:
+  driver: overlay
+  external: false
+ fint_shared:
+  external: true

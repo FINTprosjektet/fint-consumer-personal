@@ -23,7 +23,7 @@ public class ArbeidsforholdCacheService extends CacheService<FintResource<Arbeid
     @Autowired
     private ConsumerEventUtil consumerEventUtil;
 
-    @Value("${fint.events.orgs:mock.no}")
+    @Value("${fint.events.orgIds:mock.no}")
     private String[] orgs;
 
     @PostConstruct

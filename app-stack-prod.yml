@@ -1,0 +1,27 @@
+  health-adapter:
+     image: fint/health-adapter:latest
+     #ports:
+     #  - "8402:8080"
+     environment:
+      TZ: Europe/Oslo
+      springfox.title: "Play-With-FINT Health Adapter"
+      adapter.organizations: "fint.health"
+      adapter.sse-endpoint: "https://play-with-fint.felleskomponent.no/provider/sse/%s"
+      adapter.status-endpoint: "https://play-with-fint.felleskomponent.no/provider/status"
+      adapter.response-endpoint: "https://play-with-fint.felleskomponent.no/provider/response"
+     deploy:
+      placement:
+       constraints:
+        - node.role == worker
+      replicas: 1
+      restart_policy:
+       condition: on-failure
+       delay: 5s
+       max_attempts: 3
+       window: 120s
+     #networks:
+     # - fint_shared
+     # - fint_pwf
+     depends_on:
+      - redis
+      - provider

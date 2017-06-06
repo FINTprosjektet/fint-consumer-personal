@@ -24,7 +24,7 @@ public class PersonalressursCacheService extends CacheService<FintResource<Perso
     @Autowired
     private ConsumerEventUtil consumerEventUtil;
 
-    @Value("${fint.events.orgs:mock.no}")
+    @Value("${fint.events.orgIds:mock.no}")
     private String[] orgs;
 
     @PostConstruct
