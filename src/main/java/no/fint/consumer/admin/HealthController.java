@@ -1,4 +1,4 @@
-package no.fint.consumer.personal;
+package no.fint.consumer.admin;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.consumer.event.ConsumerEventUtil;
@@ -16,7 +16,7 @@ import java.util.Optional;
 @CrossOrigin
 @RestController
 @RequestMapping(value = RestEndpoints.PERSONAL, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-public class PersonalController {
+public class HealthController {
 
     @Autowired
     private ConsumerEventUtil consumerEventUtil;
