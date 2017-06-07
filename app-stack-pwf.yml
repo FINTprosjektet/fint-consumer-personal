@@ -7,6 +7,7 @@ services:
      - "8400:8080"
    environment:
     TZ: Europe/Oslo
+    server.context-path: /administrasjon/personal/provider
     fint.events.orgIds: "pwf.no, fint.health"
     fint.events.component: pwf
     fint.events.env: pwf
@@ -37,7 +38,7 @@ services:
      - "8401:8080"
    environment:
     TZ: Europe/Oslo
-    server.context-path: /
+    server.context-path: /administrasjon/personal
     fint.events.orgIds: "pwf.no, fint.health"
     fint.events.component: pwf
     fint.events.env: pwf
@@ -72,9 +73,9 @@ services:
       TZ: Europe/Oslo
       springfox.title: "Play-With-FINT Health Adapter"
       fint.adapter.organizations: fint.health
-      fint.adapter.sse-endpoint: https://play-with-fint.felleskomponent.no/provider/sse/%s
-      fint.adapter.status-endpoint: https://play-with-fint.felleskomponent.no/provider/status
-      fint.adapter.response-endpoint: https://play-with-fint.felleskomponent.no/provider/response
+      fint.adapter.sse-endpoint: https://play-with-fint.felleskomponent.no/administrasjon/personal/provider/sse/%s
+      fint.adapter.status-endpoint: https://play-with-fint.felleskomponent.no/administrasjon/personal/provider/status
+      fint.adapter.response-endpoint: https://play-with-fint.felleskomponent.no/administrasjon/personal/provider/response
      deploy:
       placement:
        constraints:
