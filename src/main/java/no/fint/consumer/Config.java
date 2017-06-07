@@ -16,7 +16,7 @@ import java.util.Map;
 @Configuration
 public class Config {
 
-    @Value("${server.contextPath:}")
+    @Value("${server.context-path:}")
     private String contextPath;
 
     @Qualifier("linkMapper")
