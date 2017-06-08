@@ -4,6 +4,7 @@ package no.fint.consumer.arbeidsforhold;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.FintAuditService;
+import no.fint.consumer.Constants;
 import no.fint.consumer.event.Actions;
 import no.fint.consumer.utils.CacheUri;
 import no.fint.consumer.utils.RestEndpoints;
@@ -85,8 +86,8 @@ public class ArbeidsforholdController {
     @FintRelations
     @RequestMapping(value = {"/systemId/{id:.+}", "/systemid/{id:.+}"}, method = RequestMethod.GET)
     public ResponseEntity getArbeidsforhold(@PathVariable String id,
-                                            @RequestHeader(value = "x-org-id") String orgId,
-                                            @RequestHeader(value = "x-client") String client) {
+                                            @RequestHeader(value = Constants.HEADER_ORGID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
+                                            @RequestHeader(value = Constants.HEADER_CLIENT, defaultValue = Constants.DEFAULT_HEADER_CLIENT) String client) {
         log.info("Id: {}", id);
         log.info("OrgId: {}", orgId);
         log.info("Client: {}", client);

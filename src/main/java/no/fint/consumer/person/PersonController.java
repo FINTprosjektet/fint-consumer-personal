@@ -3,6 +3,7 @@ package no.fint.consumer.person;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.FintAuditService;
+import no.fint.consumer.Constants;
 import no.fint.consumer.event.Actions;
 import no.fint.consumer.utils.CacheUri;
 import no.fint.consumer.utils.RestEndpoints;
@@ -36,15 +37,15 @@ public class PersonController {
     private PersonCacheService cacheService;
 
     @RequestMapping(value = "/last-updated", method = RequestMethod.GET)
-    public Map<String, String> getLastUpdated(@RequestHeader(value = "x-org-id") String orgId) {
+    public Map<String, String> getLastUpdated(@RequestHeader(value = Constants.HEADER_ORGID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId) {
         String lastUpdated = Long.toString(cacheService.getLastUpdated(CacheUri.create(orgId, "person")));
         return ImmutableMap.of("lastUpdated", lastUpdated);
     }
 
     @FintRelations
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity getAllPersoner(@RequestHeader(value = "x-org-id") String orgId,
-                                         @RequestHeader(value = "x-client") String client,
+    public ResponseEntity getAllPersoner(@RequestHeader(value = Constants.HEADER_ORGID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
+                                         @RequestHeader(value = Constants.HEADER_CLIENT, defaultValue = Constants.DEFAULT_HEADER_CLIENT) String client,
                                          @RequestParam(required = false) Long sinceTimeStamp) {
         log.info("OrgId: {}", orgId);
         log.info("Client: {}", client);
@@ -76,8 +77,8 @@ public class PersonController {
     @FintRelations
     @RequestMapping(value = "/fodselsnummer/{id}", method = RequestMethod.GET)
     public ResponseEntity getPerson(@PathVariable String id,
-                                    @RequestHeader(value = "x-org-id") String orgId,
-                                    @RequestHeader(value = "x-client") String client) {
+                                    @RequestHeader(value = Constants.HEADER_ORGID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
+                                    @RequestHeader(value = Constants.HEADER_CLIENT, defaultValue = Constants.DEFAULT_HEADER_CLIENT) String client) {
         log.info("OrgId: {}", orgId);
         log.info("Client: {}", client);
 
