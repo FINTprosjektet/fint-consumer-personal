@@ -1,5 +1,4 @@
-springfox:
- title: 'FINT Consumer Personal'
+fint:
  version: '@version@'
 
 local:
