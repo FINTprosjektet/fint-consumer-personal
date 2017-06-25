@@ -3,13 +3,15 @@ package no.fint.consumer.admin;
 import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import no.fint.consumer.Constants;
+import no.fint.consumer.config.Constants;
 import no.fint.consumer.event.ConsumerEventUtil;
 import no.fint.consumer.service.SubscriberService;
 import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.DefaultActions;
 import no.fint.event.model.Event;
+import no.fint.event.model.HeaderConstants;
 import no.fint.event.model.health.Health;
+import no.fint.event.model.health.HealthStatus;
 import no.fint.events.FintEvents;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,13 +41,16 @@ public class AdminController {
     private FintEvents fintEvents;
 
     @GetMapping("/health")
-    public ResponseEntity healthCheck(@RequestHeader(value = Constants.HEADER_ORGID) String orgId,
-                                      @RequestHeader(value = Constants.HEADER_CLIENT) String client) {
-        Event<Health> event = new Event<>(orgId, "administrasjon/organisasjon", DefaultActions.HEALTH.name(), client);
+    public ResponseEntity healthCheck(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
+                                      @RequestHeader(value = HeaderConstants.CLIENT, defaultValue = Constants.DEFAULT_HEADER_CLIENT) String client) {
+        Event<Health> event = new Event<>(orgId, Constants.COMPONENT, DefaultActions.HEALTH.name(), client);
+        event.addData(new Health(Constants.COMPONENT_CONSUMER, HealthStatus.SENT_FROM_CONSUMER_TO_PROVIDER));
         Optional<Event<Health>> health = consumerEventUtil.healthCheck(event);
 
         if (health.isPresent()) {
-            return ResponseEntity.ok(health.get());
+            Event<Health> receivedHealth = health.get();
+            receivedHealth.addData(new Health(Constants.COMPONENT_CONSUMER, HealthStatus.RECEIVED_IN_CONSUMER_FROM_PROVIDER));
+            return ResponseEntity.ok(receivedHealth);
         } else {
             event.setMessage("No response from adapter");
             return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body(event);
@@ -57,7 +62,7 @@ public class AdminController {
         if (orgIds.containsKey(orgId)) {
             return ResponseEntity.badRequest().body(String.format("OrgId %s is already registered", orgId));
         } else {
-            Event event = new Event(orgId, "administrasjon/personal", DefaultActions.REGISTER_ORG_ID.name(), "consumer");
+            Event event = new Event(orgId, Constants.COMPONENT, DefaultActions.REGISTER_ORG_ID.name(), "consumer");
             fintEvents.sendDownstream("system", event);
 
             fintEvents.registerUpstreamListener(SubscriberService.class, orgId);

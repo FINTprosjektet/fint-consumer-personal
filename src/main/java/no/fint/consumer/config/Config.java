@@ -1,4 +1,4 @@
-package no.fint.consumer;
+package no.fint.consumer.config;
 
 import com.google.common.collect.ImmutableMap;
 import no.fint.consumer.utils.RestEndpoints;
@@ -30,7 +30,7 @@ public class Config {
         );
     }
 
-    private String fullPath(String path) {
+    String fullPath(String path) {
         return String.format("%s%s", contextPath, path);
     }
 

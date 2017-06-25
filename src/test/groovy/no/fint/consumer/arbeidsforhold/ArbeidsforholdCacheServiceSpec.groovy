@@ -1,7 +1,8 @@
 package no.fint.consumer.arbeidsforhold
 
+import no.fint.cache.utils.CacheUri
+import no.fint.consumer.config.ConsumerProps
 import no.fint.consumer.event.ConsumerEventUtil
-import no.fint.consumer.utils.CacheUri
 import no.fint.event.model.Event
 import spock.lang.Specification
 
@@ -11,7 +12,7 @@ class ArbeidsforholdCacheServiceSpec extends Specification {
 
     void setup() {
         consumerEventUtil = Mock(ConsumerEventUtil)
-        cacheService = new ArbeidsforholdCacheService(orgs: ['rogfk.no'], consumerEventUtil: consumerEventUtil)
+        cacheService = new ArbeidsforholdCacheService(props: new ConsumerProps(orgs: ['rogfk.no']), consumerEventUtil: consumerEventUtil)
     }
 
     def "Initialize arbeidsforhold cache for configured organization"() {

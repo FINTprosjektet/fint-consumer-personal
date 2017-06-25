@@ -2,16 +2,16 @@ package no.fint.consumer.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
+import no.fint.cache.utils.CacheUri;
 import no.fint.consumer.arbeidsforhold.ArbeidsforholdCacheService;
-import no.fint.consumer.event.Actions;
 import no.fint.consumer.person.PersonCacheService;
 import no.fint.consumer.personalressurs.PersonalressursCacheService;
-import no.fint.consumer.utils.CacheUri;
 import no.fint.event.model.Event;
 import no.fint.event.model.EventUtil;
 import no.fint.events.annotations.FintEventListener;
 import no.fint.events.queue.QueueType;
 import no.fint.model.administrasjon.personal.Arbeidsforhold;
+import no.fint.model.administrasjon.personal.PersonalActions;
 import no.fint.model.administrasjon.personal.Personalressurs;
 import no.fint.model.felles.Person;
 import no.fint.model.relation.FintResource;
@@ -37,19 +37,19 @@ public class SubscriberService {
     public void receive(Event event) {
         log.info("Event: {}", event.getAction());
         try {
-            Actions action = Actions.valueOf(event.getAction());
-            if (action == Actions.GET_ALL_PERSONALRESSURS) {
+            PersonalActions action = PersonalActions.valueOf(event.getAction());
+            if (action == PersonalActions.GET_ALL_PERSONALRESSURS) {
                 List<FintResource<Personalressurs>> personalressursList = EventUtil.convertEventData(event, new TypeReference<List<FintResource<Personalressurs>>>() {
                 });
-                personalressursCacheService.getCache(CacheUri.create(event.getOrgId(), "personalressurs")).ifPresent(cache -> cache.update(personalressursList));
-            } else if (action == Actions.GET_ALL_PERSON) {
+                personalressursCacheService.getCache(CacheUri.create(event.getOrgId(), PersonalressursCacheService.MODEL)).ifPresent(cache -> cache.update(personalressursList));
+            } else if (action == PersonalActions.GET_ALL_PERSON) {
                 List<FintResource<Person>> personList = EventUtil.convertEventData(event, new TypeReference<List<FintResource<Person>>>() {
                 });
-                personCacheService.getCache(CacheUri.create(event.getOrgId(), "person")).ifPresent(cache -> cache.update(personList));
-            } else if (action == Actions.GET_ALL_ARBEIDSFORHOLD) {
+                personCacheService.getCache(CacheUri.create(event.getOrgId(), PersonCacheService.MODEL)).ifPresent(cache -> cache.update(personList));
+            } else if (action == PersonalActions.GET_ALL_ARBEIDSFORHOLD) {
                 List<FintResource<Arbeidsforhold>> arbeidsforholdList = EventUtil.convertEventData(event, new TypeReference<List<FintResource<Arbeidsforhold>>>() {
                 });
-                arbeidsforholdCacheService.getCache(CacheUri.create(event.getOrgId(), "arbeidsforhold")).ifPresent(cache -> cache.update(arbeidsforholdList));
+                arbeidsforholdCacheService.getCache(CacheUri.create(event.getOrgId(), ArbeidsforholdCacheService.MODEL)).ifPresent(cache -> cache.update(arbeidsforholdList));
             } else {
                 log.warn("Unhandled event: {}", event.getAction());
             }

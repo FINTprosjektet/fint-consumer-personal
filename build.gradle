@@ -1,5 +1,5 @@
 buildscript {
-    apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.12/dependencies.gradle'
+    apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.14/dependencies.gradle'
     ext {
         springBootVersion = springBootVersion
     }
@@ -23,7 +23,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'maven'
 apply plugin: 'jacoco'
 
-apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.12/version.gradle'
+apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.14/version.gradle'
 jar {
     version = createVersion()
     baseName = 'fint-consumer-personal'
@@ -51,13 +51,13 @@ repositories {
 
 dependencies {
     compile('no.fint:fint-relation-model:0.0.22')
-    compile('no.fint:fint-administrasjon-model-java:1.0.1')
-    compile('no.fint:fint-event-model:0.0.25')
+    compile('no.fint:fint-administrasjon-model-java:1.0.2')
+    compile('no.fint:fint-event-model:0.0.27')
 
     compile('no.fint:fint-relations:0.0.20')
-    compile('no.fint:fint-events:0.1.32')
+    compile('no.fint:fint-events:0.1.34')
     compile('no.fint:fint-audit-mongo-plugin:0.0.13')
-    compile('no.fint:fint-cache:0.0.3')
+    compile('no.fint:fint-cache:0.0.4')
     compile('no.fint:fint-dependencies:0.0.3')
 
     compile('com.github.fakemongo:fongo:2.1.0')
@@ -95,4 +95,4 @@ jacocoTestReport {
     }
 }
 
-apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.12/dependencyReport.gradle'
+apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.14/dependencyReport.gradle'

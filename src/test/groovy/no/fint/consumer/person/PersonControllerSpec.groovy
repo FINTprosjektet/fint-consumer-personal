@@ -1,7 +1,7 @@
 package no.fint.consumer.person
 
 import no.fint.audit.FintAuditService
-import no.fint.consumer.utils.CacheUri
+import no.fint.cache.utils.CacheUri
 import no.fint.consumer.utils.RestEndpoints
 import no.fint.event.model.Event
 import no.fint.model.felles.Person

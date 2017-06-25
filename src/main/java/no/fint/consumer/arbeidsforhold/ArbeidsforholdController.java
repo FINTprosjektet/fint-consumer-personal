@@ -4,13 +4,14 @@ package no.fint.consumer.arbeidsforhold;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.FintAuditService;
-import no.fint.consumer.Constants;
-import no.fint.consumer.event.Actions;
-import no.fint.consumer.utils.CacheUri;
+import no.fint.cache.utils.CacheUri;
+import no.fint.consumer.config.Constants;
 import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.Event;
+import no.fint.event.model.HeaderConstants;
 import no.fint.event.model.Status;
 import no.fint.model.administrasjon.personal.Arbeidsforhold;
+import no.fint.model.administrasjon.personal.PersonalActions;
 import no.fint.model.relation.FintResource;
 import no.fint.relations.annotations.FintRelations;
 import no.fint.relations.annotations.FintSelf;
@@ -37,14 +38,14 @@ public class ArbeidsforholdController {
     private ArbeidsforholdCacheService cacheService;
 
     @RequestMapping(value = "/last-updated", method = RequestMethod.GET)
-    public Map<String, String> getLastUpdated(@RequestHeader(value = "x-org-id") String orgId) {
-        String lastUpdated = Long.toString(cacheService.getLastUpdated(CacheUri.create(orgId, "arbeidsforhold")));
+    public Map<String, String> getLastUpdated(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId) {
+        String lastUpdated = Long.toString(cacheService.getLastUpdated(CacheUri.create(orgId, ArbeidsforholdCacheService.MODEL)));
         return ImmutableMap.of("lastUpdated", lastUpdated);
     }
 
     @RequestMapping(value = "/cache", method = RequestMethod.GET)
-    public Map<String, String> getCacheInfo(@RequestHeader(value = "x-org-id") String orgId) {
-        List<FintResource<Arbeidsforhold>> arbeidsforhold = cacheService.getAll(CacheUri.create(orgId, "arbeidsforhold"));
+    public Map<String, String> getCacheInfo(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId) {
+        List<FintResource<Arbeidsforhold>> arbeidsforhold = cacheService.getAll(CacheUri.create(orgId, ArbeidsforholdCacheService.MODEL));
         List<FintResource<Arbeidsforhold>> content = arbeidsforhold.subList(0, 10);
         return ImmutableMap.of(
                 "size", "" + arbeidsforhold.size(),
@@ -53,20 +54,20 @@ public class ArbeidsforholdController {
 
     @FintRelations
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity getAllArbeidsforhold(@RequestHeader(value = "x-org-id") String orgId,
-                                               @RequestHeader(value = "x-client") String client,
+    public ResponseEntity getAllArbeidsforhold(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
+                                               @RequestHeader(value = HeaderConstants.CLIENT, defaultValue = Constants.DEFAULT_HEADER_CLIENT) String client,
                                                @RequestParam(required = false) Long sinceTimeStamp) {
         log.info("OrgId: {}", orgId);
         log.info("Client: {}", client);
         log.info("SinceTimeStamp: {}", sinceTimeStamp);
 
-        Event event = new Event(orgId, "administrasjon/personal", Actions.GET_ALL_ARBEIDSFORHOLD.name(), client);
+        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_ARBEIDSFORHOLD, client);
         fintAuditService.audit(event);
 
         event.setStatus(Status.CACHE);
         fintAuditService.audit(event);
 
-        String cacheUri = CacheUri.create(orgId, "arbeidsforhold");
+        String cacheUri = CacheUri.create(orgId, ArbeidsforholdCacheService.MODEL);
         List<FintResource<Arbeidsforhold>> employments;
         if (sinceTimeStamp == null) {
             employments = cacheService.getAll(cacheUri);
@@ -86,19 +87,19 @@ public class ArbeidsforholdController {
     @FintRelations
     @RequestMapping(value = {"/systemId/{id:.+}", "/systemid/{id:.+}"}, method = RequestMethod.GET)
     public ResponseEntity getArbeidsforhold(@PathVariable String id,
-                                            @RequestHeader(value = Constants.HEADER_ORGID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
-                                            @RequestHeader(value = Constants.HEADER_CLIENT, defaultValue = Constants.DEFAULT_HEADER_CLIENT) String client) {
+                                            @RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
+                                            @RequestHeader(value = HeaderConstants.CLIENT, defaultValue = Constants.DEFAULT_HEADER_CLIENT) String client) {
         log.info("Id: {}", id);
         log.info("OrgId: {}", orgId);
         log.info("Client: {}", client);
 
-        Event event = new Event(orgId, "administrasjon/personal", Actions.GET_ARBEIDSFORHOLD.name(), client);
+        Event event = new Event(orgId, "administrasjon/personal", PersonalActions.GET_ARBEIDSFORHOLD, client);
         fintAuditService.audit(event);
 
         event.setStatus(Status.CACHE);
         fintAuditService.audit(event);
 
-        String cacheUri = CacheUri.create(orgId, "arbeidsforhold");
+        String cacheUri = CacheUri.create(orgId, ArbeidsforholdCacheService.MODEL);
         List<FintResource<Arbeidsforhold>> employments = cacheService.getAll(cacheUri);
 
         event.setStatus(Status.CACHE_RESPONSE);
