@@ -2,7 +2,7 @@ package no.fint.data;
 
 import com.google.common.collect.ImmutableList;
 import no.fint.model.administrasjon.personal.Personalressurs;
-import no.fint.model.felles.Identifikator;
+import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.felles.Person;
 import no.fint.model.relation.FintResource;
 import no.fint.model.relation.Relation;
