@@ -3,7 +3,6 @@ package no.fint.consumer.arbeidsforhold;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.cache.CacheService;
 import no.fint.cache.FintCache;
-import no.fint.cache.utils.CacheUri;
 import no.fint.consumer.config.Constants;
 import no.fint.consumer.config.ConsumerProps;
 import no.fint.consumer.event.ConsumerEventUtil;

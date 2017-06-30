@@ -1,7 +1,6 @@
 package no.fint.consumer.person
 
 import no.fint.audit.FintAuditService
-import no.fint.cache.utils.CacheUri
 import no.fint.consumer.utils.RestEndpoints
 import no.fint.event.model.Event
 import no.fint.model.felles.Person
@@ -37,7 +36,7 @@ class PersonControllerSpec extends Specification {
 
         then:
         4 * fintAuditService.audit(_ as Event)
-        1 * cacheService.getAll(CacheUri.create('rogfk.no', 'person')) >> [new Person(), new Person()]
+        1 * cacheService.getAll('rogfk.no') >> [new Person(), new Person()]
         response.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
     }

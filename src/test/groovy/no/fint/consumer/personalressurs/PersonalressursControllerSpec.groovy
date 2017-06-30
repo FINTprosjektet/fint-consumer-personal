@@ -1,7 +1,6 @@
 package no.fint.consumer.personalressurs
 
 import no.fint.audit.FintAuditService
-import no.fint.cache.utils.CacheUri
 import no.fint.consumer.utils.RestEndpoints
 import no.fint.event.model.Event
 import no.fint.model.administrasjon.personal.Personalressurs
@@ -37,7 +36,7 @@ class PersonalressursControllerSpec extends Specification {
 
         then:
         4 * fintAuditService.audit(_ as Event)
-        1 * cacheService.getAll(CacheUri.create('rogfk.no', 'personalressurs')) >> [new Personalressurs(), new Personalressurs()]
+        1 * cacheService.getAll('rogfk.no') >> [new Personalressurs(), new Personalressurs()]
         personalressurser.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
     }

@@ -3,7 +3,6 @@ package no.fint.consumer.personalressurs;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.FintAuditService;
-import no.fint.cache.utils.CacheUri;
 import no.fint.consumer.config.Constants;
 import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.Event;
@@ -38,7 +37,7 @@ public class PersonalressursController {
 
     @RequestMapping(value = "/last-updated", method = RequestMethod.GET)
     public Map<String, String> getLastUpdated(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId) {
-        String lastUpdated = Long.toString(cacheService.getLastUpdated(CacheUri.create(orgId, PersonalressursCacheService.MODEL)));
+        String lastUpdated = Long.toString(cacheService.getLastUpdated(orgId));
         return ImmutableMap.of("lastUpdated", lastUpdated);
     }
 
@@ -57,12 +56,11 @@ public class PersonalressursController {
         event.setStatus(Status.CACHE);
         fintAuditService.audit(event);
 
-        String cacheUri = CacheUri.create(orgId, PersonalressursCacheService.MODEL);
         List<FintResource<Personalressurs>> personalressurser;
         if (sinceTimeStamp == null) {
-            personalressurser = cacheService.getAll(cacheUri);
+            personalressurser = cacheService.getAll(orgId);
         } else {
-            personalressurser = cacheService.getAll(cacheUri, sinceTimeStamp);
+            personalressurser = cacheService.getAll(orgId, sinceTimeStamp);
         }
 
         event.setStatus(Status.CACHE_RESPONSE);
@@ -88,10 +86,7 @@ public class PersonalressursController {
         event.setStatus(Status.CACHE);
         fintAuditService.audit(event);
 
-        String cacheUri = CacheUri.create(orgId, PersonalressursCacheService.MODEL);
-        List<FintResource<Personalressurs>> personalressurser;
-
-        personalressurser = cacheService.getAll(cacheUri);
+        List<FintResource<Personalressurs>> personalressurser = cacheService.getAll(orgId);
 
         event.setStatus(Status.CACHE_RESPONSE);
         fintAuditService.audit(event);

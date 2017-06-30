@@ -3,7 +3,6 @@ package no.fint.consumer.person;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.FintAuditService;
-import no.fint.cache.utils.CacheUri;
 import no.fint.consumer.config.Constants;
 import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.Event;
@@ -39,7 +38,7 @@ public class PersonController {
 
     @RequestMapping(value = "/last-updated", method = RequestMethod.GET)
     public Map<String, String> getLastUpdated(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId) {
-        String lastUpdated = Long.toString(cacheService.getLastUpdated(CacheUri.create(orgId, PersonCacheService.MODEL)));
+        String lastUpdated = Long.toString(cacheService.getLastUpdated(orgId));
         return ImmutableMap.of("lastUpdated", lastUpdated);
     }
 
@@ -58,12 +57,11 @@ public class PersonController {
         event.setStatus(Status.CACHE);
         fintAuditService.audit(event);
 
-        String cacheUri = CacheUri.create(orgId, PersonCacheService.MODEL);
         List<FintResource<Person>> personer;
         if (sinceTimeStamp == null) {
-            personer = cacheService.getAll(cacheUri);
+            personer = cacheService.getAll(orgId);
         } else {
-            personer = cacheService.getAll(cacheUri, sinceTimeStamp);
+            personer = cacheService.getAll(orgId, sinceTimeStamp);
         }
 
         event.setStatus(Status.CACHE_RESPONSE);
@@ -89,8 +87,7 @@ public class PersonController {
         event.setStatus(Status.CACHE);
         fintAuditService.audit(event);
 
-        String cacheUri = CacheUri.create(orgId, PersonCacheService.MODEL);
-        List<FintResource<Person>> personer = cacheService.getAll(cacheUri);
+        List<FintResource<Person>> personer = cacheService.getAll(orgId);
 
         event.setStatus(Status.CACHE_RESPONSE);
         fintAuditService.audit(event);

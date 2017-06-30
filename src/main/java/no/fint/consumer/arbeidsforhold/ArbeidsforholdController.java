@@ -4,7 +4,6 @@ package no.fint.consumer.arbeidsforhold;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.FintAuditService;
-import no.fint.cache.utils.CacheUri;
 import no.fint.consumer.config.Constants;
 import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.Event;
@@ -39,17 +38,8 @@ public class ArbeidsforholdController {
 
     @RequestMapping(value = "/last-updated", method = RequestMethod.GET)
     public Map<String, String> getLastUpdated(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId) {
-        String lastUpdated = Long.toString(cacheService.getLastUpdated(CacheUri.create(orgId, ArbeidsforholdCacheService.MODEL)));
+        String lastUpdated = Long.toString(cacheService.getLastUpdated(orgId));
         return ImmutableMap.of("lastUpdated", lastUpdated);
-    }
-
-    @RequestMapping(value = "/cache", method = RequestMethod.GET)
-    public Map<String, String> getCacheInfo(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId) {
-        List<FintResource<Arbeidsforhold>> arbeidsforhold = cacheService.getAll(CacheUri.create(orgId, ArbeidsforholdCacheService.MODEL));
-        List<FintResource<Arbeidsforhold>> content = arbeidsforhold.subList(0, 10);
-        return ImmutableMap.of(
-                "size", "" + arbeidsforhold.size(),
-                "content", content.toString());
     }
 
     @FintRelations
@@ -67,12 +57,11 @@ public class ArbeidsforholdController {
         event.setStatus(Status.CACHE);
         fintAuditService.audit(event);
 
-        String cacheUri = CacheUri.create(orgId, ArbeidsforholdCacheService.MODEL);
         List<FintResource<Arbeidsforhold>> employments;
         if (sinceTimeStamp == null) {
-            employments = cacheService.getAll(cacheUri);
+            employments = cacheService.getAll(orgId);
         } else {
-            employments = cacheService.getAll(cacheUri, sinceTimeStamp);
+            employments = cacheService.getAll(orgId, sinceTimeStamp);
         }
 
         event.setStatus(Status.CACHE_RESPONSE);
@@ -99,8 +88,7 @@ public class ArbeidsforholdController {
         event.setStatus(Status.CACHE);
         fintAuditService.audit(event);
 
-        String cacheUri = CacheUri.create(orgId, ArbeidsforholdCacheService.MODEL);
-        List<FintResource<Arbeidsforhold>> employments = cacheService.getAll(cacheUri);
+        List<FintResource<Arbeidsforhold>> employments = cacheService.getAll(orgId);
 
         event.setStatus(Status.CACHE_RESPONSE);
         fintAuditService.audit(event);
