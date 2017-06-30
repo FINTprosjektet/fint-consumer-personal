@@ -1,10 +1,8 @@
 package no.fint.consumer.admin;
 
-import com.google.common.collect.Ordering;
-import lombok.AccessLevel;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.cache.CacheService;
+import no.fint.cache.utils.CacheUri;
 import no.fint.consumer.config.Constants;
 import no.fint.consumer.event.ConsumerEventUtil;
 import no.fint.consumer.service.SubscriberService;
@@ -23,11 +21,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @CrossOrigin
@@ -37,9 +34,6 @@ public class AdminController {
 
     @Autowired
     private ConsumerEventUtil consumerEventUtil;
-
-    @Setter(AccessLevel.PACKAGE)
-    private Map<String, Long> orgIds = new ConcurrentHashMap<>();
 
     @Autowired
     private List<CacheService> cacheServices = Collections.emptyList();
@@ -66,21 +60,18 @@ public class AdminController {
 
     @GetMapping("/organisations")
     public List<String> getOrganisations() {
-        Stream<String> keyStream = cacheServices.stream().map((Function<CacheService, Set>) CacheService::getKeys).flatMap(Collection::stream);
-        List<String> cacheUris = keyStream.collect(Collectors.toList());
-        return Ordering.natural().sortedCopy(cacheUris);
+        return CacheUri.getCacheUris(cacheServices);
     }
 
-    @GetMapping("/organisations/{orgId}")
+    @GetMapping("/organisations/{orgId:.+}")
     public List<String> getOrganization(@PathVariable String orgId) {
-        Stream<String> keyStream = cacheServices.stream().map((Function<CacheService, Set>) CacheService::getKeys).flatMap(Collection::stream);
-        List<String> cacheUris = keyStream.filter(key -> key.contains(orgId)).collect(Collectors.toList());
-        return Ordering.natural().sortedCopy(cacheUris);
+        List<String> cacheUris = CacheUri.getCacheUris(cacheServices);
+        return cacheUris.stream().filter(key -> CacheUri.containsOrgId(key, orgId)).collect(Collectors.toList());
     }
 
-    @PostMapping("/organisations/{orgId}")
+    @PostMapping("/organisations/{orgId:.+}")
     public ResponseEntity registerOrganization(@PathVariable String orgId) {
-        if (orgIds.containsKey(orgId)) {
+        if (CacheUri.containsOrgId(cacheServices, orgId)) {
             return ResponseEntity.badRequest().body(String.format("OrgId %s is already registered", orgId));
         } else {
             Event event = new Event(orgId, Constants.COMPONENT, DefaultActions.REGISTER_ORG_ID.name(), "consumer");
@@ -88,7 +79,6 @@ public class AdminController {
 
             cacheServices.forEach(cache -> cache.createCache(orgId));
             fintEvents.registerUpstreamListener(SubscriberService.class, orgId);
-            orgIds.put(orgId, System.currentTimeMillis());
 
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().buildAndExpand().toUri();
             return ResponseEntity.created(location).build();

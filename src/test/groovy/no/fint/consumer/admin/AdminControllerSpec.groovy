@@ -33,13 +33,11 @@ class AdminControllerSpec extends MockMvcSpecification {
     }
 
     def "POST new orgId, return bad request if orgId is already registered"() {
-        given:
-        controller.setOrgIds(['123': 123456L])
-
         when:
         def response = mockMvc.perform(post('/admin/organisations/123'))
 
         then:
+        1 * cacheService.getKeys() >> [CacheUri.create('123', 'test')]
         response.andExpect(status().isBadRequest())
     }
 
