@@ -2,4 +2,4 @@
 
 echo "=> Building the binary"
 
-docker run --rm -v $(pwd):/app:rw openjdk:alpine ./gradlew clean build
+docker run --rm -v "$PWD":/project -w /project openjdk:alpine ./gradlew build
