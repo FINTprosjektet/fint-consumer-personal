@@ -30,12 +30,15 @@ public class ArbeidsforholdCacheService extends CacheService<FintResource<Arbeid
     @Autowired
     private ConsumerProps props;
 
+    public ArbeidsforholdCacheService() {
+        super(MODEL);
+    }
+
     @PostConstruct
     public void init() {
         Arrays.stream(props.getOrgs()).forEach(orgId -> {
             FintCache<FintResource<Arbeidsforhold>> cache = new FintCache<>();
-            String cacheUri = CacheUri.create(orgId, MODEL);
-            put(cacheUri, cache);
+            put(orgId, cache);
         });
     }
 

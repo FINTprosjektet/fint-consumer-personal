@@ -2,7 +2,6 @@ package no.fint.consumer.arbeidsforhold
 
 import no.fint.consumer.utils.RestEndpoints
 import no.fint.test.utils.MockMvcSpecification
-import org.hamcrest.CoreMatchers
 import org.springframework.test.web.servlet.MockMvc
 
 class ArbeidsforholdControllerSpec extends MockMvcSpecification {
@@ -24,6 +23,6 @@ class ArbeidsforholdControllerSpec extends MockMvcSpecification {
         then:
         1 * cacheService.getLastUpdated(_ as String) >> 123L
         response.andExpect(status().isOk())
-                .andExpect(jsonPath('$.lastUpdated').value(CoreMatchers.equalTo('123')))
+                .andExpect(jsonPathEquals('$.lastUpdated', '123'))
     }
 }

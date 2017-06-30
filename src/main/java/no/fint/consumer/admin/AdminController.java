@@ -1,8 +1,10 @@
 package no.fint.consumer.admin;
 
+import com.google.common.collect.Ordering;
 import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import no.fint.cache.CacheService;
 import no.fint.consumer.config.Constants;
 import no.fint.consumer.event.ConsumerEventUtil;
 import no.fint.consumer.service.SubscriberService;
@@ -21,9 +23,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @CrossOrigin
@@ -36,6 +40,9 @@ public class AdminController {
 
     @Setter(AccessLevel.PACKAGE)
     private Map<String, Long> orgIds = new ConcurrentHashMap<>();
+
+    @Autowired
+    private List<CacheService> cacheServices = Collections.emptyList();
 
     @Autowired
     private FintEvents fintEvents;
@@ -57,7 +64,21 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/organization/orgIds/{orgId}")
+    @GetMapping("/organisations")
+    public List<String> getOrganisations() {
+        Stream<String> keyStream = cacheServices.stream().map((Function<CacheService, Set>) CacheService::getKeys).flatMap(Collection::stream);
+        List<String> cacheUris = keyStream.collect(Collectors.toList());
+        return Ordering.natural().sortedCopy(cacheUris);
+    }
+
+    @GetMapping("/organisations/{orgId}")
+    public List<String> getOrganization(@PathVariable String orgId) {
+        Stream<String> keyStream = cacheServices.stream().map((Function<CacheService, Set>) CacheService::getKeys).flatMap(Collection::stream);
+        List<String> cacheUris = keyStream.filter(key -> key.contains(orgId)).collect(Collectors.toList());
+        return Ordering.natural().sortedCopy(cacheUris);
+    }
+
+    @PostMapping("/organisations/{orgId}")
     public ResponseEntity registerOrganization(@PathVariable String orgId) {
         if (orgIds.containsKey(orgId)) {
             return ResponseEntity.badRequest().body(String.format("OrgId %s is already registered", orgId));
@@ -65,6 +86,7 @@ public class AdminController {
             Event event = new Event(orgId, Constants.COMPONENT, DefaultActions.REGISTER_ORG_ID.name(), "consumer");
             fintEvents.sendDownstream("system", event);
 
+            cacheServices.forEach(cache -> cache.createCache(orgId));
             fintEvents.registerUpstreamListener(SubscriberService.class, orgId);
             orgIds.put(orgId, System.currentTimeMillis());
 

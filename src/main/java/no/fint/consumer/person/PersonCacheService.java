@@ -3,7 +3,6 @@ package no.fint.consumer.person;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.cache.CacheService;
 import no.fint.cache.FintCache;
-import no.fint.cache.utils.CacheUri;
 import no.fint.consumer.config.Constants;
 import no.fint.consumer.config.ConsumerProps;
 import no.fint.consumer.event.ConsumerEventUtil;
@@ -30,12 +29,15 @@ public class PersonCacheService extends CacheService<FintResource<Person>> {
     @Autowired
     private ConsumerProps props;
 
+    public PersonCacheService() {
+        super(MODEL);
+    }
+
     @PostConstruct
     public void init() {
         Arrays.stream(props.getOrgs()).forEach(orgId -> {
             FintCache<FintResource<Person>> cache = new FintCache<>();
-            String cacheUri = CacheUri.create(orgId, MODEL);
-            put(cacheUri, cache);
+            put(orgId, cache);
         });
     }
 
