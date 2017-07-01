@@ -1,6 +1,7 @@
 package no.fint.consumer.arbeidsforhold
 
 import no.fint.consumer.utils.RestEndpoints
+import no.fint.event.model.HeaderConstants
 import no.fint.test.utils.MockMvcSpecification
 import org.springframework.test.web.servlet.MockMvc
 
@@ -15,10 +16,10 @@ class ArbeidsforholdControllerSpec extends MockMvcSpecification {
         mockMvc = standaloneSetup(controller)
     }
 
-    def "Get last updated"() {
+    def "GET last updated"() {
         when:
         def response = mockMvc.perform(get("${RestEndpoints.ARBEIDSFORHOLD}/last-updated")
-                .header('x-org-id', 'mock.no'))
+                .header(HeaderConstants.ORG_ID, 'mock.no'))
 
         then:
         1 * cacheService.getLastUpdated(_ as String) >> 123L

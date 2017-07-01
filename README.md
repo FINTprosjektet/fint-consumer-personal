@@ -11,4 +11,4 @@ npm start --prefix test-provider
 ```
 
 * Open browser and hit `http://localhost:8080/swagger-ui.html`
-* Check to see if you get any results form the endpoints
+* Check to see if you get any results from the endpoints

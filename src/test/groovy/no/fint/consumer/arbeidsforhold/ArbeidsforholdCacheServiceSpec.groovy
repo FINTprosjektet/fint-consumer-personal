@@ -1,6 +1,5 @@
 package no.fint.consumer.arbeidsforhold
 
-import no.fint.cache.utils.CacheUri
 import no.fint.consumer.config.ConsumerProps
 import no.fint.consumer.event.ConsumerEventUtil
 import no.fint.event.model.Event
@@ -18,7 +17,7 @@ class ArbeidsforholdCacheServiceSpec extends Specification {
     def "Initialize arbeidsforhold cache for configured organization"() {
         when:
         cacheService.init()
-        def cache = cacheService.getCache(CacheUri.create('rogfk.no', 'arbeidsforhold'))
+        def cache = cacheService.getCache('rogfk.no')
 
         then:
         cache != null
