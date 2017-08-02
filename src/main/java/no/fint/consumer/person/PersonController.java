@@ -8,7 +8,7 @@ import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.Event;
 import no.fint.event.model.HeaderConstants;
 import no.fint.event.model.Status;
-import no.fint.model.administrasjon.personal.PersonalActions;
+import no.fint.model.felles.FellesActions;
 import no.fint.model.felles.Person;
 import no.fint.model.relation.FintResource;
 import no.fint.relations.annotations.FintRelations;
@@ -51,7 +51,7 @@ public class PersonController {
         log.info("Client: {}", client);
         log.info("SinceTimeStamp: {}", sinceTimeStamp);
 
-        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_PERSON, client);
+        Event event = new Event(orgId, Constants.COMPONENT, FellesActions.GET_ALL_PERSON, client);
         fintAuditService.audit(event);
 
         event.setStatus(Status.CACHE);
@@ -81,7 +81,7 @@ public class PersonController {
         log.info("OrgId: {}", orgId);
         log.info("Client: {}", client);
 
-        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_PERSON, client);
+        Event event = new Event(orgId, Constants.COMPONENT, FellesActions.GET_PERSON, client);
         fintAuditService.audit(event);
 
         event.setStatus(Status.CACHE);

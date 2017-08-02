@@ -12,6 +12,7 @@ import no.fint.events.queue.QueueType;
 import no.fint.model.administrasjon.personal.Arbeidsforhold;
 import no.fint.model.administrasjon.personal.PersonalActions;
 import no.fint.model.administrasjon.personal.Personalressurs;
+import no.fint.model.felles.FellesActions;
 import no.fint.model.felles.Person;
 import no.fint.model.relation.FintResource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,16 +37,16 @@ public class SubscriberService {
     public void receive(Event event) {
         log.info("Event: {}", event.getAction());
         try {
-            PersonalActions action = PersonalActions.valueOf(event.getAction());
-            if (action == PersonalActions.GET_ALL_PERSONALRESSURS) {
+            String action = event.getAction();
+            if (action.equals(PersonalActions.GET_ALL_PERSONALRESSURS.name())) {
                 List<FintResource<Personalressurs>> personalressursList = EventUtil.convertEventData(event, new TypeReference<List<FintResource<Personalressurs>>>() {
                 });
                 personalressursCacheService.getCache(event.getOrgId()).ifPresent(cache -> cache.update(personalressursList));
-            } else if (action == PersonalActions.GET_ALL_PERSON) {
+            } else if (action.equals(FellesActions.GET_ALL_PERSON.name())) {
                 List<FintResource<Person>> personList = EventUtil.convertEventData(event, new TypeReference<List<FintResource<Person>>>() {
                 });
                 personCacheService.getCache(event.getOrgId()).ifPresent(cache -> cache.update(personList));
-            } else if (action == PersonalActions.GET_ALL_ARBEIDSFORHOLD) {
+            } else if (action.equals(PersonalActions.GET_ALL_ARBEIDSFORHOLD.name())) {
                 List<FintResource<Arbeidsforhold>> arbeidsforholdList = EventUtil.convertEventData(event, new TypeReference<List<FintResource<Arbeidsforhold>>>() {
                 });
                 arbeidsforholdCacheService.getCache(event.getOrgId()).ifPresent(cache -> cache.update(arbeidsforholdList));
