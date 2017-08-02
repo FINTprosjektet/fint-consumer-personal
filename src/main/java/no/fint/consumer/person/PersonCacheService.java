@@ -7,7 +7,7 @@ import no.fint.consumer.config.Constants;
 import no.fint.consumer.config.ConsumerProps;
 import no.fint.consumer.event.ConsumerEventUtil;
 import no.fint.event.model.Event;
-import no.fint.model.administrasjon.personal.PersonalActions;
+import no.fint.model.felles.FellesActions;
 import no.fint.model.felles.Person;
 import no.fint.model.relation.FintResource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +45,7 @@ public class PersonCacheService extends CacheService<FintResource<Person>> {
     public void getAllPersons() {
         Arrays.stream(props.getOrgs()).forEach(orgId -> {
             log.info("Populating person cache for {}", orgId);
-            Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_PERSON, Constants.CACHE_SERIVCE);
+            Event event = new Event(orgId, Constants.COMPONENT, FellesActions.GET_ALL_PERSON, Constants.CACHE_SERIVCE);
             consumerEventUtil.send(event);
         });
     }
