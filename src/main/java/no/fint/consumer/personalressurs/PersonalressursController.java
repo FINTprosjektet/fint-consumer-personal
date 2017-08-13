@@ -11,8 +11,6 @@ import no.fint.event.model.Status;
 import no.fint.model.administrasjon.personal.PersonalActions;
 import no.fint.model.administrasjon.personal.Personalressurs;
 import no.fint.model.relation.FintResource;
-import no.fint.relations.annotations.FintRelations;
-import no.fint.relations.annotations.FintSelf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@FintSelf(type = Personalressurs.class, property = "ansattnummer")
 @Slf4j
 @CrossOrigin
 @RestController
@@ -35,13 +32,15 @@ public class PersonalressursController {
     @Autowired
     private FintAuditService fintAuditService;
 
+    @Autowired
+    private PersonalressursAssembler assembler;
+
     @RequestMapping(value = "/last-updated", method = RequestMethod.GET)
     public Map<String, String> getLastUpdated(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId) {
         String lastUpdated = Long.toString(cacheService.getLastUpdated(orgId));
         return ImmutableMap.of("lastUpdated", lastUpdated);
     }
 
-    @FintRelations
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity getPersonalressurser(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
                                                @RequestHeader(value = HeaderConstants.CLIENT, defaultValue = Constants.DEFAULT_HEADER_CLIENT) String client,
@@ -69,10 +68,9 @@ public class PersonalressursController {
         event.setStatus(Status.SENT_TO_CLIENT);
         fintAuditService.audit(event);
 
-        return ResponseEntity.ok(personalressurser);
+        return assembler.resources(personalressurser);
     }
 
-    @FintRelations
     @RequestMapping(value = "/ansattnummer/{id}", method = RequestMethod.GET)
     public ResponseEntity getPersonalressurs(@PathVariable String id,
                                              @RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
@@ -100,7 +98,7 @@ public class PersonalressursController {
         ).findFirst();
 
         if (personalressursOptional.isPresent()) {
-            return ResponseEntity.ok(personalressursOptional.get());
+            return assembler.resource(personalressursOptional.get());
         } else {
             return ResponseEntity.notFound().build();
         }

@@ -11,8 +11,6 @@ import no.fint.event.model.Status;
 import no.fint.model.felles.FellesActions;
 import no.fint.model.felles.Person;
 import no.fint.model.relation.FintResource;
-import no.fint.relations.annotations.FintRelations;
-import no.fint.relations.annotations.FintSelf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +21,6 @@ import java.util.Map;
 import java.util.Optional;
 
 
-@FintSelf(type = Person.class, property = "fodselsnummer")
 @Slf4j
 @CrossOrigin
 @RestController
@@ -36,13 +33,15 @@ public class PersonController {
     @Autowired
     private PersonCacheService cacheService;
 
+    @Autowired
+    private PersonAssembler assembler;
+
     @RequestMapping(value = "/last-updated", method = RequestMethod.GET)
     public Map<String, String> getLastUpdated(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId) {
         String lastUpdated = Long.toString(cacheService.getLastUpdated(orgId));
         return ImmutableMap.of("lastUpdated", lastUpdated);
     }
 
-    @FintRelations
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity getAllPersoner(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
                                          @RequestHeader(value = HeaderConstants.CLIENT, defaultValue = Constants.DEFAULT_HEADER_CLIENT) String client,
@@ -70,10 +69,9 @@ public class PersonController {
         event.setStatus(Status.SENT_TO_CLIENT);
         fintAuditService.audit(event);
 
-        return ResponseEntity.ok(personer);
+        return assembler.resources(personer);
     }
 
-    @FintRelations
     @RequestMapping(value = "/fodselsnummer/{id}", method = RequestMethod.GET)
     public ResponseEntity getPerson(@PathVariable String id,
                                     @RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
@@ -100,7 +98,7 @@ public class PersonController {
         ).findFirst();
 
         if (personOptional.isPresent()) {
-            return ResponseEntity.ok(personOptional.get());
+            return assembler.resource(personOptional.get());
         } else {
             return ResponseEntity.notFound().build();
         }

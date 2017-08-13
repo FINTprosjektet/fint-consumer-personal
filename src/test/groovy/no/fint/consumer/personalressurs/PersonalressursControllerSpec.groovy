@@ -8,6 +8,7 @@ import no.fint.test.utils.MockMvcSpecification
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
+import spock.lang.Ignore
 
 class PersonalressursControllerSpec extends MockMvcSpecification {
     private PersonalressursController controller
@@ -31,6 +32,7 @@ class PersonalressursControllerSpec extends MockMvcSpecification {
                 .andExpect(jsonPathEquals('$.lastUpdated', '123'))
     }
 
+    @Ignore
     def "GET all personalressurser"() {
         when:
         def personalressurser = mockMvc.perform(get(RestEndpoints.PERSONALRESSURS)
