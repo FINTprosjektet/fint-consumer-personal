@@ -92,11 +92,9 @@ public class PersonalressursController {
         event.setStatus(Status.SENT_TO_CLIENT);
         fintAuditService.audit(event);
 
-
-        Optional<FintResource<Personalressurs>> personalressursOptional = personalressurser.stream().filter(
-                personalressurs -> personalressurs.getConvertedResource().getAnsattnummer().getIdentifikatorverdi().equals(id)
-        ).findFirst();
-
+        Optional<FintResource<Personalressurs>> personalressursOptional = personalressurser.stream()
+                .filter(personalressurs -> personalressurs.getResource().getAnsattnummer().getIdentifikatorverdi().equals(id))
+                .findFirst();
         if (personalressursOptional.isPresent()) {
             return assembler.resource(personalressursOptional.get());
         } else {

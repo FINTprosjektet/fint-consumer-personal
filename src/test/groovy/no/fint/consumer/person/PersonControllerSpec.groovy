@@ -3,21 +3,22 @@ package no.fint.consumer.person
 import no.fint.audit.FintAuditService
 import no.fint.consumer.utils.RestEndpoints
 import no.fint.event.model.HeaderConstants
-import no.fint.model.felles.Person
 import no.fint.test.utils.MockMvcSpecification
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.test.web.servlet.MockMvc
-import spock.lang.Ignore
 
 class PersonControllerSpec extends MockMvcSpecification {
     private PersonController controller
     private PersonCacheService cacheService
+    private PersonAssembler assembler
     private MockMvc mockMvc
 
     void setup() {
         cacheService = Mock(PersonCacheService)
-        controller = new PersonController(fintAuditService: Mock(FintAuditService), cacheService: cacheService)
+        assembler = Mock(PersonAssembler)
+        controller = new PersonController(fintAuditService: Mock(FintAuditService), cacheService: cacheService, assembler: assembler)
         mockMvc = standaloneSetup(controller)
     }
 
@@ -32,7 +33,6 @@ class PersonControllerSpec extends MockMvcSpecification {
                 .andExpect(jsonPathEquals('$.lastUpdated', '123'))
     }
 
-    @Ignore
     def "GET all personer"() {
         when:
         def response = mockMvc.perform(get(RestEndpoints.PERSON)
@@ -41,10 +41,10 @@ class PersonControllerSpec extends MockMvcSpecification {
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE))
 
         then:
-        1 * cacheService.getAll('rogfk.no') >> [new Person(), new Person()]
+        1 * cacheService.getAll('rogfk.no') >> []
+        1 * assembler.resources([]) >> ResponseEntity.ok([])
         response.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPathSize('$', 2))
     }
 
 }

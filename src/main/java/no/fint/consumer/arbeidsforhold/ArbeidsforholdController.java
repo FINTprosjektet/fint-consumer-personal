@@ -95,7 +95,7 @@ public class ArbeidsforholdController {
         fintAuditService.audit(event);
 
         Optional<FintResource<Arbeidsforhold>> arbeidsforholdOptional = employments.stream().filter(
-                arbeidsforhold -> arbeidsforhold.getConvertedResource().getSystemId().getIdentifikatorverdi().equals(id)
+                arbeidsforhold -> arbeidsforhold.getResource().getSystemId().getIdentifikatorverdi().equals(id)
         ).findFirst();
 
         if (arbeidsforholdOptional.isPresent()) {

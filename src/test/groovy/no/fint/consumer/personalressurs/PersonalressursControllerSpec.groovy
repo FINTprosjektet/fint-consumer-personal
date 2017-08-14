@@ -3,21 +3,22 @@ package no.fint.consumer.personalressurs
 import no.fint.audit.FintAuditService
 import no.fint.consumer.utils.RestEndpoints
 import no.fint.event.model.HeaderConstants
-import no.fint.model.administrasjon.personal.Personalressurs
 import no.fint.test.utils.MockMvcSpecification
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.test.web.servlet.MockMvc
-import spock.lang.Ignore
 
 class PersonalressursControllerSpec extends MockMvcSpecification {
     private PersonalressursController controller
     private PersonalressursCacheService cacheService
+    private PersonalressursAssembler assembler
     private MockMvc mockMvc
 
     void setup() {
         cacheService = Mock(PersonalressursCacheService)
-        controller = new PersonalressursController(fintAuditService: Mock(FintAuditService), cacheService: cacheService)
+        assembler = Mock(PersonalressursAssembler)
+        controller = new PersonalressursController(fintAuditService: Mock(FintAuditService), cacheService: cacheService, assembler: assembler)
         mockMvc = standaloneSetup(controller)
     }
 
@@ -32,7 +33,6 @@ class PersonalressursControllerSpec extends MockMvcSpecification {
                 .andExpect(jsonPathEquals('$.lastUpdated', '123'))
     }
 
-    @Ignore
     def "GET all personalressurser"() {
         when:
         def personalressurser = mockMvc.perform(get(RestEndpoints.PERSONALRESSURS)
@@ -41,7 +41,8 @@ class PersonalressursControllerSpec extends MockMvcSpecification {
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE))
 
         then:
-        1 * cacheService.getAll('rogfk.no') >> [new Personalressurs(), new Personalressurs()]
+        1 * cacheService.getAll('rogfk.no') >> []
+        1 * assembler.resources([]) >> ResponseEntity.ok([])
         personalressurser.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
     }

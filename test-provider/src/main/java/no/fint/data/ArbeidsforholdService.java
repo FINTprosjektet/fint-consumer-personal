@@ -24,7 +24,7 @@ public class ArbeidsforholdService {
         arbeidsforhold.setLonnsprosent(80);
         arbeidsforhold.setHovedstilling(true);
 
-        FintResource<Arbeidsforhold> fintResource = FintResource.with(arbeidsforhold).addRelasjoner(
+        FintResource<Arbeidsforhold> fintResource = FintResource.with(arbeidsforhold).addRelations(
                 new Relation.Builder()
                         .with(Arbeidsforhold.Relasjonsnavn.PERSONALRESSURS)
                         .forType(Personalressurs.class)

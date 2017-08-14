@@ -1,5 +1,6 @@
 package no.fint.consumer.person;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.FintAuditService;
@@ -93,9 +94,10 @@ public class PersonController {
         event.setStatus(Status.SENT_TO_CLIENT);
         fintAuditService.audit(event);
 
-        Optional<FintResource<Person>> personOptional = personer.stream().filter(
-                person -> person.getConvertedResource().getFodselsnummer().getIdentifikatorverdi().equals(id)
-        ).findFirst();
+
+        Optional<FintResource<Person>> personOptional = personer.stream()
+                .filter(person -> person.getResource().getFodselsnummer().getIdentifikatorverdi().equals(id))
+                .findFirst();
 
         if (personOptional.isPresent()) {
             return assembler.resource(personOptional.get());

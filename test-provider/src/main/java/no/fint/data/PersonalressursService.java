@@ -19,8 +19,8 @@ public class PersonalressursService {
         Personalressurs personalressurs = new Personalressurs();
         personalressurs.setAnsattnummer(ansattnummer);
 
-        FintResource<Personalressurs> fintResource = FintResource.with(personalressurs).addRelasjoner(
-                new Relation.Builder().with(Personalressurs.Relasjonsnavn.PERSON).forType(Person.class).field("fodselsnummer").value("204194497763").build()
+        FintResource<Personalressurs> fintResource = FintResource.with(personalressurs).addRelations(
+                new Relation.Builder().with(Personalressurs.Relasjonsnavn.PARORENDE).forType(Person.class).field("fodselsnummer").value("204194497763").build()
         );
 
         return ImmutableList.of(fintResource);
