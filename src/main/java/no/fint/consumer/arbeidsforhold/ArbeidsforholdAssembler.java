@@ -16,6 +16,5 @@ public class ArbeidsforholdAssembler extends FintResourceAssembler<Arbeidsforhol
     @Override
     public FintResourceSupport assemble(Arbeidsforhold arbeidsforhold, FintResource<Arbeidsforhold> fintResource) {
         return createResourceWithId(arbeidsforhold.getSystemId().getIdentifikatorverdi(), fintResource, "systemId");
-
     }
 }
