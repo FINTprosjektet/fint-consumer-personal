@@ -3,20 +3,19 @@ package no.fint.consumer.arbeidsforhold;
 import no.fint.model.administrasjon.personal.Arbeidsforhold;
 import no.fint.model.relation.FintResource;
 import no.fint.relations.FintResourceAssembler;
+import no.fint.relations.FintResourceSupport;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ArbeidsforholdAssembler extends FintResourceAssembler<Arbeidsforhold, ArbeidsforholdResource> {
+public class ArbeidsforholdAssembler extends FintResourceAssembler<Arbeidsforhold> {
 
     public ArbeidsforholdAssembler() {
-        super(ArbeidsforholdController.class, ArbeidsforholdResource.class);
+        super(ArbeidsforholdController.class);
     }
 
     @Override
-    public ArbeidsforholdResource mapToResource(FintResource<Arbeidsforhold> resource) {
-        Arbeidsforhold arbeidsforhold = resource.getResource();
-        ArbeidsforholdResource arbeidsforholdResource = createResourceWithId(arbeidsforhold.getSystemId().getIdentifikatorverdi(), resource, "systemId");
-        arbeidsforholdResource.setArbeidsforhold(arbeidsforhold);
-        return arbeidsforholdResource;
+    public FintResourceSupport assemble(Arbeidsforhold arbeidsforhold, FintResource<Arbeidsforhold> fintResource) {
+        return createResourceWithId(arbeidsforhold.getSystemId().getIdentifikatorverdi(), fintResource, "systemId");
+
     }
 }
