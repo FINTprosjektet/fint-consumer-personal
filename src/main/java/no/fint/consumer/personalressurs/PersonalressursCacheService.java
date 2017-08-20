@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -42,11 +43,15 @@ public class PersonalressursCacheService extends CacheService<FintResource<Perso
     }
 
     @Scheduled(initialDelayString = ConsumerProps.CACHE_INITIALDELAY_PERSONALRESSURS, fixedRateString = ConsumerProps.CACHE_FIXEDRATE_PERSONALRESSURS)
-    public void getAllStaffResources() {
+    public void populateCacheAllPersonalressurs() {
         Arrays.stream(props.getOrgs()).forEach(orgId -> {
             log.info("Populating employee cache for {}", orgId);
             Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_PERSONALRESSURS, Constants.CACHE_SERIVCE);
             consumerEventUtil.send(event);
         });
+    }
+
+    public Optional<FintResource<Personalressurs>> getPersonalressurs(String orgId, String ansattnummer) {
+        return getOne(orgId, (fintResource) -> fintResource.getResource().getAnsattnummer().getIdentifikatorverdi().equals(ansattnummer));
     }
 }

@@ -56,7 +56,7 @@ dependencies {
     compile('no.fint:fint-relations:1.1.5')
     compile('no.fint:fint-events:1.0.0')
     compile('no.fint:fint-audit-mongo-plugin:1.0.0')
-    compile('no.fint:fint-cache:1.0.0')
+    compile('no.fint:fint-cache:1.0.1')
     compile('no.fint:fint-dependencies:0.0.3')
 
     compile('com.github.fakemongo:fongo:2.1.0')

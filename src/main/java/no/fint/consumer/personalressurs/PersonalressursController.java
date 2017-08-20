@@ -84,7 +84,7 @@ public class PersonalressursController {
         event.setStatus(Status.CACHE);
         fintAuditService.audit(event);
 
-        List<FintResource<Personalressurs>> personalressurser = cacheService.getAll(orgId);
+        Optional<FintResource<Personalressurs>> personalressursOptional = cacheService.getPersonalressurs(orgId, id);
 
         event.setStatus(Status.CACHE_RESPONSE);
         fintAuditService.audit(event);
@@ -92,15 +92,11 @@ public class PersonalressursController {
         event.setStatus(Status.SENT_TO_CLIENT);
         fintAuditService.audit(event);
 
-        Optional<FintResource<Personalressurs>> personalressursOptional = personalressurser.stream()
-                .filter(personalressurs -> personalressurs.getResource().getAnsattnummer().getIdentifikatorverdi().equals(id))
-                .findFirst();
         if (personalressursOptional.isPresent()) {
             return assembler.resource(personalressursOptional.get());
         } else {
             return ResponseEntity.notFound().build();
         }
-
     }
 
 }
