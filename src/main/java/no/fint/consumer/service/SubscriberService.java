@@ -35,7 +35,7 @@ public class SubscriberService {
 
     @FintEventListener(type = QueueType.UPSTREAM)
     public void receive(Event event) {
-        log.info("Event: {}", event.getAction());
+        log.debug("Received event: {}", event);
         try {
             String action = event.getAction();
             if (action.equals(PersonalActions.GET_ALL_PERSONALRESSURS.name())) {
