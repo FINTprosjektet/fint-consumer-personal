@@ -15,7 +15,7 @@ public class ArbeidsforholdService {
 
     public List<FintResource<Arbeidsforhold>> getAll() {
         Identifikator systemId = new Identifikator();
-        systemId.setIdentifikatorverdi("6db6fcd3-3edc-43b4-b0d4-07adb71d486e");
+        systemId.setIdentifikatorverdi("100_1");
 
         Arbeidsforhold arbeidsforhold = new Arbeidsforhold();
         arbeidsforhold.setSystemId(systemId);

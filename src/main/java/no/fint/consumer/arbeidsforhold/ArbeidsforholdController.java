@@ -72,7 +72,7 @@ public class ArbeidsforholdController {
         return assembler.resources(employments);
     }
 
-    @RequestMapping(value = {"/systemId/{id:.+}", "/systemid/{id:.+}"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/systemId/{id}", "/systemid/{id}"}, method = RequestMethod.GET)
     public ResponseEntity getArbeidsforhold(@PathVariable String id,
                                             @RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
                                             @RequestHeader(value = HeaderConstants.CLIENT, defaultValue = Constants.DEFAULT_HEADER_CLIENT) String client) {
