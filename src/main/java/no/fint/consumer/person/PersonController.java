@@ -1,6 +1,5 @@
 package no.fint.consumer.person;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.FintAuditService;
@@ -12,6 +11,7 @@ import no.fint.event.model.Status;
 import no.fint.model.felles.FellesActions;
 import no.fint.model.felles.Person;
 import no.fint.model.relation.FintResource;
+import no.fint.relations.FintRelationsMediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ import java.util.Optional;
 @Slf4j
 @CrossOrigin
 @RestController
-@RequestMapping(value = RestEndpoints.PERSON, produces = {"application/hal+json", MediaType.APPLICATION_JSON_UTF8_VALUE})
+@RequestMapping(value = RestEndpoints.PERSON, produces = {FintRelationsMediaType.APPLICATION_HAL_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
 public class PersonController {
 
     @Autowired
@@ -37,13 +37,23 @@ public class PersonController {
     @Autowired
     private PersonAssembler assembler;
 
-    @RequestMapping(value = "/last-updated", method = RequestMethod.GET)
+    @GetMapping("/last-updated")
     public Map<String, String> getLastUpdated(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId) {
         String lastUpdated = Long.toString(cacheService.getLastUpdated(orgId));
         return ImmutableMap.of("lastUpdated", lastUpdated);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping("/cache/size")
+    public ImmutableMap<String, Integer> getCacheSize(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId) {
+        return ImmutableMap.of("size", cacheService.getAll(orgId).size());
+    }
+
+    @PostMapping("/cache/refresh")
+    public void refreshCache(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId) {
+        cacheService.refreshCache(orgId);
+    }
+
+    @GetMapping
     public ResponseEntity getAllPersoner(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
                                          @RequestHeader(value = HeaderConstants.CLIENT, defaultValue = Constants.DEFAULT_HEADER_CLIENT) String client,
                                          @RequestParam(required = false) Long sinceTimeStamp) {
@@ -54,8 +64,7 @@ public class PersonController {
         Event event = new Event(orgId, Constants.COMPONENT, FellesActions.GET_ALL_PERSON, client);
         fintAuditService.audit(event);
 
-        event.setStatus(Status.CACHE);
-        fintAuditService.audit(event);
+        fintAuditService.audit(event, Status.CACHE);
 
         List<FintResource<Person>> personer;
         if (sinceTimeStamp == null) {
@@ -64,16 +73,12 @@ public class PersonController {
             personer = cacheService.getAll(orgId, sinceTimeStamp);
         }
 
-        event.setStatus(Status.CACHE_RESPONSE);
-        fintAuditService.audit(event);
-
-        event.setStatus(Status.SENT_TO_CLIENT);
-        fintAuditService.audit(event);
+        fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
         return assembler.resources(personer);
     }
 
-    @RequestMapping(value = "/fodselsnummer/{id}", method = RequestMethod.GET)
+    @GetMapping("/fodselsnummer/{id}")
     public ResponseEntity getPerson(@PathVariable String id,
                                     @RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
                                     @RequestHeader(value = HeaderConstants.CLIENT, defaultValue = Constants.DEFAULT_HEADER_CLIENT) String client) {
@@ -83,21 +88,11 @@ public class PersonController {
         Event event = new Event(orgId, Constants.COMPONENT, FellesActions.GET_PERSON, client);
         fintAuditService.audit(event);
 
-        event.setStatus(Status.CACHE);
-        fintAuditService.audit(event);
+        fintAuditService.audit(event, Status.CACHE);
 
-        List<FintResource<Person>> personer = cacheService.getAll(orgId);
+        Optional<FintResource<Person>> personOptional = cacheService.getPerson(orgId, id);
 
-        event.setStatus(Status.CACHE_RESPONSE);
-        fintAuditService.audit(event);
-
-        event.setStatus(Status.SENT_TO_CLIENT);
-        fintAuditService.audit(event);
-
-
-        Optional<FintResource<Person>> personOptional = personer.stream()
-                .filter(person -> person.getResource().getFodselsnummer().getIdentifikatorverdi().equals(id))
-                .findFirst();
+        fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
         if (personOptional.isPresent()) {
             return assembler.resource(personOptional.get());
@@ -105,4 +100,5 @@ public class PersonController {
             return ResponseEntity.notFound().build();
         }
     }
+
 }

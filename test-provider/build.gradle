@@ -30,8 +30,8 @@ repositories {
 }
 
 dependencies {
-    compile('no.fint:fint-relation-model:1.0.6')
-    compile('no.fint:fint-administrasjon-model-java:1.1.0-rc.1.6')
+    compile('no.fint:fint-relation-model:1.0.7')
+    compile('no.fint:fint-administrasjon-model-java:1.1.0-rc.1.7')
     compile('no.fint:fint-event-model:2.0.0')
 
     compile('no.fint:fint-events:1.0.0')

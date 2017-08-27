@@ -14,7 +14,6 @@ import no.fint.event.model.health.Health;
 import no.fint.event.model.health.HealthStatus;
 import no.fint.events.FintEvents;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +23,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -42,10 +40,6 @@ public class AdminController {
 
     @Autowired
     private FintEvents fintEvents;
-
-    @Autowired
-    @Qualifier("linkMapper")
-    private Map<String, String> linkMapper;
 
     @GetMapping("/health")
     public ResponseEntity healthCheck(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
@@ -89,10 +83,5 @@ public class AdminController {
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().buildAndExpand().toUri();
             return ResponseEntity.created(location).build();
         }
-    }
-
-    @GetMapping("/link-mapper")
-    public Map<String, String> getLinkMapper() {
-        return linkMapper;
     }
 }

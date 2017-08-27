@@ -43,12 +43,19 @@ public class PersonalressursCacheService extends CacheService<FintResource<Perso
     }
 
     @Scheduled(initialDelayString = ConsumerProps.CACHE_INITIALDELAY_PERSONALRESSURS, fixedRateString = ConsumerProps.CACHE_FIXEDRATE_PERSONALRESSURS)
-    public void populateCacheAllPersonalressurs() {
-        Arrays.stream(props.getOrgs()).forEach(orgId -> {
-            log.info("Populating employee cache for {}", orgId);
-            Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_PERSONALRESSURS, Constants.CACHE_SERIVCE);
-            consumerEventUtil.send(event);
-        });
+    public void populateCacheAll() {
+        Arrays.stream(props.getOrgs()).forEach(this::populateCache);
+    }
+
+    public void refreshCache(String orgId) {
+        flush(orgId);
+        populateCache(orgId);
+    }
+
+    private void populateCache(String orgId) {
+        log.info("Populating employee cache for {}", orgId);
+        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_PERSONALRESSURS, Constants.CACHE_SERIVCE);
+        consumerEventUtil.send(event);
     }
 
     public Optional<FintResource<Personalressurs>> getPersonalressurs(String orgId, String ansattnummer) {

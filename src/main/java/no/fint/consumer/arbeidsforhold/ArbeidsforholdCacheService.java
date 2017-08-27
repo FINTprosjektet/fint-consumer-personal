@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -42,11 +43,22 @@ public class ArbeidsforholdCacheService extends CacheService<FintResource<Arbeid
     }
 
     @Scheduled(initialDelayString = ConsumerProps.CACHE_INITIALDELAY_ARBEIDSFORHOLD, fixedRateString = ConsumerProps.CACHE_FIXEDRATE_ARBEIDSFORHOLD)
-    public void populateCacheAllArbeidsforhold() {
-        Arrays.stream(props.getOrgs()).forEach(orgId -> {
-            log.info("Populating arbeidsforhold cache for {}", orgId);
-            Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_ARBEIDSFORHOLD, Constants.CACHE_SERIVCE);
-            consumerEventUtil.send(event);
-        });
+    public void populateCacheAll() {
+        Arrays.stream(props.getOrgs()).forEach(this::populateCache);
+    }
+
+    public void refreshCache(String orgId) {
+        flush(orgId);
+        populateCache(orgId);
+    }
+
+    private void populateCache(String orgId) {
+        log.info("Populating arbeidsforhold cache for {}", orgId);
+        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_ARBEIDSFORHOLD, Constants.CACHE_SERIVCE);
+        consumerEventUtil.send(event);
+    }
+
+    public Optional<FintResource<Arbeidsforhold>> getArbeidsforhold(String orgId, String systemId) {
+        return getOne(orgId, (fintResource) -> fintResource.getResource().getSystemId().getIdentifikatorverdi().equals(systemId));
     }
 }
