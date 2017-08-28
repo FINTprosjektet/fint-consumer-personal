@@ -47,7 +47,7 @@ public class PersonCacheService extends CacheService<FintResource<Person>> {
         Arrays.stream(props.getOrgs()).forEach(this::populateCache);
     }
 
-    public void refreshCache(String orgId) {
+    public void rebuildCache(String orgId) {
         flush(orgId);
         populateCache(orgId);
     }

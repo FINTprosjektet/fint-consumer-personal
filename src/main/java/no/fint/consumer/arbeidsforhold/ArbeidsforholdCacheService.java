@@ -47,7 +47,7 @@ public class ArbeidsforholdCacheService extends CacheService<FintResource<Arbeid
         Arrays.stream(props.getOrgs()).forEach(this::populateCache);
     }
 
-    public void refreshCache(String orgId) {
+    public void rebuildCache(String orgId) {
         flush(orgId);
         populateCache(orgId);
     }

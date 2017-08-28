@@ -38,9 +38,9 @@ class PersonalressursCacheServiceSpec extends Specification {
         1 * consumerEventUtil.send(_ as Event)
     }
 
-    def "Refresh cache"() {
+    def "Rebuild cache"() {
         when:
-        cacheService.refreshCache('rogfk.no')
+        cacheService.rebuildCache('rogfk.no')
         def values = cacheService.getAll('rogfk.no')
 
         then:
