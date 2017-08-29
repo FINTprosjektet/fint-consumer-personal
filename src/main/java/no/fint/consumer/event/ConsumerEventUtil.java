@@ -28,16 +28,14 @@ public class ConsumerEventUtil {
     public Optional<Event<Health>> healthCheck(Event event) {
         fintAuditService.audit(event);
 
-        event.setStatus(Status.DOWNSTREAM_QUEUE);
-        fintAuditService.audit(event);
+        fintAuditService.audit(event, Status.DOWNSTREAM_QUEUE);
 
         log.info("Sending health check to {}", event.getOrgId());
         Event response = fintEventsHealth.sendHealthCheck(event.getOrgId(), event.getCorrId(), event);
         if (response == null) {
             return Optional.empty();
         } else {
-            response.setStatus(Status.SENT_TO_CLIENT);
-            fintAuditService.audit(response);
+            fintAuditService.audit(response, Status.SENT_TO_CLIENT);
             return Optional.of(response);
         }
     }
@@ -45,13 +43,11 @@ public class ConsumerEventUtil {
     public void send(Event event) {
         fintAuditService.audit(event);
 
-        event.setStatus(Status.DOWNSTREAM_QUEUE);
-        fintAuditService.audit(event);
+        fintAuditService.audit(event, Status.DOWNSTREAM_QUEUE);
 
         log.info("Sending event {} to {}", event.getAction(), event.getOrgId());
         fintEvents.sendDownstream(event.getOrgId(), event);
-        event.setStatus(Status.SENT_TO_CLIENT);
-        fintAuditService.audit(event);
+        fintAuditService.audit(event, Status.SENT_TO_CLIENT);
     }
 
 }

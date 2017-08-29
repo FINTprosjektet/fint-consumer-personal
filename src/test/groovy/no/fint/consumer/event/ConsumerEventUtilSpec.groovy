@@ -2,6 +2,7 @@ package no.fint.consumer.event
 
 import no.fint.audit.FintAuditService
 import no.fint.event.model.Event
+import no.fint.event.model.Status
 import no.fint.events.FintEvents
 import no.fint.events.FintEventsHealth
 import spock.lang.Specification
@@ -27,7 +28,7 @@ class ConsumerEventUtilSpec extends Specification {
         def response = consumerEventUtil.healthCheck(event)
 
         then:
-        3 * fintAuditService.audit(_ as Event)
+        2 * fintAuditService.audit(_ as Event, _ as Status)
         1 * fintEventsHealth.sendHealthCheck('rogfk.no', '123', event) >> event
         response.isPresent()
     }
