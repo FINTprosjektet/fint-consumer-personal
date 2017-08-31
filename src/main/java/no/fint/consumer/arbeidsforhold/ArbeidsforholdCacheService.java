@@ -54,7 +54,7 @@ public class ArbeidsforholdCacheService extends CacheService<FintResource<Arbeid
 
     private void populateCache(String orgId) {
         log.info("Populating arbeidsforhold cache for {}", orgId);
-        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_ARBEIDSFORHOLD, Constants.CACHE_SERIVCE);
+        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_ARBEIDSFORHOLD, Constants.CACHE_SERVICE);
         consumerEventUtil.send(event);
     }
 

@@ -54,7 +54,7 @@ public class PersonCacheService extends CacheService<FintResource<Person>> {
 
     private void populateCache(String orgId) {
         log.info("Populating person cache for {}", orgId);
-        Event event = new Event(orgId, Constants.COMPONENT, FellesActions.GET_ALL_PERSON, Constants.CACHE_SERIVCE);
+        Event event = new Event(orgId, Constants.COMPONENT, FellesActions.GET_ALL_PERSON, Constants.CACHE_SERVICE);
         consumerEventUtil.send(event);
     }
 
