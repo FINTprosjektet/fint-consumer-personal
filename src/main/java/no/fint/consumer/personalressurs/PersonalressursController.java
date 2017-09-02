@@ -47,7 +47,7 @@ public class PersonalressursController {
         return ImmutableMap.of("size", cacheService.getAll(orgId).size());
     }
 
-    @PostMapping("/cache/refresh")
+    @PostMapping("/cache/rebuild")
     public void rebuildCache(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId) {
         cacheService.rebuildCache(orgId);
     }
