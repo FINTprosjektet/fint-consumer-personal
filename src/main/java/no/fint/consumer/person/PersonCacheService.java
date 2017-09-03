@@ -1,5 +1,6 @@
 package no.fint.consumer.person;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.cache.CacheService;
 import no.fint.cache.FintCache;
@@ -7,6 +8,7 @@ import no.fint.consumer.config.Constants;
 import no.fint.consumer.config.ConsumerProps;
 import no.fint.consumer.event.ConsumerEventUtil;
 import no.fint.event.model.Event;
+import no.fint.event.model.EventUtil;
 import no.fint.model.felles.FellesActions;
 import no.fint.model.felles.Person;
 import no.fint.model.relation.FintResource;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -31,7 +34,7 @@ public class PersonCacheService extends CacheService<FintResource<Person>> {
     private ConsumerProps props;
 
     public PersonCacheService() {
-        super(MODEL);
+        super(MODEL, FellesActions.GET_ALL_PERSON);
     }
 
     @PostConstruct
@@ -62,4 +65,10 @@ public class PersonCacheService extends CacheService<FintResource<Person>> {
         return getOne(orgId, (fintResource) -> fintResource.getResource().getFodselsnummer().getIdentifikatorverdi().equals(fodselsnummer));
     }
 
+    @Override
+    public void onAction(Event event) {
+        List<FintResource<Person>> personList = EventUtil.convertEventData(event, new TypeReference<List<FintResource<Person>>>() {
+        });
+        getCache(event.getOrgId()).ifPresent(cache -> cache.update(personList));
+    }
 }

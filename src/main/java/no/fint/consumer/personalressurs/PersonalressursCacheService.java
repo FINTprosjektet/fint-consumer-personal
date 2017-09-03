@@ -1,5 +1,6 @@
 package no.fint.consumer.personalressurs;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.cache.CacheService;
 import no.fint.cache.FintCache;
@@ -7,6 +8,7 @@ import no.fint.consumer.config.Constants;
 import no.fint.consumer.config.ConsumerProps;
 import no.fint.consumer.event.ConsumerEventUtil;
 import no.fint.event.model.Event;
+import no.fint.event.model.EventUtil;
 import no.fint.model.administrasjon.personal.PersonalActions;
 import no.fint.model.administrasjon.personal.Personalressurs;
 import no.fint.model.relation.FintResource;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -31,7 +34,7 @@ public class PersonalressursCacheService extends CacheService<FintResource<Perso
     private ConsumerProps props;
 
     public PersonalressursCacheService() {
-        super(MODEL);
+        super(MODEL, PersonalActions.GET_ALL_PERSONALRESSURS);
     }
 
     @PostConstruct
@@ -60,5 +63,12 @@ public class PersonalressursCacheService extends CacheService<FintResource<Perso
 
     public Optional<FintResource<Personalressurs>> getPersonalressurs(String orgId, String ansattnummer) {
         return getOne(orgId, (fintResource) -> fintResource.getResource().getAnsattnummer().getIdentifikatorverdi().equals(ansattnummer));
+    }
+
+    @Override
+    public void onAction(Event event) {
+        List<FintResource<Personalressurs>> personalressursList = EventUtil.convertEventData(event, new TypeReference<List<FintResource<Personalressurs>>>() {
+        });
+        getCache(event.getOrgId()).ifPresent(cache -> cache.update(personalressursList));
     }
 }

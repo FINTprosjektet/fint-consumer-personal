@@ -1,5 +1,6 @@
 package no.fint.consumer.arbeidsforhold;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.cache.CacheService;
 import no.fint.cache.FintCache;
@@ -7,6 +8,7 @@ import no.fint.consumer.config.Constants;
 import no.fint.consumer.config.ConsumerProps;
 import no.fint.consumer.event.ConsumerEventUtil;
 import no.fint.event.model.Event;
+import no.fint.event.model.EventUtil;
 import no.fint.model.administrasjon.personal.Arbeidsforhold;
 import no.fint.model.administrasjon.personal.PersonalActions;
 import no.fint.model.relation.FintResource;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -31,7 +34,7 @@ public class ArbeidsforholdCacheService extends CacheService<FintResource<Arbeid
     private ConsumerProps props;
 
     public ArbeidsforholdCacheService() {
-        super(MODEL);
+        super(MODEL, PersonalActions.GET_ALL_ARBEIDSFORHOLD);
     }
 
     @PostConstruct
@@ -60,5 +63,12 @@ public class ArbeidsforholdCacheService extends CacheService<FintResource<Arbeid
 
     public Optional<FintResource<Arbeidsforhold>> getArbeidsforhold(String orgId, String systemId) {
         return getOne(orgId, (fintResource) -> fintResource.getResource().getSystemId().getIdentifikatorverdi().equals(systemId));
+    }
+
+    @Override
+    public void onAction(Event event) {
+        List<FintResource<Arbeidsforhold>> arbeidsforholdList = EventUtil.convertEventData(event, new TypeReference<List<FintResource<Arbeidsforhold>>>() {
+        });
+        getCache(event.getOrgId()).ifPresent(cache -> cache.update(arbeidsforholdList));
     }
 }
