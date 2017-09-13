@@ -8,7 +8,6 @@ import no.fint.consumer.config.Constants;
 import no.fint.consumer.config.ConsumerProps;
 import no.fint.consumer.event.ConsumerEventUtil;
 import no.fint.event.model.Event;
-import no.fint.event.model.EventUtil;
 import no.fint.model.administrasjon.personal.Arbeidsforhold;
 import no.fint.model.administrasjon.personal.PersonalActions;
 import no.fint.model.relation.FintResource;
@@ -67,8 +66,7 @@ public class ArbeidsforholdCacheService extends CacheService<FintResource<Arbeid
 
     @Override
     public void onAction(Event event) {
-        List<FintResource<Arbeidsforhold>> arbeidsforholdList = EventUtil.convertEventData(event, new TypeReference<List<FintResource<Arbeidsforhold>>>() {
+        update(event, new TypeReference<List<FintResource<Arbeidsforhold>>>() {
         });
-        getCache(event.getOrgId()).ifPresent(cache -> cache.update(arbeidsforholdList));
     }
 }

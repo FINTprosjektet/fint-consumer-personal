@@ -8,7 +8,6 @@ import no.fint.consumer.config.Constants;
 import no.fint.consumer.config.ConsumerProps;
 import no.fint.consumer.event.ConsumerEventUtil;
 import no.fint.event.model.Event;
-import no.fint.event.model.EventUtil;
 import no.fint.model.felles.FellesActions;
 import no.fint.model.felles.Person;
 import no.fint.model.relation.FintResource;
@@ -67,8 +66,7 @@ public class PersonCacheService extends CacheService<FintResource<Person>> {
 
     @Override
     public void onAction(Event event) {
-        List<FintResource<Person>> personList = EventUtil.convertEventData(event, new TypeReference<List<FintResource<Person>>>() {
+        update(event, new TypeReference<List<FintResource<Person>>>() {
         });
-        getCache(event.getOrgId()).ifPresent(cache -> cache.update(personList));
     }
 }
