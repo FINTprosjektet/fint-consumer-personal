@@ -3,6 +3,7 @@ package no.fint.consumer.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import no.fint.consumer.utils.RestEndpoints;
+import no.fint.model.administrasjon.kodeverk.*;
 import no.fint.model.administrasjon.organisasjon.Organisasjonselement;
 import no.fint.model.administrasjon.personal.Arbeidsforhold;
 import no.fint.model.administrasjon.personal.Personalressurs;
@@ -38,6 +39,11 @@ public class Config {
         links.put(Personalressurs.class.getName(), fullPath(RestEndpoints.PERSONALRESSURS));
         links.put(Arbeidsforhold.class.getName(), fullPath(RestEndpoints.ARBEIDSFORHOLD));
         links.put(Person.class.getName(), fullPath(RestEndpoints.PERSON));
+        links.put(Ansvar.class.getName(), "/administrasjon/kodeverk/ansvar/systemid");
+        links.put(Funksjon.class.getName(), "/administrasjon/kodeverk/funksjon/systemid");
+        links.put(Arbeidsforholdstype.class.getName(), "/administrasjon/kodeverk/arbeidsforholdstype/systemid");
+        links.put(Stillingskode.class.getName(), "/administrasjon/kodeverk/stillingskode/systemid");
+        links.put(Uketimetall.class.getName(), "/administrasjon/kodeverk/timerperuke/systemid");
         links.put(Organisasjonselement.class.getName(), "/administrasjon/organisasjon/organisasjonselement");
         return links;
     }
