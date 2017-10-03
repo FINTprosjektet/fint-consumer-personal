@@ -47,7 +47,7 @@ public class Config {
         links.put(Stillingskode.class.getName(), "/administrasjon/kodeverk/stillingskode");
         links.put(Uketimetall.class.getName(), "/administrasjon/kodeverk/timerperuke");
         links.put(Organisasjonselement.class.getName(), "/administrasjon/organisasjon/organisasjonselement");
-        links.put(Personalressurskategori.class.getName(), "/administrasjon/organisasjon/personalressurskategori");
+        links.put(Personalressurskategori.class.getName(), "/administrasjon/kodeverk/personalressurskategori");
 
         links.put(Person.class.getName(), fullPath(RestEndpoints.PERSON));
         links.put(Sprak.class.getName(), "https://api.felleskomponent.no/felles/kodeverk/iso/6391alpha2");
