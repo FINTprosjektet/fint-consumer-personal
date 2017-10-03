@@ -45,7 +45,7 @@ public class Config {
         links.put(Funksjon.class.getName(), "/administrasjon/kodeverk/funksjon");
         links.put(Arbeidsforholdstype.class.getName(), "/administrasjon/kodeverk/arbeidsforholdstype");
         links.put(Stillingskode.class.getName(), "/administrasjon/kodeverk/stillingskode");
-        links.put(Uketimetall.class.getName(), "/administrasjon/kodeverk/timerperuke");
+        links.put(Uketimetall.class.getName(), "/administrasjon/kodeverk/uketimetall");
         links.put(Organisasjonselement.class.getName(), "/administrasjon/organisasjon/organisasjonselement");
         links.put(Personalressurskategori.class.getName(), "/administrasjon/kodeverk/personalressurskategori");
 
