@@ -8,6 +8,7 @@ import no.fint.model.administrasjon.organisasjon.Organisasjonselement;
 import no.fint.model.administrasjon.personal.Arbeidsforhold;
 import no.fint.model.administrasjon.personal.Personalressurs;
 import no.fint.model.felles.Person;
+import no.fint.model.felles.kodeverk.iso.Kjonn;
 import no.fint.model.felles.kodeverk.iso.Landkode;
 import no.fint.model.felles.kodeverk.iso.Sprak;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +51,9 @@ public class Config {
         links.put(Personalressurskategori.class.getName(), "/administrasjon/kodeverk/personalressurskategori");
 
         links.put(Person.class.getName(), fullPath(RestEndpoints.PERSON));
-        links.put(Sprak.class.getName(), "https://api.felleskomponent.no/felles/kodeverk/iso/6391alpha2");
-        links.put(Landkode.class.getName(), "https://api.felleskomponent.no/felles/kodeverk/iso/31661alpha2");
+        links.put(Sprak.class.getName(), "/felles/kodeverk/sprak");
+        links.put(Landkode.class.getName(), "/felles/kodeverk/land");
+        links.put(Kjonn.class.getName(), "/felles/kodeverk/kjonn");
 
         return links;
     }
