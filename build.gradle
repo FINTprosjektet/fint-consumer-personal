@@ -23,8 +23,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'maven'
 apply plugin: 'jacoco'
 
-apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/master/version.gradle'
-version = createVersion()
+version = "${version}-${apiVersion}"
 
 jar {
     baseName = 'fint-consumer-personal'
@@ -51,7 +50,7 @@ repositories {
 }
 
 dependencies {
-    compile('no.fint:fint-administrasjon-model-java:2.2.20')
+    compile("no.fint:fint-administrasjon-model-java:${apiVersion}")
     compile('no.fint:fint-event-model:2.0.1')
 
     compile('no.fint:fint-relations:1.2.0-1')
