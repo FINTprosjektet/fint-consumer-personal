@@ -18,10 +18,6 @@ pipeline {
             }
             steps {
                 withDockerRegistry([credentialsId: 'dtr-rogfk-no', url: 'https://dtr.rogfk.no']) {
-                    unstash 'version'
-                    script {
-                        VERSION=readFile('version.txt').trim()
-                    }
                     sh "docker push 'dtr.rogfk.no/fint-beta/consumer-personal:${VERSION}'"
                 }
             }
