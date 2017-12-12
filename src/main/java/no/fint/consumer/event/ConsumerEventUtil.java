@@ -6,7 +6,6 @@ import no.fint.event.model.Event;
 import no.fint.event.model.Status;
 import no.fint.event.model.health.Health;
 import no.fint.events.FintEvents;
-import no.fint.events.FintEventsHealth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +19,6 @@ public class ConsumerEventUtil {
     private FintEvents fintEvents;
 
     @Autowired
-    private FintEventsHealth fintEventsHealth;
-
-    @Autowired
     private FintAuditService fintAuditService;
 
     public Optional<Event<Health>> healthCheck(Event event) {
@@ -31,7 +27,7 @@ public class ConsumerEventUtil {
         fintAuditService.audit(event, Status.DOWNSTREAM_QUEUE);
 
         log.info("Sending health check to {}", event.getOrgId());
-        Event response = fintEventsHealth.sendHealthCheck(event.getOrgId(), event.getCorrId(), event);
+        Event response = fintEvents.sendHealthCheck(event);
         if (response == null) {
             return Optional.empty();
         } else {
@@ -46,7 +42,7 @@ public class ConsumerEventUtil {
         fintAuditService.audit(event, Status.DOWNSTREAM_QUEUE);
 
         log.info("Sending event {} to {}", event.getAction(), event.getOrgId());
-        fintEvents.sendDownstream(event.getOrgId(), event);
+        fintEvents.sendDownstream(event);
         fintAuditService.audit(event, Status.SENT_TO_CLIENT);
     }
 

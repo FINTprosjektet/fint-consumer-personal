@@ -27,7 +27,7 @@ class AdminControllerSpec extends MockMvcSpecification {
         def response = mockMvc.perform(post('/admin/organisations/123'))
 
         then:
-        1 * fintEvents.sendDownstream('system', _ as Event)
+        1 * fintEvents.sendDownstream(_ as Event)
         response.andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.header().string(HttpHeaders.LOCATION, equalTo('http://localhost/admin/organisations/123')))
     }

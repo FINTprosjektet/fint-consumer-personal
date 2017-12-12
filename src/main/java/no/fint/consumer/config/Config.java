@@ -2,6 +2,9 @@ package no.fint.consumer.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
+import no.fint.cache.CacheManager;
+import no.fint.cache.FintCacheManager;
+import no.fint.cache.HazelcastCacheManager;
 import no.fint.consumer.utils.RestEndpoints;
 import no.fint.model.administrasjon.kodeverk.*;
 import no.fint.model.administrasjon.organisasjon.Organisasjonselement;
@@ -26,6 +29,19 @@ public class Config {
 
     @Value("${server.context-path:}")
     private String contextPath;
+
+    @Value("${fint.consumer.cache-manager:default}")
+    private String cacheManagerType;
+
+    @Bean
+    public CacheManager<?> cacheManager() {
+        switch (cacheManagerType.toUpperCase()) {
+            case "HAZELCAST":
+                return new HazelcastCacheManager<>();
+            default:
+                return new FintCacheManager<>();
+        }
+    }
 
     @Autowired
     private ObjectMapper objectMapper;

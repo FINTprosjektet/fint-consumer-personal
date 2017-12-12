@@ -41,6 +41,9 @@ public class AdminController {
     @Autowired
     private FintEvents fintEvents;
 
+    @Autowired
+    private SubscriberService subscriberService;
+
     @GetMapping("/health")
     public ResponseEntity healthCheck(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
                                       @RequestHeader(value = HeaderConstants.CLIENT, defaultValue = Constants.DEFAULT_HEADER_CLIENT) String client) {
@@ -75,10 +78,10 @@ public class AdminController {
             return ResponseEntity.badRequest().body(String.format("OrgId %s is already registered", orgId));
         } else {
             Event event = new Event(orgId, Constants.COMPONENT, DefaultActions.REGISTER_ORG_ID.name(), "consumer");
-            fintEvents.sendDownstream("system", event);
+            fintEvents.sendDownstream(event);
 
             cacheServices.forEach(cache -> cache.createCache(orgId));
-            fintEvents.registerUpstreamListener(SubscriberService.class, orgId);
+            fintEvents.registerUpstreamListener(orgId, subscriberService);
 
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().buildAndExpand().toUri();
             return ResponseEntity.created(location).build();

@@ -4,20 +4,17 @@ import no.fint.audit.FintAuditService
 import no.fint.event.model.Event
 import no.fint.event.model.Status
 import no.fint.events.FintEvents
-import no.fint.events.FintEventsHealth
 import spock.lang.Specification
 
 class ConsumerEventUtilSpec extends Specification {
     private ConsumerEventUtil consumerEventUtil
     private FintEvents fintEvents
-    private FintEventsHealth fintEventsHealth
     private FintAuditService fintAuditService
 
     void setup() {
         fintEvents = Mock(FintEvents)
         fintAuditService = Mock(FintAuditService)
-        fintEventsHealth = Mock(FintEventsHealth)
-        consumerEventUtil = new ConsumerEventUtil(fintEvents: fintEvents, fintEventsHealth: fintEventsHealth, fintAuditService: fintAuditService)
+        consumerEventUtil = new ConsumerEventUtil(fintEvents: fintEvents, fintAuditService: fintAuditService)
     }
 
     def "Send and receive Event"() {
@@ -29,7 +26,7 @@ class ConsumerEventUtilSpec extends Specification {
 
         then:
         2 * fintAuditService.audit(_ as Event, _ as Status)
-        1 * fintEventsHealth.sendHealthCheck('rogfk.no', '123', event) >> event
+        1 * fintEvents.sendHealthCheck(event) >> event
         response.isPresent()
     }
 }

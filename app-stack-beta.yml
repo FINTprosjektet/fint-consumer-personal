@@ -14,7 +14,7 @@ services:
     fint.events.redisson.addresses: "redis://redis:6379"
     fint.events.redisson.use-linux-native-epoll: "true"
     fint.events.reddison.dns-monitoring: "true"
-    fint.audit.mongo.hostname: fint-mongodb
+    fint.audit.mongo.hostname: ucp.rogfk.no
     fint.audit.mongo.databasename: fint-audit-beta
    deploy:
     placement:
@@ -26,9 +26,6 @@ services:
      delay: 5s
      max_attempts: 3
      window: 120s
-   networks:
-    - fint_shared
-    - fint_beta
    depends_on:
     - redis
 
@@ -46,7 +43,7 @@ services:
     fint.events.redisson.use-linux-native-epoll: "true"
     fint.events.reddison.dns-monitoring: "true"
     fint.relations.default-base-url: "https://beta.felleskomponent.no"
-    fint.audit.mongo.hostname: fint-mongodb
+    fint.audit.mongo.hostname: ucp.rogfk.no
     fint.audit.mongo.databasename: fint-audit-beta
    deploy:
     placement:
@@ -58,9 +55,6 @@ services:
      delay: 5s
      max_attempts: 3
      window: 120s
-   networks:
-    - fint_shared
-    - fint_beta
    depends_on:
     - redis
     - provider
@@ -102,12 +96,3 @@ services:
       delay: 5s
       max_attempts: 3
       window: 120s
-    networks:
-     - fint_beta
-
-networks:
- fint_beta:
-  driver: overlay
-  external: false
- fint_shared:
-  external: true

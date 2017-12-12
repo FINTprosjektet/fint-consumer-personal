@@ -54,9 +54,9 @@ dependencies {
     compile('no.fint:fint-event-model:2.0.1')
 
     compile('no.fint:fint-relations:1.2.0-1')
-    compile('no.fint:fint-events:1.0.1')
+    compile('no.fint:fint-events:2.0.0-1')
     compile('no.fint:fint-audit-mongo-plugin:1.1.1')
-    compile('no.fint:fint-cache:1.4.0')
+    compile('no.fint:fint-cache:2.0.0-1')
     compile('no.fint:fint-dependencies:0.0.3')
 
     compile('com.github.fakemongo:fongo:2.1.0')
@@ -67,7 +67,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
 
     testCompile('no.fint:fint-test-utils:0.0.4')
-    testCompile('cglib:cglib-nodep:3.2.5')
+    testCompile("cglib:cglib-nodep:${cglibVersion}")
     testCompile("org.spockframework:spock-spring:${spockSpringVersion}")
     testCompile("org.spockframework:spock-core:${spockSpringVersion}")
     testCompile('org.springframework.boot:spring-boot-starter-test')
