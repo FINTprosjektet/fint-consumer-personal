@@ -2,6 +2,7 @@ package no.fint.consumer.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
+import com.google.common.collect.ImmutableMap;
 import no.fint.cache.CacheManager;
 import no.fint.cache.FintCacheManager;
 import no.fint.cache.HazelcastCacheManager;
@@ -21,7 +22,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
@@ -54,24 +54,23 @@ public class Config {
     @Qualifier("linkMapper")
     @Bean
     public Map<String, String> linkMapper() {
-        Map<String, String> links = new HashMap<>();
-        links.put(Personalressurs.class.getName(), fullPath(RestEndpoints.PERSONALRESSURS));
-        links.put(Arbeidsforhold.class.getName(), fullPath(RestEndpoints.ARBEIDSFORHOLD));
+        return ImmutableMap.<String,String>builder()
+        .put(Personalressurs.class.getName(), fullPath(RestEndpoints.PERSONALRESSURS))
+        .put(Arbeidsforhold.class.getName(), fullPath(RestEndpoints.ARBEIDSFORHOLD))
 
-        links.put(Ansvar.class.getName(), "/administrasjon/kodeverk/ansvar");
-        links.put(Funksjon.class.getName(), "/administrasjon/kodeverk/funksjon");
-        links.put(Arbeidsforholdstype.class.getName(), "/administrasjon/kodeverk/arbeidsforholdstype");
-        links.put(Stillingskode.class.getName(), "/administrasjon/kodeverk/stillingskode");
-        links.put(Uketimetall.class.getName(), "/administrasjon/kodeverk/uketimetall");
-        links.put(Organisasjonselement.class.getName(), "/administrasjon/organisasjon/organisasjonselement");
-        links.put(Personalressurskategori.class.getName(), "/administrasjon/kodeverk/personalressurskategori");
+        .put(Ansvar.class.getName(), "/administrasjon/kodeverk/ansvar")
+        .put(Funksjon.class.getName(), "/administrasjon/kodeverk/funksjon")
+        .put(Arbeidsforholdstype.class.getName(), "/administrasjon/kodeverk/arbeidsforholdstype")
+        .put(Stillingskode.class.getName(), "/administrasjon/kodeverk/stillingskode")
+        .put(Uketimetall.class.getName(), "/administrasjon/kodeverk/uketimetall")
+        .put(Organisasjonselement.class.getName(), "/administrasjon/organisasjon/organisasjonselement")
+        .put(Personalressurskategori.class.getName(), "/administrasjon/kodeverk/personalressurskategori")
 
-        links.put(Person.class.getName(), fullPath(RestEndpoints.PERSON));
-        links.put(Sprak.class.getName(), "/felles/kodeverk/sprak");
-        links.put(Landkode.class.getName(), "/felles/kodeverk/land");
-        links.put(Kjonn.class.getName(), "/felles/kodeverk/kjonn");
-
-        return links;
+        .put(Person.class.getName(), fullPath(RestEndpoints.PERSON))
+        .put(Sprak.class.getName(), "/felles/kodeverk/sprak")
+        .put(Landkode.class.getName(), "/felles/kodeverk/land")
+        .put(Kjonn.class.getName(), "/felles/kodeverk/kjonn")
+        .build();
     }
 
     String fullPath(String path) {

@@ -57,8 +57,7 @@ public class PersonController {
     public ResponseEntity getAllPersoner(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
                                          @RequestHeader(value = HeaderConstants.CLIENT, defaultValue = Constants.DEFAULT_HEADER_CLIENT) String client,
                                          @RequestParam(required = false) Long sinceTimeStamp) {
-        log.info("OrgId: {}", orgId);
-        log.info("Client: {}", client);
+        log.info("OrgId: {}, Client: {}", orgId, client);
         log.info("SinceTimeStamp: {}", sinceTimeStamp);
 
         Event event = new Event(orgId, Constants.COMPONENT, FellesActions.GET_ALL_PERSON, client);
@@ -82,8 +81,7 @@ public class PersonController {
     public ResponseEntity getPerson(@PathVariable String id,
                                     @RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
                                     @RequestHeader(value = HeaderConstants.CLIENT, defaultValue = Constants.DEFAULT_HEADER_CLIENT) String client) {
-        log.info("OrgId: {}", orgId);
-        log.info("Client: {}", client);
+        log.info("Id: {}, OrgId: {}, Client: {}", id.substring(0,8), orgId, client);
 
         Event event = new Event(orgId, Constants.COMPONENT, FellesActions.GET_PERSON, client);
         fintAuditService.audit(event);

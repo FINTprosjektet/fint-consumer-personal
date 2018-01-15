@@ -56,9 +56,7 @@ public class PersonalressursController {
     public ResponseEntity getPersonalressurser(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
                                                @RequestHeader(value = HeaderConstants.CLIENT, defaultValue = Constants.DEFAULT_HEADER_CLIENT) String client,
                                                @RequestParam(required = false) Long sinceTimeStamp) {
-        log.info("OrgId: {}", orgId);
-        log.info("Client: {}", client);
-        log.info("SinceTimeStamp: {}", sinceTimeStamp);
+        log.info("OrgId: {}, Client: {}", orgId, client);
 
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_PERSONALRESSURS, client);
         fintAuditService.audit(event);
@@ -81,8 +79,7 @@ public class PersonalressursController {
     public ResponseEntity getPersonalressurs(@PathVariable String id,
                                              @RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
                                              @RequestHeader(value = HeaderConstants.CLIENT, defaultValue = Constants.DEFAULT_HEADER_CLIENT) String client) {
-        log.info("OrgId: {}", orgId);
-        log.info("Client: {}", client);
+        log.info("Id: {}, OrgId: {}, Client: {}", id, orgId, client);
 
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_PERSONALRESSURS, client);
         fintAuditService.audit(event);

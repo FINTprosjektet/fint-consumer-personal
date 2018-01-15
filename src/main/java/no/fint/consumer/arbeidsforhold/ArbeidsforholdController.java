@@ -57,8 +57,7 @@ public class ArbeidsforholdController {
     public ResponseEntity getAllArbeidsforhold(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
                                                @RequestHeader(value = HeaderConstants.CLIENT, defaultValue = Constants.DEFAULT_HEADER_CLIENT) String client,
                                                @RequestParam(required = false) Long sinceTimeStamp) {
-        log.info("OrgId: {}", orgId);
-        log.info("Client: {}", client);
+        log.info("OrgId: {}, Client: {}", orgId, client);
         log.info("SinceTimeStamp: {}", sinceTimeStamp);
 
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_ARBEIDSFORHOLD, client);
@@ -82,9 +81,7 @@ public class ArbeidsforholdController {
     public ResponseEntity getArbeidsforhold(@PathVariable String id,
                                             @RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
                                             @RequestHeader(value = HeaderConstants.CLIENT, defaultValue = Constants.DEFAULT_HEADER_CLIENT) String client) {
-        log.info("Id: {}", id);
-        log.info("OrgId: {}", orgId);
-        log.info("Client: {}", client);
+        log.info("Id: {}, OrgId: {}, Client: {}", id, orgId, client);
 
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ARBEIDSFORHOLD, client);
         fintAuditService.audit(event);
