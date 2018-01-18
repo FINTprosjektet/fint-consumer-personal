@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import com.google.common.collect.ImmutableMap;
 import com.hazelcast.config.JoinConfig;
+import com.hazelcast.config.MulticastConfig;
 import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.config.TcpIpConfig;
 import no.fint.cache.CacheManager;
@@ -52,7 +53,7 @@ public class Config {
 
     @Bean
     public com.hazelcast.config.Config hazelcastConfig() {
-        return new com.hazelcast.config.Config().setNetworkConfig(new NetworkConfig().setJoin(new JoinConfig().setTcpIpConfig(new TcpIpConfig().setMembers(Arrays.asList(members.split(","))))));
+        return new com.hazelcast.config.Config().setNetworkConfig(new NetworkConfig().setJoin(new JoinConfig().setTcpIpConfig(new TcpIpConfig().setMembers(Arrays.asList(members.split(","))).setEnabled(true)).setMulticastConfig(new MulticastConfig().setEnabled(false))));
     }
 
     @Autowired
