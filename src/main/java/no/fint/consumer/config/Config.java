@@ -3,10 +3,7 @@ package no.fint.consumer.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import com.google.common.collect.ImmutableMap;
-import com.hazelcast.config.JoinConfig;
-import com.hazelcast.config.MulticastConfig;
-import com.hazelcast.config.NetworkConfig;
-import com.hazelcast.config.TcpIpConfig;
+import com.hazelcast.config.*;
 import no.fint.cache.CacheManager;
 import no.fint.cache.FintCacheManager;
 import no.fint.cache.HazelcastCacheManager;
@@ -38,9 +35,6 @@ public class Config {
     @Value("${fint.consumer.cache-manager:default}")
     private String cacheManagerType;
 
-    @Value("${fint.hazelcast.members}")
-    private String members;
-
     @Bean
     public CacheManager<?> cacheManager() {
         switch (cacheManagerType.toUpperCase()) {
@@ -51,9 +45,13 @@ public class Config {
         }
     }
 
+    @Value("${fint.hazelcast.members}")
+    private String members;
+
     @Bean
     public com.hazelcast.config.Config hazelcastConfig() {
-        return new com.hazelcast.config.Config().setNetworkConfig(new NetworkConfig().setJoin(new JoinConfig().setTcpIpConfig(new TcpIpConfig().setMembers(Arrays.asList(members.split(","))).setEnabled(true)).setMulticastConfig(new MulticastConfig().setEnabled(false))));
+        com.hazelcast.config.Config cfg = new ClasspathXmlConfig("fint-hazelcast.xml");
+        return cfg.setNetworkConfig(new NetworkConfig().setJoin(new JoinConfig().setTcpIpConfig(new TcpIpConfig().setMembers(Arrays.asList(members.split(","))).setEnabled(true)).setMulticastConfig(new MulticastConfig().setEnabled(false))));
     }
 
     @Autowired
