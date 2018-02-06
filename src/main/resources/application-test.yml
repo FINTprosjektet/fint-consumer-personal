@@ -1,20 +1,18 @@
 fint:
  events:
+  orgIds: mock.no
   test-mode: true
   queue-endpoint-enabled: true
-  orgIds: 'pwf.no'
 
  audit:
   test-mode: true
 
  relations:
   force-https: false
+  default-base-url: /
 
- consumer:
-  cache:
-   initialDelay:
-    arbeidsforhold: 1000
-    person: 2000
-    personalressurs: 3000
+ hazelcast:
+  members: localhost
 
-link-mapper-base-url: http://localhost:8080
+server:
+ context-path: /

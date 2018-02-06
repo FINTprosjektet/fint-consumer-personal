@@ -1,4 +1,4 @@
-package no.fint.consumer.models.arbeidsforhold;
+package no.fint.consumer.models.variabellonn;
 
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
@@ -21,23 +21,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import no.fint.model.administrasjon.personal.Arbeidsforhold;
+import no.fint.model.administrasjon.personal.Variabellonn;
 import no.fint.model.administrasjon.personal.PersonalActions;
 
 @Slf4j
 @CrossOrigin
 @RestController
-@RequestMapping(value = RestEndpoints.ARBEIDSFORHOLD, produces = {FintRelationsMediaType.APPLICATION_HAL_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
-public class ArbeidsforholdController {
+@RequestMapping(value = RestEndpoints.VARIABELLONN, produces = {FintRelationsMediaType.APPLICATION_HAL_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
+public class VariabellonnController {
 
     @Autowired
-    private ArbeidsforholdCacheService cacheService;
+    private VariabellonnCacheService cacheService;
 
     @Autowired
     private FintAuditService fintAuditService;
 
     @Autowired
-    private ArbeidsforholdAssembler assembler;
+    private VariabellonnAssembler assembler;
 
     @Autowired
     private ConsumerProps props;
@@ -68,7 +68,7 @@ public class ArbeidsforholdController {
     }
 
     @GetMapping
-    public ResponseEntity getArbeidsforhold(
+    public ResponseEntity getVariabellonn(
             @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client,
             @RequestParam(required = false) Long sinceTimeStamp) {
@@ -80,26 +80,26 @@ public class ArbeidsforholdController {
         }
         log.info("OrgId: {}, Client: {}", orgId, client);
 
-        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_ARBEIDSFORHOLD, client);
+        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_VARIABELLONN, client);
         fintAuditService.audit(event);
 
         fintAuditService.audit(event, Status.CACHE);
 
-        List<FintResource<Arbeidsforhold>> arbeidsforhold;
+        List<FintResource<Variabellonn>> variabellonn;
         if (sinceTimeStamp == null) {
-            arbeidsforhold = cacheService.getAll(orgId);
+            variabellonn = cacheService.getAll(orgId);
         } else {
-            arbeidsforhold = cacheService.getAll(orgId, sinceTimeStamp);
+            variabellonn = cacheService.getAll(orgId, sinceTimeStamp);
         }
 
         fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
-        return assembler.resources(arbeidsforhold);
+        return assembler.resources(variabellonn);
     }
 
 
     @GetMapping("/systemid/{id}")
-    public ResponseEntity getArbeidsforholdBySystemId(@PathVariable String id,
+    public ResponseEntity getVariabellonnBySystemId(@PathVariable String id,
             @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client) {
         if (props.isOverrideOrgId() || orgId == null) {
@@ -110,17 +110,17 @@ public class ArbeidsforholdController {
         }
         log.info("SystemId: {}, OrgId: {}, Client: {}", id, orgId, client);
 
-        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ARBEIDSFORHOLD, client);
+        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_VARIABELLONN, client);
         fintAuditService.audit(event);
 
         fintAuditService.audit(event, Status.CACHE);
 
-        Optional<FintResource<Arbeidsforhold>> arbeidsforhold = cacheService.getArbeidsforholdBySystemId(orgId, id);
+        Optional<FintResource<Variabellonn>> variabellonn = cacheService.getVariabellonnBySystemId(orgId, id);
 
         fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
-        if (arbeidsforhold.isPresent()) {
-            return assembler.resource(arbeidsforhold.get());
+        if (variabellonn.isPresent()) {
+            return assembler.resource(variabellonn.get());
         } else {
             return ResponseEntity.notFound().build();
         }

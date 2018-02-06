@@ -7,19 +7,34 @@ import org.springframework.stereotype.Component;
 @Getter
 @Component
 public class ConsumerProps {
+    
+    @Value("${fint.consumer.override-org-id:false}")
+    private boolean overrideOrgId;
 
-    public static final String CACHE_INITIALDELAY_ARBEIDSFORHOLD = "${fint.consumer.cache.initialDelay.arbeidsforhold:50000}";
-    public static final String CACHE_FIXEDRATE_ARBEIDSFORHOLD = "${fint.consumer.cache.fixedRate.arbeidsforhold:900000}";
+    @Value("${fint.consumer.default-client:FINT}")
+    private String defaultClient;
 
-    public static final String CACHE_INITIALDELAY_PERSON = "${fint.consumer.cache.initialDelay.person:40000}";
-    public static final String CACHE_FIXEDRATE_PERSON = "${fint.consumer.cache.fixedRate.person:900000}";
-
-    public static final String CACHE_INITIALDELAY_PERSONALRESSURS = "${fint.consumer.cache.initialDelay.personalressurs:30000}";
-    public static final String CACHE_FIXEDRATE_PERSONALRESSURS = "${fint.consumer.cache.fixedRate.personalressurs:900000}";
-
-    @Value("${fint.events.orgIds:mock.no}")
+    @Value("${fint.consumer.default-org-id:fint.no}")
+    private String defaultOrgId;
+    
+    @Value("${fint.events.orgIds:fint.no}")
     private String[] orgs;
 
-
+    
+    public static final String CACHE_INITIALDELAY_ARBEIDSFORHOLD = "${fint.consumer.cache.initialDelay.arbeidsforhold:60000}";
+    public static final String CACHE_FIXEDRATE_ARBEIDSFORHOLD = "${fint.consumer.cache.fixedRate.arbeidsforhold:900000}";
+    
+    public static final String CACHE_INITIALDELAY_FASTLONN = "${fint.consumer.cache.initialDelay.fastlonn:70000}";
+    public static final String CACHE_FIXEDRATE_FASTLONN = "${fint.consumer.cache.fixedRate.fastlonn:900000}";
+    
+    public static final String CACHE_INITIALDELAY_PERSON = "${fint.consumer.cache.initialDelay.person:80000}";
+    public static final String CACHE_FIXEDRATE_PERSON = "${fint.consumer.cache.fixedRate.person:900000}";
+    
+    public static final String CACHE_INITIALDELAY_PERSONALRESSURS = "${fint.consumer.cache.initialDelay.personalressurs:90000}";
+    public static final String CACHE_FIXEDRATE_PERSONALRESSURS = "${fint.consumer.cache.fixedRate.personalressurs:900000}";
+    
+    public static final String CACHE_INITIALDELAY_VARIABELLONN = "${fint.consumer.cache.initialDelay.variabellonn:100000}";
+    public static final String CACHE_FIXEDRATE_VARIABELLONN = "${fint.consumer.cache.fixedRate.variabellonn:900000}";
+    
 
 }

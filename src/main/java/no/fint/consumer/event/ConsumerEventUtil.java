@@ -21,13 +21,13 @@ public class ConsumerEventUtil {
     @Autowired
     private FintAuditService fintAuditService;
 
-    public Optional<Event<Health>> healthCheck(Event event) {
+    public Optional<Event<Health>> healthCheck(Event<Health> event) {
         fintAuditService.audit(event);
 
         fintAuditService.audit(event, Status.DOWNSTREAM_QUEUE);
 
-        log.info("Sending health check to {}", event.getOrgId());
-        Event response = fintEvents.sendHealthCheck(event);
+        log.info("Sending health check event {} to {}", event.getAction(), event.getOrgId());
+        Event<Health> response = fintEvents.sendHealthCheck(event);
         if (response == null) {
             return Optional.empty();
         } else {
@@ -45,5 +45,4 @@ public class ConsumerEventUtil {
         fintEvents.sendDownstream(event);
         fintAuditService.audit(event, Status.SENT_TO_CLIENT);
     }
-
 }

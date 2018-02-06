@@ -1,6 +1,3 @@
-fint:
- version: '@version@'
-
-local:
- server:
-  port: 8080
+springfox:
+  title: '@title@'
+  version: '@version@'

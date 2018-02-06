@@ -1,6 +1,7 @@
 package no.fint.consumer.models.personalressurs
 
 import no.fint.audit.FintAuditService
+import no.fint.consumer.config.ConsumerProps
 import no.fint.consumer.utils.RestEndpoints
 import no.fint.event.model.HeaderConstants
 import no.fint.test.utils.MockMvcSpecification
@@ -13,12 +14,14 @@ class PersonalressursControllerSpec extends MockMvcSpecification {
     private PersonalressursController controller
     private PersonalressursCacheService cacheService
     private PersonalressursAssembler assembler
+    private ConsumerProps props
     private MockMvc mockMvc
 
     void setup() {
         cacheService = Mock(PersonalressursCacheService)
         assembler = Mock(PersonalressursAssembler)
-        controller = new PersonalressursController(fintAuditService: Mock(FintAuditService), cacheService: cacheService, assembler: assembler)
+        props = Mock(ConsumerProps)
+        controller = new PersonalressursController(fintAuditService: Mock(FintAuditService), cacheService: cacheService, assembler: assembler, props: props)
         mockMvc = standaloneSetup(controller)
     }
 
@@ -29,6 +32,7 @@ class PersonalressursControllerSpec extends MockMvcSpecification {
 
         then:
         1 * cacheService.getLastUpdated(_ as String) >> 123L
+        1 * props.isOverrideOrgId() >> false
         response.andExpect(status().isOk())
                 .andExpect(jsonPathEquals('$.lastUpdated', '123'))
     }
@@ -41,6 +45,7 @@ class PersonalressursControllerSpec extends MockMvcSpecification {
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE))
 
         then:
+        1 * props.isOverrideOrgId() >> false
         1 * cacheService.getAll('rogfk.no') >> []
         1 * assembler.resources([]) >> ResponseEntity.ok([])
         personalressurser.andExpect(status().isOk())

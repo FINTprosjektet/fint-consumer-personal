@@ -20,4 +20,3 @@ ${Ansi.RED} 			FFFFFFFFFFF           IIIIIIIIIINNNNNNNN         NNNNNNN      TTT
 
 ${Ansi.GREEN}              Greetings from FINTLabs! ${Ansi.DEFAULT}
 
-

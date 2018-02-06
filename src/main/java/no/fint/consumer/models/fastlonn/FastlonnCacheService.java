@@ -1,4 +1,4 @@
-package no.fint.consumer.models.person;
+package no.fint.consumer.models.fastlonn;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
@@ -18,14 +18,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import no.fint.model.felles.Person;
-import no.fint.model.felles.FellesActions;
+import no.fint.model.administrasjon.personal.Fastlonn;
+import no.fint.model.administrasjon.personal.PersonalActions;
 
 @Slf4j
 @Service
-public class PersonCacheService extends CacheService<FintResource<Person>> {
+public class FastlonnCacheService extends CacheService<FintResource<Fastlonn>> {
 
-    public static final String MODEL = Person.class.getSimpleName().toLowerCase();
+    public static final String MODEL = Fastlonn.class.getSimpleName().toLowerCase();
 
     @Autowired
     private ConsumerEventUtil consumerEventUtil;
@@ -33,8 +33,8 @@ public class PersonCacheService extends CacheService<FintResource<Person>> {
     @Autowired
     private ConsumerProps props;
 
-    public PersonCacheService() {
-        super(MODEL, FellesActions.GET_ALL_PERSON);
+    public FastlonnCacheService() {
+        super(MODEL, PersonalActions.GET_ALL_FASTLONN);
     }
 
     @PostConstruct
@@ -42,7 +42,7 @@ public class PersonCacheService extends CacheService<FintResource<Person>> {
         Arrays.stream(props.getOrgs()).forEach(this::createCache);
     }
 
-    @Scheduled(initialDelayString = ConsumerProps.CACHE_INITIALDELAY_PERSON, fixedRateString = ConsumerProps.CACHE_FIXEDRATE_PERSON)
+    @Scheduled(initialDelayString = ConsumerProps.CACHE_INITIALDELAY_FASTLONN, fixedRateString = ConsumerProps.CACHE_FIXEDRATE_FASTLONN)
     public void populateCacheAll() {
         Arrays.stream(props.getOrgs()).forEach(this::populateCache);
     }
@@ -53,22 +53,22 @@ public class PersonCacheService extends CacheService<FintResource<Person>> {
 	}
 
     private void populateCache(String orgId) {
-		log.info("Populating Person cache for {}", orgId);
-        Event event = new Event(orgId, Constants.COMPONENT, FellesActions.GET_ALL_PERSON, Constants.CACHE_SERVICE);
+		log.info("Populating Fastlonn cache for {}", orgId);
+        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_FASTLONN, Constants.CACHE_SERVICE);
         consumerEventUtil.send(event);
     }
 
 
-    public Optional<FintResource<Person>> getPersonByFodselsnummer(String orgId, String fodselsnummer) {
+    public Optional<FintResource<Fastlonn>> getFastlonnBySystemId(String orgId, String systemId) {
         Identifikator needle = new Identifikator();
-        needle.setIdentifikatorverdi(fodselsnummer);
-        return getOne(orgId, (fintResource) -> needle.equals(fintResource.getResource().getFodselsnummer()));
+        needle.setIdentifikatorverdi(systemId);
+        return getOne(orgId, (fintResource) -> needle.equals(fintResource.getResource().getSystemId()));
     }
 
 
 	@Override
     public void onAction(Event event) {
-        update(event, new TypeReference<List<FintResource<Person>>>() {
+        update(event, new TypeReference<List<FintResource<Fastlonn>>>() {
         });
     }
 }

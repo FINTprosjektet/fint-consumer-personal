@@ -7,9 +7,8 @@ import no.fint.consumer.config.Constants;
 import no.fint.consumer.config.ConsumerProps;
 import no.fint.consumer.event.ConsumerEventUtil;
 import no.fint.event.model.Event;
-import no.fint.model.administrasjon.personal.PersonalActions;
-import no.fint.model.administrasjon.personal.Personalressurs;
 import no.fint.model.relation.FintResource;
+import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -18,6 +17,9 @@ import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import no.fint.model.administrasjon.personal.Personalressurs;
+import no.fint.model.administrasjon.personal.PersonalActions;
 
 @Slf4j
 @Service
@@ -46,21 +48,37 @@ public class PersonalressursCacheService extends CacheService<FintResource<Perso
     }
 
     public void rebuildCache(String orgId) {
-        flush(orgId);
-        populateCache(orgId);
-    }
+		flush(orgId);
+		populateCache(orgId);
+	}
 
     private void populateCache(String orgId) {
-        log.info("Populating employee cache for {}", orgId);
+		log.info("Populating Personalressurs cache for {}", orgId);
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_PERSONALRESSURS, Constants.CACHE_SERVICE);
         consumerEventUtil.send(event);
     }
 
-    public Optional<FintResource<Personalressurs>> getPersonalressurs(String orgId, String ansattnummer) {
-        return getOne(orgId, (fintResource) -> fintResource.getResource().getAnsattnummer().getIdentifikatorverdi().equals(ansattnummer));
+
+    public Optional<FintResource<Personalressurs>> getPersonalressursByAnsattnummer(String orgId, String ansattnummer) {
+        Identifikator needle = new Identifikator();
+        needle.setIdentifikatorverdi(ansattnummer);
+        return getOne(orgId, (fintResource) -> needle.equals(fintResource.getResource().getAnsattnummer()));
     }
 
-    @Override
+    public Optional<FintResource<Personalressurs>> getPersonalressursByBrukernavn(String orgId, String brukernavn) {
+        Identifikator needle = new Identifikator();
+        needle.setIdentifikatorverdi(brukernavn);
+        return getOne(orgId, (fintResource) -> needle.equals(fintResource.getResource().getBrukernavn()));
+    }
+
+    public Optional<FintResource<Personalressurs>> getPersonalressursBySystemId(String orgId, String systemId) {
+        Identifikator needle = new Identifikator();
+        needle.setIdentifikatorverdi(systemId);
+        return getOne(orgId, (fintResource) -> needle.equals(fintResource.getResource().getSystemId()));
+    }
+
+
+	@Override
     public void onAction(Event event) {
         update(event, new TypeReference<List<FintResource<Personalressurs>>>() {
         });
