@@ -1,4 +1,4 @@
-package no.fint.consumer.personalressurs
+package no.fint.consumer.models.personalressurs
 
 import no.fint.audit.FintAuditService
 import no.fint.consumer.utils.RestEndpoints

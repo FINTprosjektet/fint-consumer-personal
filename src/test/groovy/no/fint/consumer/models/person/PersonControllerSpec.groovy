@@ -1,4 +1,4 @@
-package no.fint.consumer.person
+package no.fint.consumer.models.person
 
 import no.fint.audit.FintAuditService
 import no.fint.consumer.utils.RestEndpoints

@@ -1,4 +1,4 @@
-package no.fint.consumer.arbeidsforhold
+package no.fint.consumer.models.arbeidsforhold
 
 import no.fint.consumer.utils.RestEndpoints
 import no.fint.event.model.HeaderConstants

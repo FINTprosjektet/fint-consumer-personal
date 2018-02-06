@@ -1,4 +1,4 @@
-package no.fint.consumer.personalressurs;
+package no.fint.consumer.models.arbeidsforhold;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
@@ -7,8 +7,8 @@ import no.fint.consumer.config.Constants;
 import no.fint.consumer.config.ConsumerProps;
 import no.fint.consumer.event.ConsumerEventUtil;
 import no.fint.event.model.Event;
+import no.fint.model.administrasjon.personal.Arbeidsforhold;
 import no.fint.model.administrasjon.personal.PersonalActions;
-import no.fint.model.administrasjon.personal.Personalressurs;
 import no.fint.model.relation.FintResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -21,9 +21,9 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-public class PersonalressursCacheService extends CacheService<FintResource<Personalressurs>> {
+public class ArbeidsforholdCacheService extends CacheService<FintResource<Arbeidsforhold>> {
 
-    public static final String MODEL = Personalressurs.class.getSimpleName().toLowerCase();
+    public static final String MODEL = Arbeidsforhold.class.getSimpleName().toLowerCase();
 
     @Autowired
     private ConsumerEventUtil consumerEventUtil;
@@ -31,8 +31,8 @@ public class PersonalressursCacheService extends CacheService<FintResource<Perso
     @Autowired
     private ConsumerProps props;
 
-    public PersonalressursCacheService() {
-        super(MODEL, PersonalActions.GET_ALL_PERSONALRESSURS);
+    public ArbeidsforholdCacheService() {
+        super(MODEL, PersonalActions.GET_ALL_ARBEIDSFORHOLD);
     }
 
     @PostConstruct
@@ -40,7 +40,7 @@ public class PersonalressursCacheService extends CacheService<FintResource<Perso
         Arrays.stream(props.getOrgs()).forEach(this::createCache);
     }
 
-    @Scheduled(initialDelayString = ConsumerProps.CACHE_INITIALDELAY_PERSONALRESSURS, fixedRateString = ConsumerProps.CACHE_FIXEDRATE_PERSONALRESSURS)
+    @Scheduled(initialDelayString = ConsumerProps.CACHE_INITIALDELAY_ARBEIDSFORHOLD, fixedRateString = ConsumerProps.CACHE_FIXEDRATE_ARBEIDSFORHOLD)
     public void populateCacheAll() {
         Arrays.stream(props.getOrgs()).forEach(this::populateCache);
     }
@@ -51,18 +51,18 @@ public class PersonalressursCacheService extends CacheService<FintResource<Perso
     }
 
     private void populateCache(String orgId) {
-        log.info("Populating employee cache for {}", orgId);
-        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_PERSONALRESSURS, Constants.CACHE_SERVICE);
+        log.info("Populating arbeidsforhold cache for {}", orgId);
+        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_ARBEIDSFORHOLD, Constants.CACHE_SERVICE);
         consumerEventUtil.send(event);
     }
 
-    public Optional<FintResource<Personalressurs>> getPersonalressurs(String orgId, String ansattnummer) {
-        return getOne(orgId, (fintResource) -> fintResource.getResource().getAnsattnummer().getIdentifikatorverdi().equals(ansattnummer));
+    public Optional<FintResource<Arbeidsforhold>> getArbeidsforhold(String orgId, String systemId) {
+        return getOne(orgId, (fintResource) -> fintResource.getResource().getSystemId().getIdentifikatorverdi().equals(systemId));
     }
 
     @Override
     public void onAction(Event event) {
-        update(event, new TypeReference<List<FintResource<Personalressurs>>>() {
+        update(event, new TypeReference<List<FintResource<Arbeidsforhold>>>() {
         });
     }
 }

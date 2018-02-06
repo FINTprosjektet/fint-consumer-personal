@@ -1,5 +1,4 @@
-package no.fint.consumer.arbeidsforhold;
-
+package no.fint.consumer.models.person;
 
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
@@ -9,8 +8,8 @@ import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.Event;
 import no.fint.event.model.HeaderConstants;
 import no.fint.event.model.Status;
-import no.fint.model.administrasjon.personal.Arbeidsforhold;
-import no.fint.model.administrasjon.personal.PersonalActions;
+import no.fint.model.felles.FellesActions;
+import no.fint.model.felles.Person;
 import no.fint.model.relation.FintResource;
 import no.fint.relations.FintRelationsMediaType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,20 +21,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+
 @Slf4j
 @CrossOrigin
 @RestController
-@RequestMapping(value = RestEndpoints.ARBEIDSFORHOLD, produces = {FintRelationsMediaType.APPLICATION_HAL_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
-public class ArbeidsforholdController {
+@RequestMapping(value = RestEndpoints.PERSON, produces = {FintRelationsMediaType.APPLICATION_HAL_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
+public class PersonController {
 
     @Autowired
     private FintAuditService fintAuditService;
 
     @Autowired
-    private ArbeidsforholdCacheService cacheService;
+    private PersonCacheService cacheService;
 
     @Autowired
-    private ArbeidsforholdAssembler assembler;
+    private PersonAssembler assembler;
 
     @GetMapping("/last-updated")
     public Map<String, String> getLastUpdated(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId) {
@@ -54,46 +54,46 @@ public class ArbeidsforholdController {
     }
 
     @GetMapping
-    public ResponseEntity getAllArbeidsforhold(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
-                                               @RequestHeader(value = HeaderConstants.CLIENT, defaultValue = Constants.DEFAULT_HEADER_CLIENT) String client,
-                                               @RequestParam(required = false) Long sinceTimeStamp) {
+    public ResponseEntity getAllPersoner(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
+                                         @RequestHeader(value = HeaderConstants.CLIENT, defaultValue = Constants.DEFAULT_HEADER_CLIENT) String client,
+                                         @RequestParam(required = false) Long sinceTimeStamp) {
         log.info("OrgId: {}, Client: {}", orgId, client);
         log.info("SinceTimeStamp: {}", sinceTimeStamp);
 
-        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_ARBEIDSFORHOLD, client);
+        Event event = new Event(orgId, Constants.COMPONENT, FellesActions.GET_ALL_PERSON, client);
         fintAuditService.audit(event);
 
         fintAuditService.audit(event, Status.CACHE);
 
-        List<FintResource<Arbeidsforhold>> employments;
+        List<FintResource<Person>> personer;
         if (sinceTimeStamp == null) {
-            employments = cacheService.getAll(orgId);
+            personer = cacheService.getAll(orgId);
         } else {
-            employments = cacheService.getAll(orgId, sinceTimeStamp);
+            personer = cacheService.getAll(orgId, sinceTimeStamp);
         }
 
         fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
-        return assembler.resources(employments);
+        return assembler.resources(personer);
     }
 
-    @GetMapping("/systemId/{id}")
-    public ResponseEntity getArbeidsforhold(@PathVariable String id,
-                                            @RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
-                                            @RequestHeader(value = HeaderConstants.CLIENT, defaultValue = Constants.DEFAULT_HEADER_CLIENT) String client) {
-        log.info("Id: {}, OrgId: {}, Client: {}", id, orgId, client);
+    @GetMapping("/fodselsnummer/{id}")
+    public ResponseEntity getPerson(@PathVariable String id,
+                                    @RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.DEFAULT_HEADER_ORGID) String orgId,
+                                    @RequestHeader(value = HeaderConstants.CLIENT, defaultValue = Constants.DEFAULT_HEADER_CLIENT) String client) {
+        log.info("Id: {}xxx, OrgId: {}, Client: {}", id.substring(0,8), orgId, client);
 
-        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ARBEIDSFORHOLD, client);
+        Event event = new Event(orgId, Constants.COMPONENT, FellesActions.GET_PERSON, client);
         fintAuditService.audit(event);
 
         fintAuditService.audit(event, Status.CACHE);
 
-        Optional<FintResource<Arbeidsforhold>> arbeidsforholdOptional = cacheService.getArbeidsforhold(orgId, id);
+        Optional<FintResource<Person>> personOptional = cacheService.getPerson(orgId, id);
 
         fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
-        if (arbeidsforholdOptional.isPresent()) {
-            return assembler.resource(arbeidsforholdOptional.get());
+        if (personOptional.isPresent()) {
+            return assembler.resource(personOptional.get());
         } else {
             return ResponseEntity.notFound().build();
         }

@@ -1,4 +1,4 @@
-package no.fint.consumer.personalressurs;
+package no.fint.consumer.models.personalressurs;
 
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package no.fint.consumer.arbeidsforhold;
+package no.fint.consumer.models.arbeidsforhold;
 
 import no.fint.model.administrasjon.personal.Arbeidsforhold;
 import no.fint.model.relation.FintResource;

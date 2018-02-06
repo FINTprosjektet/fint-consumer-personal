@@ -1,4 +1,4 @@
-package no.fint.consumer.person;
+package no.fint.consumer.models.person;
 
 import no.fint.model.felles.Person;
 import no.fint.model.relation.FintResource;
