@@ -10,6 +10,7 @@ import no.fint.event.model.Event;
 import no.fint.event.model.HeaderConstants;
 import no.fint.event.model.Status;
 
+import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.relation.FintResource;
 import no.fint.relations.FintRelationsMediaType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 import no.fint.model.administrasjon.personal.Fastlonn;
 import no.fint.model.administrasjon.personal.PersonalActions;
@@ -126,6 +128,16 @@ public class FastlonnController {
         }
     }
 
-    
+   @PostMapping
+   public ResponseEntity createFastlonn(
+    @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
+    @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client,
+    @RequestBody FintResource<Fastlonn> body) {
+        log.info("Body: {}", body);
+        Identifikator systemId = new Identifikator();
+        systemId.setIdentifikatorverdi(Long.toString(ThreadLocalRandom.current().nextLong(Long.MAX_VALUE)));
+        body.getResource().setSystemId(systemId);
+        return assembler.resource(body);
+   }
 }
 
