@@ -1,94 +1,42 @@
 {
-  "anvist": "2018-03-07T10:10:28Z",
-  "attestert": "2018-03-07T10:10:28Z",
+  "anvist": "2018-03-13T12:30:44Z",
+  "attestert": "2018-03-13T12:30:44Z",
   "periode": {
-    "slutt": "2018-03-07T10:10:28Z",
-    "start": "2018-03-07T10:10:28Z"
+    "slutt": "2018-03-13T12:30:44Z",
+    "start": "2018-03-13T12:30:44Z"
   },
   "systemId": {
-    "identifikatorverdi": "6686779131522784615"
+    "identifikatorverdi": "8004801442698697923"
   },
   "beskjeftigelse": [
     {
-      "prosent": 10000,
-      "kontostreng": {
-        "_links": {
-          "art": [
-            {
-              "href": "https://play-with-fint.felleskomponent.no/administrasjon/kodeverk/art/systemid/1234"
-            }
-          ],
-          "ansvar": [
-            {
-              "href": "https://play-with-fint.felleskomponent.no/administrasjon/kodeverk/ansvar/systemid/1234"
-            }
-          ],
-          "funksjon": [
-            {
-              "href": "https://play-with-fint.felleskomponent.no/administrasjon/kodeverk/funksjon/systemid/1234"
-            }
-          ]
-        }
-      },
-      "_links": {
-        "lonnsart": [
-          {
-            "href": "https://play-with-fint.felleskomponent.no/administrasjon/kodeverk/lonnsart/systemid/421879"
-          }
-        ]
-      }
+      "prosent": 10000
     }
   ],
   "fasttillegg": [
     {
-      "belop": 100000,
-      "kontostreng": {
-        "_links": {
-          "art": [
-            {
-              "href": "https://play-with-fint.felleskomponent.no/administrasjon/kodeverk/art/systemid/1234"
-            }
-          ],
-          "ansvar": [
-            {
-              "href": "https://play-with-fint.felleskomponent.no/administrasjon/kodeverk/ansvar/systemid/1234"
-            }
-          ],
-          "funksjon": [
-            {
-              "href": "https://play-with-fint.felleskomponent.no/administrasjon/kodeverk/funksjon/systemid/1234"
-            }
-          ]
-        }
-      },
-      "_links": {
-        "lonnsart": [
-          {
-            "href": "https://play-with-fint.felleskomponent.no/administrasjon/kodeverk/lonnsart/systemid/421879"
-          }
-        ]
-      }
+      "belop": 100000
     }
   ],
   "_links": {
     "arbeidsforhold": [
       {
-        "href": "https://play-with-fint.felleskomponent.no/administrasjon/arbeidsforhold/systemid/1234"
+        "href": "http://localhost:0//arbeidsforhold/systemid/1234"
       }
     ],
     "attestant": [
       {
-        "href": "https://play-with-fint.felleskomponent.no/administrasjon/personalressurs/ansattnummer/100000"
+        "href": "http://localhost:0//personalressurs/ansattnummer/100000"
       }
     ],
     "anviser": [
       {
-        "href": "https://play-with-fint.felleskomponent.no/administrasjon/personalressurs/ansattnummer/100001"
+        "href": "http://localhost:0//personalressurs/ansattnummer/100001"
       }
     ],
     "self": [
       {
-        "href": "http://localhost:60750/fastlonn/systemid/6686779131522784615"
+        "href": "http://localhost:55796/fastlonn/systemid/8004801442698697923"
       }
     ]
   }
