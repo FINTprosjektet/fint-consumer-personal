@@ -1,9 +1,5 @@
 # FINT Consumer Personal
 
-[![Build Status](https://travis-ci.org/FINTprosjektet/fint-consumer-personal.svg?branch=master)](https://travis-ci.org/FINTprosjektet/fint-consumer-personal) 
-[![Coverage Status](https://coveralls.io/repos/github/FINTprosjektet/fint-consumer-personal/badge.svg?branch=master)](https://coveralls.io/github/FINTprosjektet/fint-consumer-personal?branch=master)
-
-
 ## Run consumer locally
 
 ```bash
@@ -21,3 +17,5 @@ To log the event payload add the configuration to `application.properties` or as
 ```
 logging.level.no.fint.consumer.service.SubscriberService: DEBUG
 ```
+
+Generated from tag `v2.6.0-beta-3` on package `personal` and component `administrasjon`.

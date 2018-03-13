@@ -27,13 +27,16 @@ public class ConsumerProps {
     public static final String CACHE_INITIALDELAY_FASTLONN = "${fint.consumer.cache.initialDelay.fastlonn:70000}";
     public static final String CACHE_FIXEDRATE_FASTLONN = "${fint.consumer.cache.fixedRate.fastlonn:900000}";
     
-    public static final String CACHE_INITIALDELAY_PERSON = "${fint.consumer.cache.initialDelay.person:80000}";
+    public static final String CACHE_INITIALDELAY_FRAVAR = "${fint.consumer.cache.initialDelay.fravar:80000}";
+    public static final String CACHE_FIXEDRATE_FRAVAR = "${fint.consumer.cache.fixedRate.fravar:900000}";
+    
+    public static final String CACHE_INITIALDELAY_PERSON = "${fint.consumer.cache.initialDelay.person:90000}";
     public static final String CACHE_FIXEDRATE_PERSON = "${fint.consumer.cache.fixedRate.person:900000}";
     
-    public static final String CACHE_INITIALDELAY_PERSONALRESSURS = "${fint.consumer.cache.initialDelay.personalressurs:90000}";
+    public static final String CACHE_INITIALDELAY_PERSONALRESSURS = "${fint.consumer.cache.initialDelay.personalressurs:100000}";
     public static final String CACHE_FIXEDRATE_PERSONALRESSURS = "${fint.consumer.cache.fixedRate.personalressurs:900000}";
     
-    public static final String CACHE_INITIALDELAY_VARIABELLONN = "${fint.consumer.cache.initialDelay.variabellonn:100000}";
+    public static final String CACHE_INITIALDELAY_VARIABELLONN = "${fint.consumer.cache.initialDelay.variabellonn:110000}";
     public static final String CACHE_FIXEDRATE_VARIABELLONN = "${fint.consumer.cache.fixedRate.variabellonn:900000}";
     
 

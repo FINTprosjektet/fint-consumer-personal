@@ -5,10 +5,7 @@ import java.util.Map;
 import com.google.common.collect.ImmutableMap;
 import no.fint.model.administrasjon.kodeverk.*;
 import no.fint.model.administrasjon.organisasjon.Organisasjonselement;
-import no.fint.model.administrasjon.personal.Arbeidsforhold;
-import no.fint.model.administrasjon.personal.Fastlonn;
-import no.fint.model.administrasjon.personal.Personalressurs;
-import no.fint.model.administrasjon.personal.Variabellonn;
+import no.fint.model.administrasjon.personal.*;
 import no.fint.model.felles.Person;
 import no.fint.model.felles.kodeverk.iso.Kjonn;
 import no.fint.model.felles.kodeverk.iso.Landkode;
@@ -20,10 +17,13 @@ public class LinkMapper {
 		return ImmutableMap.<String,String>builder()
 			.put(Arbeidsforhold.class.getName(), contextPath + RestEndpoints.ARBEIDSFORHOLD)
 			.put(Fastlonn.class.getName(), contextPath + RestEndpoints.FASTLONN)
+			.put(Fravar.class.getName(), contextPath + RestEndpoints.FRAVAR)
 			.put(Person.class.getName(), contextPath + RestEndpoints.PERSON)
 			.put(Personalressurs.class.getName(), contextPath + RestEndpoints.PERSONALRESSURS)
 			.put(Variabellonn.class.getName(), contextPath + RestEndpoints.VARIABELLONN)
 			.put(Ansvar.class.getName(), "/administrasjon/kodeverk/ansvar")
+			.put(Fravarsgrunn.class.getName(), "/administrasjon/kodeverk/fravarsgrunn")
+			.put(Fravarstype.class.getName(), "/administrasjon/kodeverk/fravarstype")
 			.put(Funksjon.class.getName(), "/administrasjon/kodeverk/funksjon")
 			.put(Arbeidsforholdstype.class.getName(), "/administrasjon/kodeverk/arbeidsforholdstype")
 			.put(Stillingskode.class.getName(), "/administrasjon/kodeverk/stillingskode")

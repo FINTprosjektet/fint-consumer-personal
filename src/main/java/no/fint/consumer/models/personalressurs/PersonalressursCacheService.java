@@ -60,21 +60,33 @@ public class PersonalressursCacheService extends CacheService<FintResource<Perso
 
 
     public Optional<FintResource<Personalressurs>> getPersonalressursByAnsattnummer(String orgId, String ansattnummer) {
-        Identifikator needle = new Identifikator();
-        needle.setIdentifikatorverdi(ansattnummer);
-        return getOne(orgId, (fintResource) -> needle.equals(fintResource.getResource().getAnsattnummer()));
+        return getOne(orgId, (fintResource) -> Optional
+                .ofNullable(fintResource)
+                .map(FintResource::getResource)
+                .map(Personalressurs::getAnsattnummer)
+                .map(Identifikator::getIdentifikatorverdi)
+                .map(id -> id.equals(ansattnummer))
+                .orElse(false));
     }
 
     public Optional<FintResource<Personalressurs>> getPersonalressursByBrukernavn(String orgId, String brukernavn) {
-        Identifikator needle = new Identifikator();
-        needle.setIdentifikatorverdi(brukernavn);
-        return getOne(orgId, (fintResource) -> needle.equals(fintResource.getResource().getBrukernavn()));
+        return getOne(orgId, (fintResource) -> Optional
+                .ofNullable(fintResource)
+                .map(FintResource::getResource)
+                .map(Personalressurs::getBrukernavn)
+                .map(Identifikator::getIdentifikatorverdi)
+                .map(id -> id.equals(brukernavn))
+                .orElse(false));
     }
 
     public Optional<FintResource<Personalressurs>> getPersonalressursBySystemId(String orgId, String systemId) {
-        Identifikator needle = new Identifikator();
-        needle.setIdentifikatorverdi(systemId);
-        return getOne(orgId, (fintResource) -> needle.equals(fintResource.getResource().getSystemId()));
+        return getOne(orgId, (fintResource) -> Optional
+                .ofNullable(fintResource)
+                .map(FintResource::getResource)
+                .map(Personalressurs::getSystemId)
+                .map(Identifikator::getIdentifikatorverdi)
+                .map(id -> id.equals(systemId))
+                .orElse(false));
     }
 
 

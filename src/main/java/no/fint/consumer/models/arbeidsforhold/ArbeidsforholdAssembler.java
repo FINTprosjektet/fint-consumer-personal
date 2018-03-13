@@ -20,5 +20,6 @@ public class ArbeidsforholdAssembler extends FintResourceAssembler<Arbeidsforhol
     }
     
     
+    
 }
 

@@ -20,5 +20,6 @@ public class FastlonnAssembler extends FintResourceAssembler<Fastlonn> {
     }
     
     
+    
 }
 

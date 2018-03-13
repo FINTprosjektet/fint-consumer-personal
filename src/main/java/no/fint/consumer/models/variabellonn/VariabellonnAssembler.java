@@ -20,5 +20,6 @@ public class VariabellonnAssembler extends FintResourceAssembler<Variabellonn> {
     }
     
     
+    
 }
 

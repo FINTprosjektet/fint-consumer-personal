@@ -60,9 +60,13 @@ public class PersonCacheService extends CacheService<FintResource<Person>> {
 
 
     public Optional<FintResource<Person>> getPersonByFodselsnummer(String orgId, String fodselsnummer) {
-        Identifikator needle = new Identifikator();
-        needle.setIdentifikatorverdi(fodselsnummer);
-        return getOne(orgId, (fintResource) -> needle.equals(fintResource.getResource().getFodselsnummer()));
+        return getOne(orgId, (fintResource) -> Optional
+                .ofNullable(fintResource)
+                .map(FintResource::getResource)
+                .map(Person::getFodselsnummer)
+                .map(Identifikator::getIdentifikatorverdi)
+                .map(id -> id.equals(fodselsnummer))
+                .orElse(false));
     }
 
 

@@ -1,5 +1,5 @@
 buildscript {
-    apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.1.0/dependencies.gradle'
+    apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.2.0/dependencies.gradle'
     ext {
         springBootVersion = springBootVersion
     }
@@ -118,4 +118,4 @@ jacocoTestReport {
     }
 }
 
-apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.1.0/dependencyReport.gradle'
+apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.2.0/dependencyReport.gradle'

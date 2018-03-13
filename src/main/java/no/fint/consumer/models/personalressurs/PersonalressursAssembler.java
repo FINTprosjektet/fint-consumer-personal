@@ -20,5 +20,6 @@ public class PersonalressursAssembler extends FintResourceAssembler<Personalress
     }
     
     
+    
 }
 

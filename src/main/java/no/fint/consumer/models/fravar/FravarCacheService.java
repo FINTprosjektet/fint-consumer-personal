@@ -1,4 +1,4 @@
-package no.fint.consumer.models.variabellonn;
+package no.fint.consumer.models.fravar;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
@@ -18,14 +18,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import no.fint.model.administrasjon.personal.Variabellonn;
+import no.fint.model.administrasjon.personal.Fravar;
 import no.fint.model.administrasjon.personal.PersonalActions;
 
 @Slf4j
 @Service
-public class VariabellonnCacheService extends CacheService<FintResource<Variabellonn>> {
+public class FravarCacheService extends CacheService<FintResource<Fravar>> {
 
-    public static final String MODEL = Variabellonn.class.getSimpleName().toLowerCase();
+    public static final String MODEL = Fravar.class.getSimpleName().toLowerCase();
 
     @Autowired
     private ConsumerEventUtil consumerEventUtil;
@@ -33,8 +33,8 @@ public class VariabellonnCacheService extends CacheService<FintResource<Variabel
     @Autowired
     private ConsumerProps props;
 
-    public VariabellonnCacheService() {
-        super(MODEL, PersonalActions.GET_ALL_VARIABELLONN);
+    public FravarCacheService() {
+        super(MODEL, PersonalActions.GET_ALL_FRAVAR);
     }
 
     @PostConstruct
@@ -42,7 +42,7 @@ public class VariabellonnCacheService extends CacheService<FintResource<Variabel
         Arrays.stream(props.getOrgs()).forEach(this::createCache);
     }
 
-    @Scheduled(initialDelayString = ConsumerProps.CACHE_INITIALDELAY_VARIABELLONN, fixedRateString = ConsumerProps.CACHE_FIXEDRATE_VARIABELLONN)
+    @Scheduled(initialDelayString = ConsumerProps.CACHE_INITIALDELAY_FRAVAR, fixedRateString = ConsumerProps.CACHE_FIXEDRATE_FRAVAR)
     public void populateCacheAll() {
         Arrays.stream(props.getOrgs()).forEach(this::populateCache);
     }
@@ -53,17 +53,17 @@ public class VariabellonnCacheService extends CacheService<FintResource<Variabel
 	}
 
     private void populateCache(String orgId) {
-		log.info("Populating Variabellonn cache for {}", orgId);
-        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_VARIABELLONN, Constants.CACHE_SERVICE);
+		log.info("Populating Fravar cache for {}", orgId);
+        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_FRAVAR, Constants.CACHE_SERVICE);
         consumerEventUtil.send(event);
     }
 
 
-    public Optional<FintResource<Variabellonn>> getVariabellonnBySystemId(String orgId, String systemId) {
+    public Optional<FintResource<Fravar>> getFravarBySystemId(String orgId, String systemId) {
         return getOne(orgId, (fintResource) -> Optional
                 .ofNullable(fintResource)
                 .map(FintResource::getResource)
-                .map(Variabellonn::getSystemId)
+                .map(Fravar::getSystemId)
                 .map(Identifikator::getIdentifikatorverdi)
                 .map(id -> id.equals(systemId))
                 .orElse(false));
@@ -72,7 +72,7 @@ public class VariabellonnCacheService extends CacheService<FintResource<Variabel
 
 	@Override
     public void onAction(Event event) {
-        update(event, new TypeReference<List<FintResource<Variabellonn>>>() {
+        update(event, new TypeReference<List<FintResource<Fravar>>>() {
         });
     }
 }

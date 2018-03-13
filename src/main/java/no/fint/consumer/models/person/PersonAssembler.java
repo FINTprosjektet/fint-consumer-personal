@@ -20,5 +20,6 @@ public class PersonAssembler extends FintResourceAssembler<Person> {
     }
     
     
+    
 }
 
