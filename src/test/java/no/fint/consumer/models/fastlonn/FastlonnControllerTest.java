@@ -39,6 +39,7 @@ public class FastlonnControllerTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
+    @Ignore
     @Test
     public void postFastlonn() {
         Fastlonn fastlonn = new Fastlonn();

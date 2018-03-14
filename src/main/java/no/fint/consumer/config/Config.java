@@ -33,7 +33,7 @@ public class Config {
     @Autowired
     ObjectMapper objectMapper;
 
-    @Autowired(required = false)
+    @Autowired
     RestTemplate restTemplate;
 
     @PostConstruct
@@ -43,12 +43,10 @@ public class Config {
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         log.info("Disabled FAIL_ON_EMPTY_BEANS on {}", objectMapper);
         log.info("After: {}", objectMapper.isEnabled(SerializationFeature.FAIL_ON_EMPTY_BEANS));
-        if (restTemplate != null) {
-            List<AbstractJackson2HttpMessageConverter> converters = restTemplate.getMessageConverters().stream().filter(AbstractJackson2HttpMessageConverter.class::isInstance).map(AbstractJackson2HttpMessageConverter.class::cast).collect(Collectors.toList());
-            log.info("Found {} Jackson MessageConverters.", converters.size());
-            converters.forEach(converter -> converter.setObjectMapper(objectMapper));
-            log.info("Updated ObjectMapper on all Jackson MessageConverters.");
-        }
+        List<AbstractJackson2HttpMessageConverter> converters = restTemplate.getMessageConverters().stream().filter(AbstractJackson2HttpMessageConverter.class::isInstance).map(AbstractJackson2HttpMessageConverter.class::cast).collect(Collectors.toList());
+        log.info("Found {} Jackson MessageConverters.", converters.size());
+        converters.forEach(converter -> converter.setObjectMapper(objectMapper));
+        log.info("Updated ObjectMapper on all Jackson MessageConverters.");
     }
 
     @Qualifier("linkMapper")
