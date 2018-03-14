@@ -54,7 +54,7 @@ public class FastlonnController {
     }
 
     @GetMapping("/cache/size")
-     public ImmutableMap<String, Integer> getCacheSize(@RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId) {
+    public ImmutableMap<String, Integer> getCacheSize(@RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId) {
         if (props.isOverrideOrgId() || orgId == null) {
             orgId = props.getDefaultOrgId();
         }
@@ -102,8 +102,8 @@ public class FastlonnController {
 
     @GetMapping("/systemid/{id}")
     public ResponseEntity getFastlonnBySystemId(@PathVariable String id,
-            @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
-            @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client) {
+                                                @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
+                                                @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client) {
         if (props.isOverrideOrgId() || orgId == null) {
             orgId = props.getDefaultOrgId();
         }
@@ -128,16 +128,17 @@ public class FastlonnController {
         }
     }
 
-   @PostMapping
-   public ResponseEntity createFastlonn(
-    @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
-    @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client,
-    @RequestBody FintResource<Fastlonn> body) {
+    // TODO What is the proper type for the request body?
+    @PostMapping
+    public ResponseEntity createFastlonn(
+            @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
+            @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client,
+            @RequestBody FintResource<Fastlonn> body) {
         log.info("Body: {}", body);
         Identifikator systemId = new Identifikator();
         systemId.setIdentifikatorverdi(Long.toString(ThreadLocalRandom.current().nextLong(Long.MAX_VALUE)));
         body.getResource().setSystemId(systemId);
         return assembler.resource(body);
-   }
+    }
 }
 

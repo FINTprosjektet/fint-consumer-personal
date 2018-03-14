@@ -10,12 +10,14 @@
   },
   "beskjeftigelse": [
     {
-      "prosent": 10000
+      "prosent": 10000,
+      "kontostreng": {}
     }
   ],
   "fasttillegg": [
     {
-      "belop": 100000
+      "belop": 100000,
+      "kontostreng": {}
     }
   ],
   "_links": {

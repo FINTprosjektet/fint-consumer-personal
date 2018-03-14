@@ -39,16 +39,15 @@ public class FastlonnControllerTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    @Ignore
     @Test
     public void postFastlonn() {
         Fastlonn fastlonn = new Fastlonn();
         Beskjeftigelse beskjeftigelse = new Beskjeftigelse();
         beskjeftigelse.setProsent(10000L);
-        //beskjeftigelse.setKontostreng(new Kontostreng());
+        beskjeftigelse.setKontostreng(new Kontostreng());
         Fasttillegg fasttillegg = new Fasttillegg();
         fasttillegg.setBelop(100000L);
-        //fasttillegg.setKontostreng(new Kontostreng());
+        fasttillegg.setKontostreng(new Kontostreng());
         fastlonn.setBeskjeftigelse(Collections.singletonList(beskjeftigelse));
         fastlonn.setFasttillegg(Collections.singletonList(fasttillegg));
         fastlonn.setAttestert(new Date());
@@ -72,6 +71,7 @@ public class FastlonnControllerTest {
         Assert.assertThat(result.getStatusCode().is2xxSuccessful(), Matchers.is(true));
     }
 
+    // TODO Update with proper JSON for request body, if necessary.
     @Ignore
     @Test
     public void postFastlonnJson() throws IOException {
