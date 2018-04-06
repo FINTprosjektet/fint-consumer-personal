@@ -12,12 +12,17 @@ import no.fint.event.model.Status;
 
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.relation.FintResource;
+import no.fint.model.resource.Link;
+import no.fint.model.resource.administrasjon.personal.FastlonnResource;
 import no.fint.relations.FintRelationsMediaType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Resources;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,6 +30,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import no.fint.model.administrasjon.personal.Fastlonn;
 import no.fint.model.administrasjon.personal.PersonalActions;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @CrossOrigin
@@ -87,7 +94,7 @@ public class FastlonnController {
 
         fintAuditService.audit(event, Status.CACHE);
 
-        List<FintResource<Fastlonn>> fastlonn;
+        List<FastlonnResource> fastlonn;
         if (sinceTimeStamp == null) {
             fastlonn = cacheService.getAll(orgId);
         } else {
@@ -96,7 +103,7 @@ public class FastlonnController {
 
         fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
-        return assembler.resources(fastlonn);
+        return ResponseEntity.ok(new Resources(fastlonn, new org.springframework.hateoas.Link(ServletUriComponentsBuilder.fromCurrentRequest().build().toString())));
     }
 
 
@@ -117,28 +124,31 @@ public class FastlonnController {
 
         fintAuditService.audit(event, Status.CACHE);
 
-        Optional<FintResource<Fastlonn>> fastlonn = cacheService.getFastlonnBySystemId(orgId, id);
+        Optional<FastlonnResource> fastlonn = cacheService.getFastlonnBySystemId(orgId, id);
 
         fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
         if (fastlonn.isPresent()) {
-            return assembler.resource(fastlonn.get());
+            return ResponseEntity.ok(fastlonn.get());
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
-    // TODO What is the proper type for the request body?
     @PostMapping
     public ResponseEntity createFastlonn(
             @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client,
-            @RequestBody FintResource<Fastlonn> body) {
+            @RequestBody FastlonnResource body) {
         log.info("Body: {}", body);
         Identifikator systemId = new Identifikator();
         systemId.setIdentifikatorverdi(Long.toString(ThreadLocalRandom.current().nextLong(Long.MAX_VALUE)));
-        body.getResource().setSystemId(systemId);
-        return assembler.resource(body);
+        body.setSystemId(systemId);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().pathSegment("systemid", "{id}").buildAndExpand(systemId.getIdentifikatorverdi()).toUri();
+        log.info("URI: {}", uri);
+        body.addLink("self", Link.with(uri.toString()));
+        cacheService.add(orgId, Collections.singletonList(body));
+        return ResponseEntity.created(uri).build();
     }
 }
 

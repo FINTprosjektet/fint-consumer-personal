@@ -1,9 +1,8 @@
 package no.fint.consumer.test;
 
 import lombok.extern.slf4j.Slf4j;
-import no.fint.consumer.models.fastlonn.FastlonnCacheService;
-import no.fint.consumer.models.fravar.FravarCacheService;
-import no.fint.consumer.models.variabellonn.VariabellonnCacheService;
+import no.fint.consumer.event.EventListener;
+import no.fint.event.model.Event;
 import no.fint.model.administrasjon.kodeverk.Fravarsgrunn;
 import no.fint.model.administrasjon.kodeverk.Fravarstype;
 import no.fint.model.administrasjon.kompleksedatatyper.Beskjeftigelse;
@@ -22,6 +21,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -31,20 +31,23 @@ import java.util.concurrent.TimeUnit;
 public class TestData {
 
     @Autowired
-    FravarCacheService fravarCacheService;
-
-    @Autowired
-    FastlonnCacheService fastlonnCacheService;
-
-    @Autowired
-    VariabellonnCacheService variabellonnCacheService;
+    EventListener eventListener;
 
     @PostConstruct
     public void init() {
-        fravarCacheService.update("mock.no", Collections.singletonList(fakeFravar()));
-        fastlonnCacheService.update("mock.no", Collections.singletonList(fakeFastlonn()));
-        variabellonnCacheService.update("mock.no", Collections.singletonList(fakeVariabellonn()));
+        eventListener.accept(createEvent(PersonalActions.GET_ALL_FRAVAR, Collections.singletonList(fakeFravar())));
+        eventListener.accept(createEvent(PersonalActions.GET_ALL_FASTLONN, Collections.singletonList(fakeFastlonn())));
+        eventListener.accept(createEvent(PersonalActions.GET_ALL_VARIABELLONN, Collections.singletonList(fakeVariabellonn())));
         log.info("Alternative facts restored for mock.no");
+    }
+
+    private Event createEvent(Enum action, List list) {
+        Event result = new Event();
+        result.setCorrId(UUID.randomUUID().toString());
+        result.setAction(action);
+        result.setOrgId("mock.no");
+        result.setData(list);
+        return result;
     }
 
     private FintResource<Variabellonn> fakeVariabellonn() {
@@ -83,13 +86,13 @@ public class TestData {
         Beskjeftigelse beskjeftigelse = new Beskjeftigelse();
         beskjeftigelse.setProsent(10000L);
         beskjeftigelse.setBeskrivelse("1STA KLST");
-        //beskjeftigelse.setKontostreng(new Kontostreng());
+        beskjeftigelse.setKontostreng(new Kontostreng());
         beskjeftigelse.setPeriode(getPeriode());
 
         Fasttillegg fasttillegg = new Fasttillegg();
         fasttillegg.setBelop(100000L);
         fasttillegg.setBeskrivelse("Kontaktlærertillegg");
-        //fasttillegg.setKontostreng(new Kontostreng());
+        fasttillegg.setKontostreng(new Kontostreng());
         fasttillegg.setPeriode(getPeriode());
 
         Fastlonn fastlonn = new Fastlonn();

@@ -1,44 +1,58 @@
 {
-  "anvist": "2018-03-13T12:30:44Z",
-  "attestert": "2018-03-13T12:30:44Z",
+  "anvist": "2018-04-05T14:51:20Z",
+  "attestert": "2018-04-05T14:51:10Z",
+  "kontert": null,
   "periode": {
-    "slutt": "2018-03-13T12:30:44Z",
-    "start": "2018-03-13T12:30:44Z"
+    "beskrivelse": null,
+    "slutt": null,
+    "start": "2018-04-05T14:51:20Z"
   },
   "systemId": {
-    "identifikatorverdi": "8004801442698697923"
+    "gyldighetsperiode": null,
+    "identifikatorverdi": "ABC123"
   },
   "beskjeftigelse": [
     {
+      "beskrivelse": "Test",
+      "kontostreng": {
+        "_links": {
+          "art": [
+            {
+              "href": "/administrasjon/kodeverk/art/systemid/1"
+            }
+          ],
+          "ansvar": [
+            {
+              "href": "/administrasjon/kodeverk/ansvar/systemid/2"
+            }
+          ],
+          "funksjon": [
+            {
+              "href": "/administrasjon/kodeverk/funksjon/systemid/3"
+            }
+          ]
+        }
+      },
+      "periode": {
+        "beskrivelse": null,
+        "slutt": null,
+        "start": "2018-04-05T14:51:20Z"
+      },
       "prosent": 10000,
-      "kontostreng": {}
+      "_links": {
+        "lonnsart": [
+          {
+            "href": "/administrasjon/kodeverk/lonnsart/systemid/4"
+          }
+        ]
+      }
     }
   ],
-  "fasttillegg": [
-    {
-      "belop": 100000,
-      "kontostreng": {}
-    }
-  ],
+  "fasttillegg": [],
   "_links": {
     "arbeidsforhold": [
       {
-        "href": "http://localhost:0//arbeidsforhold/systemid/1234"
-      }
-    ],
-    "attestant": [
-      {
-        "href": "http://localhost:0//personalressurs/ansattnummer/100000"
-      }
-    ],
-    "anviser": [
-      {
-        "href": "http://localhost:0//personalressurs/ansattnummer/100001"
-      }
-    ],
-    "self": [
-      {
-        "href": "http://localhost:55796/fastlonn/systemid/8004801442698697923"
+        "href": "/administrasjon/personal/arbeidsforhold/systemid/1234"
       }
     ]
   }

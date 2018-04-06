@@ -66,13 +66,11 @@ public class FastlonnControllerTest {
         headers.add("x-org-id", "pwf.no");
         headers.add("x-client", "test");
 
-        ResponseEntity<String> result = restTemplate.exchange("http://localhost:{port}{endpoint}", HttpMethod.POST, new HttpEntity<>(resource, headers), String.class, port, RestEndpoints.FASTLONN);
+        ResponseEntity<String> result = restTemplate.exchange("http://localhost:{port}{endpoint}", HttpMethod.POST, new HttpEntity<>(fastlonn, headers), String.class, port, RestEndpoints.FASTLONN);
         System.out.println("result.getBody() = " + result.getBody());
         Assert.assertThat(result.getStatusCode().is2xxSuccessful(), Matchers.is(true));
     }
 
-    // TODO Update with proper JSON for request body, if necessary.
-    @Ignore
     @Test
     public void postFastlonnJson() throws IOException {
         String content = IOUtils.toString(new ClassPathResource("fastlonn.json").getInputStream(), "UTF-8");
