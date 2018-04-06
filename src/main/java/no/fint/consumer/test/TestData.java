@@ -50,7 +50,7 @@ public class TestData {
         return result;
     }
 
-    private FintResource<Variabellonn> fakeVariabellonn() {
+    public static FintResource<Variabellonn> fakeVariabellonn() {
         Identifikator identifikator = new Identifikator();
         identifikator.setIdentifikatorverdi(UUID.randomUUID().toString());
 
@@ -72,14 +72,14 @@ public class TestData {
                 .addRelations(new Relation.Builder().with(Fastlonn.Relasjonsnavn.ANVISER).forType(Personalressurs.class).field("ansattnummer").value("100001").build());
     }
 
-    private Periode getPeriode() {
+    private static Periode getPeriode() {
         Periode periode = new Periode();
         periode.setStart(new Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(10)));
         periode.setSlutt(new Date());
         return periode;
     }
 
-    private FintResource<Fastlonn> fakeFastlonn() {
+    public static FintResource<Fastlonn> fakeFastlonn() {
         Identifikator identifikator = new Identifikator();
         identifikator.setIdentifikatorverdi(UUID.randomUUID().toString());
 
@@ -110,7 +110,7 @@ public class TestData {
 
     }
 
-    private FintResource<Fravar> fakeFravar() {
+    public static FintResource<Fravar> fakeFravar() {
         Identifikator identifikator = new Identifikator();
         identifikator.setIdentifikatorverdi(UUID.randomUUID().toString());
 
