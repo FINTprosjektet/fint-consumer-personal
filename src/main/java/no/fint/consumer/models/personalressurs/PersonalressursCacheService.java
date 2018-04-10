@@ -1,15 +1,22 @@
 package no.fint.consumer.models.personalressurs;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 import lombok.extern.slf4j.Slf4j;
+
 import no.fint.cache.CacheService;
 import no.fint.consumer.config.Constants;
 import no.fint.consumer.config.ConsumerProps;
 import no.fint.consumer.event.ConsumerEventUtil;
 import no.fint.event.model.Event;
-import no.fint.model.relation.FintResource;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
+import no.fint.model.relation.FintResource;
+import no.fint.model.resource.Link;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -17,15 +24,20 @@ import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import no.fint.model.administrasjon.personal.Personalressurs;
+import no.fint.model.resource.administrasjon.personal.PersonalressursResource;
 import no.fint.model.administrasjon.personal.PersonalActions;
 
 @Slf4j
 @Service
-public class PersonalressursCacheService extends CacheService<FintResource<Personalressurs>> {
+public class PersonalressursCacheService extends CacheService<PersonalressursResource> {
 
     public static final String MODEL = Personalressurs.class.getSimpleName().toLowerCase();
+
+    @Value("${fint.consumer.compatibility.fintresource:true}")
+    private boolean fintResourceCompatibility;
 
     @Autowired
     private ConsumerEventUtil consumerEventUtil;
@@ -59,40 +71,50 @@ public class PersonalressursCacheService extends CacheService<FintResource<Perso
     }
 
 
-    public Optional<FintResource<Personalressurs>> getPersonalressursByAnsattnummer(String orgId, String ansattnummer) {
-        return getOne(orgId, (fintResource) -> Optional
-                .ofNullable(fintResource)
-                .map(FintResource::getResource)
-                .map(Personalressurs::getAnsattnummer)
+    public Optional<PersonalressursResource> getPersonalressursByAnsattnummer(String orgId, String ansattnummer) {
+        return getOne(orgId, (resource) -> Optional
+                .ofNullable(resource)
+                .map(PersonalressursResource::getAnsattnummer)
                 .map(Identifikator::getIdentifikatorverdi)
-                .map(id -> id.equals(ansattnummer))
+                .map(_id -> _id.equals(ansattnummer))
                 .orElse(false));
     }
 
-    public Optional<FintResource<Personalressurs>> getPersonalressursByBrukernavn(String orgId, String brukernavn) {
-        return getOne(orgId, (fintResource) -> Optional
-                .ofNullable(fintResource)
-                .map(FintResource::getResource)
-                .map(Personalressurs::getBrukernavn)
+    public Optional<PersonalressursResource> getPersonalressursByBrukernavn(String orgId, String brukernavn) {
+        return getOne(orgId, (resource) -> Optional
+                .ofNullable(resource)
+                .map(PersonalressursResource::getBrukernavn)
                 .map(Identifikator::getIdentifikatorverdi)
-                .map(id -> id.equals(brukernavn))
+                .map(_id -> _id.equals(brukernavn))
                 .orElse(false));
     }
 
-    public Optional<FintResource<Personalressurs>> getPersonalressursBySystemId(String orgId, String systemId) {
-        return getOne(orgId, (fintResource) -> Optional
-                .ofNullable(fintResource)
-                .map(FintResource::getResource)
-                .map(Personalressurs::getSystemId)
+    public Optional<PersonalressursResource> getPersonalressursBySystemId(String orgId, String systemId) {
+        return getOne(orgId, (resource) -> Optional
+                .ofNullable(resource)
+                .map(PersonalressursResource::getSystemId)
                 .map(Identifikator::getIdentifikatorverdi)
-                .map(id -> id.equals(systemId))
+                .map(_id -> _id.equals(systemId))
                 .orElse(false));
     }
 
 
 	@Override
     public void onAction(Event event) {
-        update(event, new TypeReference<List<FintResource<Personalressurs>>>() {
+        if (fintResourceCompatibility && !event.getData().isEmpty() && event.getData().get(0) instanceof FintResource) {
+            log.info("Compatibility: Converting FintResource<PersonalressursResource> to PersonalressursResource ...");
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+            List<FintResource<PersonalressursResource>> original = objectMapper.convertValue(event.getData(), new TypeReference<List<FintResource<PersonalressursResource>>>() {
+            });
+            List<PersonalressursResource> replacement = original.stream().map(fintResource -> {
+                PersonalressursResource resource = fintResource.getResource();
+                fintResource.getRelations().forEach(relation -> resource.addLink(relation.getRelationName(), Link.with(relation.getLink())));
+                return resource;
+            }).collect(Collectors.toList());
+            event.setData(replacement);
+        }
+        update(event, new TypeReference<List<PersonalressursResource>>() {
         });
     }
 }

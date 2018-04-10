@@ -1,15 +1,22 @@
 package no.fint.consumer.models.person;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 import lombok.extern.slf4j.Slf4j;
+
 import no.fint.cache.CacheService;
 import no.fint.consumer.config.Constants;
 import no.fint.consumer.config.ConsumerProps;
 import no.fint.consumer.event.ConsumerEventUtil;
 import no.fint.event.model.Event;
-import no.fint.model.relation.FintResource;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
+import no.fint.model.relation.FintResource;
+import no.fint.model.resource.Link;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -17,15 +24,20 @@ import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import no.fint.model.felles.Person;
+import no.fint.model.resource.felles.PersonResource;
 import no.fint.model.felles.FellesActions;
 
 @Slf4j
 @Service
-public class PersonCacheService extends CacheService<FintResource<Person>> {
+public class PersonCacheService extends CacheService<PersonResource> {
 
     public static final String MODEL = Person.class.getSimpleName().toLowerCase();
+
+    @Value("${fint.consumer.compatibility.fintresource:true}")
+    private boolean fintResourceCompatibility;
 
     @Autowired
     private ConsumerEventUtil consumerEventUtil;
@@ -59,20 +71,32 @@ public class PersonCacheService extends CacheService<FintResource<Person>> {
     }
 
 
-    public Optional<FintResource<Person>> getPersonByFodselsnummer(String orgId, String fodselsnummer) {
-        return getOne(orgId, (fintResource) -> Optional
-                .ofNullable(fintResource)
-                .map(FintResource::getResource)
-                .map(Person::getFodselsnummer)
+    public Optional<PersonResource> getPersonByFodselsnummer(String orgId, String fodselsnummer) {
+        return getOne(orgId, (resource) -> Optional
+                .ofNullable(resource)
+                .map(PersonResource::getFodselsnummer)
                 .map(Identifikator::getIdentifikatorverdi)
-                .map(id -> id.equals(fodselsnummer))
+                .map(_id -> _id.equals(fodselsnummer))
                 .orElse(false));
     }
 
 
 	@Override
     public void onAction(Event event) {
-        update(event, new TypeReference<List<FintResource<Person>>>() {
+        if (fintResourceCompatibility && !event.getData().isEmpty() && event.getData().get(0) instanceof FintResource) {
+            log.info("Compatibility: Converting FintResource<PersonResource> to PersonResource ...");
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+            List<FintResource<PersonResource>> original = objectMapper.convertValue(event.getData(), new TypeReference<List<FintResource<PersonResource>>>() {
+            });
+            List<PersonResource> replacement = original.stream().map(fintResource -> {
+                PersonResource resource = fintResource.getResource();
+                fintResource.getRelations().forEach(relation -> resource.addLink(relation.getRelationName(), Link.with(relation.getLink())));
+                return resource;
+            }).collect(Collectors.toList());
+            event.setData(replacement);
+        }
+        update(event, new TypeReference<List<PersonResource>>() {
         });
     }
 }

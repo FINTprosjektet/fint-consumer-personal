@@ -15,4 +15,5 @@ fint:
   members: localhost
 
 server:
- context-path: /
+ context-path: ""
+ port: 8080

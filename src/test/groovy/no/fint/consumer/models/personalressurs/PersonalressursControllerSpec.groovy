@@ -13,15 +13,15 @@ import org.springframework.test.web.servlet.MockMvc
 class PersonalressursControllerSpec extends MockMvcSpecification {
     private PersonalressursController controller
     private PersonalressursCacheService cacheService
-    private PersonalressursAssembler assembler
+    private PersonalressursLinker linker
     private ConsumerProps props
     private MockMvc mockMvc
 
     void setup() {
         cacheService = Mock(PersonalressursCacheService)
-        assembler = Mock(PersonalressursAssembler)
+        linker = Mock(PersonalressursLinker)
         props = Mock(ConsumerProps)
-        controller = new PersonalressursController(fintAuditService: Mock(FintAuditService), cacheService: cacheService, assembler: assembler, props: props)
+        controller = new PersonalressursController(fintAuditService: Mock(FintAuditService), cacheService: cacheService, linker: linker, props: props)
         mockMvc = standaloneSetup(controller)
     }
 
@@ -47,7 +47,7 @@ class PersonalressursControllerSpec extends MockMvcSpecification {
         then:
         1 * props.isOverrideOrgId() >> false
         1 * cacheService.getAll('rogfk.no') >> []
-        1 * assembler.resources([]) >> ResponseEntity.ok([])
+        1 * linker.toResources([]) >> ResponseEntity.ok([])
         personalressurser.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
     }

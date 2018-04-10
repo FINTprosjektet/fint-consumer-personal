@@ -5,23 +5,31 @@ import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.FintAuditService;
 import no.fint.consumer.config.Constants;
 import no.fint.consumer.config.ConsumerProps;
+import no.fint.consumer.exceptions.*;
 import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.Event;
 import no.fint.event.model.HeaderConstants;
 import no.fint.event.model.Status;
 
-import no.fint.model.relation.FintResource;
+import no.fint.model.resource.Link;
+
 import no.fint.relations.FintRelationsMediaType;
+import no.fint.relations.FintResources;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import no.fint.model.felles.Person;
+import javax.naming.NameNotFoundException;
+
+import no.fint.model.resource.felles.PersonResource;
 import no.fint.model.felles.FellesActions;
 
 @Slf4j
@@ -37,7 +45,7 @@ public class PersonController {
     private FintAuditService fintAuditService;
 
     @Autowired
-    private PersonAssembler assembler;
+    private PersonLinker linker;
 
     @Autowired
     private ConsumerProps props;
@@ -68,7 +76,7 @@ public class PersonController {
     }
 
     @GetMapping
-    public ResponseEntity getPerson(
+    public FintResources getPerson(
             @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client,
             @RequestParam(required = false) Long sinceTimeStamp) {
@@ -85,7 +93,7 @@ public class PersonController {
 
         fintAuditService.audit(event, Status.CACHE);
 
-        List<FintResource<Person>> person;
+        List<PersonResource> person;
         if (sinceTimeStamp == null) {
             person = cacheService.getAll(orgId);
         } else {
@@ -94,12 +102,12 @@ public class PersonController {
 
         fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
-        return assembler.resources(person);
+        return linker.toResources(person);
     }
 
 
     @GetMapping("/fodselsnummer/{id}")
-    public ResponseEntity getPersonByFodselsnummer(@PathVariable String id,
+    public PersonResource getPersonByFodselsnummer(@PathVariable String id,
             @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client) {
         if (props.isOverrideOrgId() || orgId == null) {
@@ -108,24 +116,53 @@ public class PersonController {
         if (client == null) {
             client = props.getDefaultClient();
         }
-        log.info("Fodselsnummer: {}xxx, OrgId: {}, Client: {}", id.substring(0,8), orgId, client);
+        log.info("Fodselsnummer: {}, OrgId: {}, Client: {}", id, orgId, client);
 
         Event event = new Event(orgId, Constants.COMPONENT, FellesActions.GET_PERSON, client);
         fintAuditService.audit(event);
 
         fintAuditService.audit(event, Status.CACHE);
 
-        Optional<FintResource<Person>> person = cacheService.getPersonByFodselsnummer(orgId, id);
+        Optional<PersonResource> person = cacheService.getPersonByFodselsnummer(orgId, id);
 
         fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
-        if (person.isPresent()) {
-            return assembler.resource(person.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return person.orElseThrow(() -> new EntityNotFoundException(id));
     }
 
-    
+
+    //
+    // Exception handlers
+    //
+    @ExceptionHandler(UpdateEntityMismatchException.class)
+    public ResponseEntity handleUpdateEntityMismatch(Exception e) {
+        return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity handleEntityNotFound(Exception e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(e.getMessage()));
+    }
+
+    @ExceptionHandler(CreateEntityMismatchException.class)
+    public ResponseEntity handleCreateEntityMismatch(Exception e) {
+        return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+    }
+
+    @ExceptionHandler(EntityFoundException.class)
+    public ResponseEntity handleEntityFound(Exception e) {
+        return ResponseEntity.status(HttpStatus.FOUND).body(new ErrorResponse(e.getMessage()));
+    }
+
+    @ExceptionHandler(NameNotFoundException.class)
+    public ResponseEntity handleNameNotFound(Exception e) {
+        return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+    }
+
+    @ExceptionHandler(UnknownHostException.class)
+    public ResponseEntity handleUnkownHost(Exception e) {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ErrorResponse(e.getMessage()));
+    }
+
 }
 

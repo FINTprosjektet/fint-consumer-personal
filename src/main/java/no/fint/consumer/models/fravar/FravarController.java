@@ -1,6 +1,5 @@
 package no.fint.consumer.models.fravar;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
@@ -9,26 +8,33 @@ import no.fint.audit.FintAuditService;
 import no.fint.consumer.config.Constants;
 import no.fint.consumer.config.ConsumerProps;
 import no.fint.consumer.event.ConsumerEventUtil;
+import no.fint.consumer.exceptions.*;
 import no.fint.consumer.status.StatusCache;
 import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.Event;
 import no.fint.event.model.HeaderConstants;
 import no.fint.event.model.Status;
-import no.fint.model.administrasjon.personal.Fravar;
-import no.fint.model.administrasjon.personal.PersonalActions;
-import no.fint.model.relation.FintResource;
+
 import no.fint.relations.FintRelationsMediaType;
+import no.fint.relations.FintResources;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import javax.naming.NameNotFoundException;
+
+import no.fint.model.resource.administrasjon.personal.FravarResource;
+import no.fint.model.administrasjon.personal.PersonalActions;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @CrossOrigin
@@ -43,7 +49,7 @@ public class FravarController {
     private FintAuditService fintAuditService;
 
     @Autowired
-    private FravarAssembler assembler;
+    private FravarLinker linker;
 
     @Autowired
     private ConsumerProps props;
@@ -52,10 +58,10 @@ public class FravarController {
     private StatusCache statusCache;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private ConsumerEventUtil consumerEventUtil;
 
     @Autowired
-    private ConsumerEventUtil consumerEventUtil;
+    private ObjectMapper objectMapper;
 
     @GetMapping("/status/{id}")
     public ResponseEntity getStatus(@PathVariable String id,
@@ -74,14 +80,14 @@ public class FravarController {
         if (e.getResponseStatus() == null) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).build();
         }
-        List<FintResource<Fravar>> result = objectMapper.convertValue(e.getData(), new TypeReference<List<FintResource<Fravar>>>() {});
+        List<FravarResource> result = objectMapper.convertValue(e.getData(), new TypeReference<List<FravarResource>>() {});
         switch (e.getResponseStatus()) {
             case ACCEPTED:
-                return assembler.resources(result);
+                return ResponseEntity.ok(linker.toResources(result));
             case ERROR:
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
             case CONFLICT:
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(assembler.toResources(result));
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(linker.toResources(result));
             case REJECTED:
                 return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -98,7 +104,7 @@ public class FravarController {
     }
 
     @GetMapping("/cache/size")
-    public ImmutableMap<String, Integer> getCacheSize(@RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId) {
+     public ImmutableMap<String, Integer> getCacheSize(@RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId) {
         if (props.isOverrideOrgId() || orgId == null) {
             orgId = props.getDefaultOrgId();
         }
@@ -114,7 +120,7 @@ public class FravarController {
     }
 
     @GetMapping
-    public ResponseEntity getFravar(
+    public FintResources getFravar(
             @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client,
             @RequestParam(required = false) Long sinceTimeStamp) {
@@ -131,7 +137,7 @@ public class FravarController {
 
         fintAuditService.audit(event, Status.CACHE);
 
-        List<FintResource<Fravar>> fravar;
+        List<FravarResource> fravar;
         if (sinceTimeStamp == null) {
             fravar = cacheService.getAll(orgId);
         } else {
@@ -140,36 +146,33 @@ public class FravarController {
 
         fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
-        return assembler.resources(fravar);
+        return linker.toResources(fravar);
     }
 
     @PostMapping
     public ResponseEntity postFravar(
             @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client,
-            @RequestBody FintResource<Fravar> body
-    ) throws JsonProcessingException {
+            @RequestBody FravarResource body
+    ) {
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_FRAVAR, client);
-        // FIXME: Explicit marshalling to JSON
-        event.addObject(new ObjectMapper().disableDefaultTyping().writeValueAsString(body));
-        //event.addObject(FintResource.with(data));
+        event.addObject(body);
         fintAuditService.audit(event);
 
         consumerEventUtil.send(event);
 
         statusCache.put(event.getCorrId(), event);
 
-        // TODO Use fint-relations and linkMapper to produce link!
-        URI location = ServletUriComponentsBuilder.fromCurrentServletMapping().scheme(null).pathSegment(RestEndpoints.FRAVAR, "status", event.getCorrId()).build().toUri();
+        URI location = UriComponentsBuilder.fromUriString(linker.self()).path("status/{id}").buildAndExpand(event.getCorrId()).toUri();
         log.info("Location: {}", location);
         return ResponseEntity.status(HttpStatus.ACCEPTED).location(location).build();
     }
 
 
     @GetMapping("/systemid/{id}")
-    public ResponseEntity getFravarBySystemId(@PathVariable String id,
-                                              @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
-                                              @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client) {
+    public FravarResource getFravarBySystemId(@PathVariable String id,
+            @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
+            @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client) {
         if (props.isOverrideOrgId() || orgId == null) {
             orgId = props.getDefaultOrgId();
         }
@@ -183,17 +186,45 @@ public class FravarController {
 
         fintAuditService.audit(event, Status.CACHE);
 
-        Optional<FintResource<Fravar>> fravar = cacheService.getFravarBySystemId(orgId, id);
+        Optional<FravarResource> fravar = cacheService.getFravarBySystemId(orgId, id);
 
         fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
-        if (fravar.isPresent()) {
-            return assembler.resource(fravar.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return fravar.orElseThrow(() -> new EntityNotFoundException(id));
     }
 
 
-}
+    //
+    // Exception handlers
+    //
+    @ExceptionHandler(UpdateEntityMismatchException.class)
+    public ResponseEntity handleUpdateEntityMismatch(Exception e) {
+        return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+    }
 
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity handleEntityNotFound(Exception e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(e.getMessage()));
+    }
+
+    @ExceptionHandler(CreateEntityMismatchException.class)
+    public ResponseEntity handleCreateEntityMismatch(Exception e) {
+        return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+    }
+
+    @ExceptionHandler(EntityFoundException.class)
+    public ResponseEntity handleEntityFound(Exception e) {
+        return ResponseEntity.status(HttpStatus.FOUND).body(new ErrorResponse(e.getMessage()));
+    }
+
+    @ExceptionHandler(NameNotFoundException.class)
+    public ResponseEntity handleNameNotFound(Exception e) {
+        return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+    }
+
+    @ExceptionHandler(UnknownHostException.class)
+    public ResponseEntity handleUnkownHost(Exception e) {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ErrorResponse(e.getMessage()));
+    }
+
+}

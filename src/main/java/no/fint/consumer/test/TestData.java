@@ -58,6 +58,7 @@ public class TestData {
         variabelttillegg.setAntall(1045L);
         variabelttillegg.setBeskrivelse("Kjøregodtgjørelse");
         variabelttillegg.setPeriode(getPeriode());
+        variabelttillegg.setKontostreng(new Kontostreng());
 
         Variabellonn variabellonn = new Variabellonn();
         variabellonn.setSystemId(identifikator);
