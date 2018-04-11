@@ -48,11 +48,57 @@
       }
     }
   ],
-  "fasttillegg": [],
+  "fasttillegg": [
+    {
+      "beskrivelse": "Kontaktlærertillegg",
+      "belop": 1000000,
+      "periode": {
+        "beskrivelse": null,
+        "slutt": null,
+        "start": "2018-04-05T14:51:20Z"
+      },
+      "kontostreng": {
+        "_links": {
+          "art": [
+            {
+              "href": "${administrasjon.kodeverk.art}/systemid/5"
+            }
+          ],
+          "ansvar": [
+            {
+              "href": "${administrasjon.kodeverk.ansvar}/systemid/6"
+            }
+          ],
+          "funksjon": [
+            {
+              "href": "${administrasjon.kodeverk.funksjon}/systemid/7"
+            }
+          ]
+        }
+      },
+      "_links": {
+        "lonnsart": [
+          {
+            "href": "${administrasjon.kodeverk.lonnsart}/systemid/8"
+          }
+        ]
+      }
+    }
+  ],
   "_links": {
     "arbeidsforhold": [
       {
         "href": "${administrasjon.personal.arbeidsforhold}/systemid/1234"
+      }
+    ],
+    "attestant": [
+      {
+        "href": "${administrasjon.personal.personalressurs}/ansattnummer/120000"
+      }
+    ],
+    "anviser": [
+      {
+        "href": "${administrasjon.personal.personalressurs}/ansattnummer/100000"
       }
     ]
   }
