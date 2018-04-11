@@ -11,8 +11,6 @@ import no.fint.event.model.Event;
 import no.fint.event.model.HeaderConstants;
 import no.fint.event.model.Status;
 
-import no.fint.model.resource.Link;
-
 import no.fint.relations.FintRelationsMediaType;
 import no.fint.relations.FintResources;
 

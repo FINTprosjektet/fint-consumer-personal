@@ -2,6 +2,7 @@ package no.fint.consumer.models.fravar;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.FintAuditService;
@@ -14,27 +15,23 @@ import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.Event;
 import no.fint.event.model.HeaderConstants;
 import no.fint.event.model.Status;
-
+import no.fint.model.administrasjon.personal.PersonalActions;
+import no.fint.model.resource.administrasjon.personal.FravarResource;
 import no.fint.relations.FintRelationsMediaType;
 import no.fint.relations.FintResources;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.naming.NameNotFoundException;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import javax.naming.NameNotFoundException;
-
-import no.fint.model.resource.administrasjon.personal.FravarResource;
-import no.fint.model.administrasjon.personal.PersonalActions;
-import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @CrossOrigin
@@ -156,7 +153,7 @@ public class FravarController {
             @RequestBody FravarResource body
     ) {
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_FRAVAR, client);
-        event.addObject(body);
+        event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
         fintAuditService.audit(event);
 
         consumerEventUtil.send(event);

@@ -6,9 +6,11 @@ import spock.lang.Specification
 
 class EventListenerSpec extends Specification {
     private EventListener eventListener
+    private StatusCache statusCache
 
     void setup() {
-        eventListener = new EventListener(cacheServices: [], statusCache: new StatusCache())
+        statusCache = Mock(StatusCache)
+        eventListener = new EventListener(cacheServices: [], statusCache: statusCache)
     }
 
     def "No exception is thrown when receiving event"() {
@@ -17,5 +19,6 @@ class EventListenerSpec extends Specification {
 
         then:
         noExceptionThrown()
+        1 * statusCache.containsKey(_ as String) >> false
     }
 }

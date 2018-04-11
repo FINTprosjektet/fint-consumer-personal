@@ -5,6 +5,7 @@ import no.fint.model.administrasjon.kompleksedatatyper.Beskjeftigelse
 import no.fint.model.administrasjon.kompleksedatatyper.Fasttillegg
 import no.fint.model.administrasjon.kompleksedatatyper.Kontostreng
 import no.fint.model.administrasjon.personal.Fastlonn
+import no.fint.model.felles.kompleksedatatyper.Identifikator
 import no.fint.model.felles.kompleksedatatyper.Periode
 import no.fint.model.resource.Link
 import no.fint.model.resource.administrasjon.kompleksedatatyper.BeskjeftigelseResource
@@ -34,7 +35,7 @@ public class FastlonnControllerSpec extends Specification {
         given:
         def beskjeftigelse = new Beskjeftigelse(prosent: 10000L, kontostreng: new Kontostreng(), periode: new Periode(start: new Date(), slutt: new Date()))
         def fasttillegg = new Fasttillegg(belop: 100000L, kontostreng: new Kontostreng(), periode: new Periode(start: new Date(), slutt: new Date()))
-        def fastlonn = new Fastlonn(beskjeftigelse: [beskjeftigelse], fasttillegg: [fasttillegg], attestert: new Date(), anvist: new Date(), periode: new Periode(start: new Date(), slutt: new Date()))
+        def fastlonn = new Fastlonn(systemId: new Identifikator(identifikatorverdi: "AAA222"), beskjeftigelse: [beskjeftigelse], fasttillegg: [fasttillegg], attestert: new Date(), anvist: new Date(), periode: new Periode(start: new Date(), slutt: new Date()))
 
         HttpHeaders headers = new HttpHeaders()
         headers.add("x-org-id", "pwf.no")
@@ -69,7 +70,7 @@ public class FastlonnControllerSpec extends Specification {
         def kontostreng = new KontostrengResource()
         def beskjeftigelse = new BeskjeftigelseResource(prosent: 10000L, kontostreng: kontostreng, periode: new Periode(start: new Date(), slutt: new Date()))
         def fasttillegg = new FasttilleggResource(belop: 100000L, kontostreng: kontostreng, periode: new Periode(start: new Date(), slutt: new Date()))
-        def fastlonn = new FastlonnResource(beskjeftigelse: [beskjeftigelse], fasttillegg: [fasttillegg], attestert: new Date(), anvist: new Date(), periode: new Periode(start: new Date(), slutt: new Date()))
+        def fastlonn = new FastlonnResource(systemId: new Identifikator(identifikatorverdi: "AAA2222"), beskjeftigelse: [beskjeftigelse], fasttillegg: [fasttillegg], attestert: new Date(), anvist: new Date(), periode: new Periode(start: new Date(), slutt: new Date()))
         kontostreng.addArt(Link.with('${administrasjon.kodeverk.art}/systemid/1'))
         beskjeftigelse.addLonnsart(Link.with('${administrasjon.kodeverk.lonnsart}/systemid/1'))
         fastlonn.addArbeidsforhold(Link.with('${administrasjon.personal.arbeidsforhold}/ansattnummer/12345'))

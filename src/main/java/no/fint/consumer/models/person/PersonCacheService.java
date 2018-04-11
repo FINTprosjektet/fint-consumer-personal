@@ -1,6 +1,7 @@
 package no.fint.consumer.models.person;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -83,18 +84,22 @@ public class PersonCacheService extends CacheService<PersonResource> {
 
 	@Override
     public void onAction(Event event) {
-        if (fintResourceCompatibility && !event.getData().isEmpty() && event.getData().get(0) instanceof FintResource) {
-            log.info("Compatibility: Converting FintResource<PersonResource> to PersonResource ...");
+        if (fintResourceCompatibility && !event.getData().isEmpty()) {
+            log.info("Compatibility check...");
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-            List<FintResource<PersonResource>> original = objectMapper.convertValue(event.getData(), new TypeReference<List<FintResource<PersonResource>>>() {
-            });
-            List<PersonResource> replacement = original.stream().map(fintResource -> {
-                PersonResource resource = fintResource.getResource();
-                fintResource.getRelations().forEach(relation -> resource.addLink(relation.getRelationName(), Link.with(relation.getLink())));
-                return resource;
-            }).collect(Collectors.toList());
-            event.setData(replacement);
+            JsonNode node = objectMapper.valueToTree(event.getData().get(0));
+            if (node.hasNonNull("resource")) {
+                log.info("Compatibility: Converting FintResource<PersonResource> to PersonResource ...");
+                List<FintResource<PersonResource>> original = objectMapper.convertValue(event.getData(), new TypeReference<List<FintResource<PersonResource>>>() {
+                });
+                List<PersonResource> replacement = original.stream().map(fintResource -> {
+                    PersonResource resource = fintResource.getResource();
+                    fintResource.getRelations().forEach(relation -> resource.addLink(relation.getRelationName(), Link.with(relation.getLink())));
+                    return resource;
+                }).collect(Collectors.toList());
+                event.setData(replacement);
+            }
         }
         update(event, new TypeReference<List<PersonResource>>() {
         });

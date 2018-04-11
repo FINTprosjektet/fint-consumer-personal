@@ -1,6 +1,7 @@
 package no.fint.consumer.models.personalressurs;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -101,18 +102,22 @@ public class PersonalressursCacheService extends CacheService<PersonalressursRes
 
 	@Override
     public void onAction(Event event) {
-        if (fintResourceCompatibility && !event.getData().isEmpty() && event.getData().get(0) instanceof FintResource) {
-            log.info("Compatibility: Converting FintResource<PersonalressursResource> to PersonalressursResource ...");
+        if (fintResourceCompatibility && !event.getData().isEmpty()) {
+            log.info("Compatibility check...");
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-            List<FintResource<PersonalressursResource>> original = objectMapper.convertValue(event.getData(), new TypeReference<List<FintResource<PersonalressursResource>>>() {
-            });
-            List<PersonalressursResource> replacement = original.stream().map(fintResource -> {
-                PersonalressursResource resource = fintResource.getResource();
-                fintResource.getRelations().forEach(relation -> resource.addLink(relation.getRelationName(), Link.with(relation.getLink())));
-                return resource;
-            }).collect(Collectors.toList());
-            event.setData(replacement);
+            JsonNode node = objectMapper.valueToTree(event.getData().get(0));
+            if (node.hasNonNull("resource")) {
+                log.info("Compatibility: Converting FintResource<PersonalressursResource> to PersonalressursResource ...");
+                List<FintResource<PersonalressursResource>> original = objectMapper.convertValue(event.getData(), new TypeReference<List<FintResource<PersonalressursResource>>>() {
+                });
+                List<PersonalressursResource> replacement = original.stream().map(fintResource -> {
+                    PersonalressursResource resource = fintResource.getResource();
+                    fintResource.getRelations().forEach(relation -> resource.addLink(relation.getRelationName(), Link.with(relation.getLink())));
+                    return resource;
+                }).collect(Collectors.toList());
+                event.setData(replacement);
+            }
         }
         update(event, new TypeReference<List<PersonalressursResource>>() {
         });

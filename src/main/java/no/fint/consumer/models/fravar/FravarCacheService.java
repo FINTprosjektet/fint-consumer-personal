@@ -1,6 +1,7 @@
 package no.fint.consumer.models.fravar;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -83,18 +84,22 @@ public class FravarCacheService extends CacheService<FravarResource> {
 
 	@Override
     public void onAction(Event event) {
-        if (fintResourceCompatibility && !event.getData().isEmpty() && event.getData().get(0) instanceof FintResource) {
-            log.info("Compatibility: Converting FintResource<FravarResource> to FravarResource ...");
+        if (fintResourceCompatibility && !event.getData().isEmpty()) {
+            log.info("Compatibility check...");
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-            List<FintResource<FravarResource>> original = objectMapper.convertValue(event.getData(), new TypeReference<List<FintResource<FravarResource>>>() {
-            });
-            List<FravarResource> replacement = original.stream().map(fintResource -> {
-                FravarResource resource = fintResource.getResource();
-                fintResource.getRelations().forEach(relation -> resource.addLink(relation.getRelationName(), Link.with(relation.getLink())));
-                return resource;
-            }).collect(Collectors.toList());
-            event.setData(replacement);
+            JsonNode node = objectMapper.valueToTree(event.getData().get(0));
+            if (node.hasNonNull("resource")) {
+                log.info("Compatibility: Converting FintResource<FravarResource> to FravarResource ...");
+                List<FintResource<FravarResource>> original = objectMapper.convertValue(event.getData(), new TypeReference<List<FintResource<FravarResource>>>() {
+                });
+                List<FravarResource> replacement = original.stream().map(fintResource -> {
+                    FravarResource resource = fintResource.getResource();
+                    fintResource.getRelations().forEach(relation -> resource.addLink(relation.getRelationName(), Link.with(relation.getLink())));
+                    return resource;
+                }).collect(Collectors.toList());
+                event.setData(replacement);
+            }
         }
         update(event, new TypeReference<List<FravarResource>>() {
         });

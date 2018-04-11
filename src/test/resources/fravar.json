@@ -1,0 +1,27 @@
+{
+  "periode": {
+    "slutt": "2018-04-10T12:00:45Z",
+    "start": "2018-01-31T23:00:00Z"
+  },
+  "prosent": 10000,
+  "systemId": {
+    "identifikatorverdi": "3736db63-eae6-4e58-ad63-57e649d6322f"
+  },
+  "_links": {
+    "arbeidsforhold": [
+      {
+        "href": "${administrasjon.personal.arbeidsforhold}/ansattnummer/12345"
+      }
+    ],
+    "fravarsgrunn": [
+      {
+        "href": "${administrasjon.kodeverk.fravarsgrunn}/systemid/111"
+      }
+    ],
+    "fravarstype": [
+      {
+        "href": "${administrasjon.kodeverk.fravarstype}/systemid/222"
+      }
+    ]
+  }
+}
