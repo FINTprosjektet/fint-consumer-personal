@@ -16,12 +16,15 @@ import no.fint.model.resource.Link
 import no.fint.model.resource.administrasjon.kompleksedatatyper.BeskjeftigelseResource
 import no.fint.model.resource.administrasjon.kompleksedatatyper.KontostrengResource
 import no.fint.model.resource.administrasjon.personal.FastlonnResource
+import no.fint.relations.FintResourceCompatibility
+import no.fint.relations.config.FintRelationsProps
+import no.fint.relations.internal.FintLinkMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import spock.lang.Specification
 
-@SpringBootTest(classes = [FastlonnCacheService, FintCacheManager, ConsumerProps, ObjectMapper], properties = ["fint.events.orgIds=mock.no"])
+@SpringBootTest(classes = [FastlonnCacheService, FintCacheManager, ConsumerProps, ObjectMapper, FintResourceCompatibility, FastlonnLinker, FintLinkMapper, FintRelationsProps], properties = ["fint.events.orgIds=mock.no"])
 class FastlonnCacheServiceSpec extends Specification {
 
     @MockBean

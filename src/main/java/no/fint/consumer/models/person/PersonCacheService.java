@@ -1,7 +1,6 @@
 package no.fint.consumer.models.person;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -13,8 +12,7 @@ import no.fint.consumer.config.ConsumerProps;
 import no.fint.consumer.event.ConsumerEventUtil;
 import no.fint.event.model.Event;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
-import no.fint.model.relation.FintResource;
-import no.fint.model.resource.Link;
+import no.fint.relations.FintResourceCompatibility;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +23,6 @@ import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import no.fint.model.felles.Person;
 import no.fint.model.resource.felles.PersonResource;
@@ -38,7 +35,10 @@ public class PersonCacheService extends CacheService<PersonResource> {
     public static final String MODEL = Person.class.getSimpleName().toLowerCase();
 
     @Value("${fint.consumer.compatibility.fintresource:true}")
-    private boolean fintResourceCompatibility;
+    private boolean checkFintResourceCompatibility;
+
+    @Autowired
+    private FintResourceCompatibility fintResourceCompatibility;
 
     @Autowired
     private ConsumerEventUtil consumerEventUtil;
@@ -46,8 +46,18 @@ public class PersonCacheService extends CacheService<PersonResource> {
     @Autowired
     private ConsumerProps props;
 
+    @Autowired
+    private PersonLinker linker;
+
+    private JavaType javaType;
+
+    private ObjectMapper objectMapper;
+
     public PersonCacheService() {
         super(MODEL, FellesActions.GET_ALL_PERSON);
+        objectMapper = new ObjectMapper();
+        javaType = objectMapper.getTypeFactory().constructCollectionType(List.class, PersonResource.class);
+        objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
     }
 
     @PostConstruct
@@ -84,24 +94,15 @@ public class PersonCacheService extends CacheService<PersonResource> {
 
 	@Override
     public void onAction(Event event) {
-        if (fintResourceCompatibility && !event.getData().isEmpty()) {
-            log.info("Compatibility check...");
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-            JsonNode node = objectMapper.valueToTree(event.getData().get(0));
-            if (node.hasNonNull("resource")) {
-                log.info("Compatibility: Converting FintResource<PersonResource> to PersonResource ...");
-                List<FintResource<PersonResource>> original = objectMapper.convertValue(event.getData(), new TypeReference<List<FintResource<PersonResource>>>() {
-                });
-                List<PersonResource> replacement = original.stream().map(fintResource -> {
-                    PersonResource resource = fintResource.getResource();
-                    fintResource.getRelations().forEach(relation -> resource.addLink(relation.getRelationName(), Link.with(relation.getLink())));
-                    return resource;
-                }).collect(Collectors.toList());
-                event.setData(replacement);
-            }
+        List<PersonResource> data;
+        if (checkFintResourceCompatibility && fintResourceCompatibility.isFintResourceData(event.getData())) {
+            log.info("Compatibility: Converting FintResource<PersonResource> to PersonResource ...");
+            data = fintResourceCompatibility.convertResourceData(event.getData(), PersonResource.class);
+        } else {
+            data = objectMapper.convertValue(event.getData(), javaType);
         }
-        update(event, new TypeReference<List<PersonResource>>() {
-        });
+        data.forEach(linker::toResource);
+        update(event.getOrgId(), data);
+        log.info("Updated cache for {} with {} elements", event.getOrgId(), data.size());
     }
 }

@@ -1,7 +1,6 @@
 package no.fint.consumer.models.fravar;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -13,8 +12,7 @@ import no.fint.consumer.config.ConsumerProps;
 import no.fint.consumer.event.ConsumerEventUtil;
 import no.fint.event.model.Event;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
-import no.fint.model.relation.FintResource;
-import no.fint.model.resource.Link;
+import no.fint.relations.FintResourceCompatibility;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +23,6 @@ import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import no.fint.model.administrasjon.personal.Fravar;
 import no.fint.model.resource.administrasjon.personal.FravarResource;
@@ -38,7 +35,10 @@ public class FravarCacheService extends CacheService<FravarResource> {
     public static final String MODEL = Fravar.class.getSimpleName().toLowerCase();
 
     @Value("${fint.consumer.compatibility.fintresource:true}")
-    private boolean fintResourceCompatibility;
+    private boolean checkFintResourceCompatibility;
+
+    @Autowired
+    private FintResourceCompatibility fintResourceCompatibility;
 
     @Autowired
     private ConsumerEventUtil consumerEventUtil;
@@ -46,8 +46,18 @@ public class FravarCacheService extends CacheService<FravarResource> {
     @Autowired
     private ConsumerProps props;
 
+    @Autowired
+    private FravarLinker linker;
+
+    private JavaType javaType;
+
+    private ObjectMapper objectMapper;
+
     public FravarCacheService() {
         super(MODEL, PersonalActions.GET_ALL_FRAVAR);
+        objectMapper = new ObjectMapper();
+        javaType = objectMapper.getTypeFactory().constructCollectionType(List.class, FravarResource.class);
+        objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
     }
 
     @PostConstruct
@@ -84,24 +94,15 @@ public class FravarCacheService extends CacheService<FravarResource> {
 
 	@Override
     public void onAction(Event event) {
-        if (fintResourceCompatibility && !event.getData().isEmpty()) {
-            log.info("Compatibility check...");
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-            JsonNode node = objectMapper.valueToTree(event.getData().get(0));
-            if (node.hasNonNull("resource")) {
-                log.info("Compatibility: Converting FintResource<FravarResource> to FravarResource ...");
-                List<FintResource<FravarResource>> original = objectMapper.convertValue(event.getData(), new TypeReference<List<FintResource<FravarResource>>>() {
-                });
-                List<FravarResource> replacement = original.stream().map(fintResource -> {
-                    FravarResource resource = fintResource.getResource();
-                    fintResource.getRelations().forEach(relation -> resource.addLink(relation.getRelationName(), Link.with(relation.getLink())));
-                    return resource;
-                }).collect(Collectors.toList());
-                event.setData(replacement);
-            }
+        List<FravarResource> data;
+        if (checkFintResourceCompatibility && fintResourceCompatibility.isFintResourceData(event.getData())) {
+            log.info("Compatibility: Converting FintResource<FravarResource> to FravarResource ...");
+            data = fintResourceCompatibility.convertResourceData(event.getData(), FravarResource.class);
+        } else {
+            data = objectMapper.convertValue(event.getData(), javaType);
         }
-        update(event, new TypeReference<List<FravarResource>>() {
-        });
+        data.forEach(linker::toResource);
+        update(event.getOrgId(), data);
+        log.info("Updated cache for {} with {} elements", event.getOrgId(), data.size());
     }
 }

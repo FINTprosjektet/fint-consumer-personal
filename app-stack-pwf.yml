@@ -40,6 +40,8 @@ services:
     fint.audit.mongo.databasename: fint-audit-pwf
     fint.hazelcast.members: consumer,provider
     fint.consumer.cache-manager: hazelcast
+    fint.consumer.default-org-id: "pwf.no"
+    fint.consumer.override-org-id: "true"
    deploy:
     placement:
      constraints:

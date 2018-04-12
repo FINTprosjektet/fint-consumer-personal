@@ -139,9 +139,9 @@ public class FastlonnController {
             @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client,
             @RequestBody FastlonnResource body) {
         log.info("Body: {}", body);
+        linker.toResource(body);
         URI uri = UriComponentsBuilder.fromUriString(linker.getSelfHref(body)).build().toUri();
         log.info("URI: {}", uri);
-        body.addLink("self", Link.with(uri.toString()));
         cacheService.add(orgId, Collections.singletonList(body));
         return ResponseEntity.created(uri).build();
     }
