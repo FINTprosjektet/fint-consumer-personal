@@ -1,23 +1,29 @@
 package no.fint.consumer.admin;
 
+import no.fint.cache.CacheService;
+import no.fint.cache.utils.CacheUri;
 import no.fint.consumer.config.Constants;
 import no.fint.consumer.event.ConsumerEventUtil;
+import no.fint.consumer.event.EventListener;
 import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.DefaultActions;
 import no.fint.event.model.Event;
 import no.fint.event.model.HeaderConstants;
 import no.fint.event.model.health.Health;
 import no.fint.event.model.health.HealthStatus;
+import no.fint.events.FintEvents;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = RestEndpoints.ADMIN, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -25,6 +31,15 @@ public class AdminController {
 
     @Autowired
     private ConsumerEventUtil consumerEventUtil;
+
+    @Autowired
+    private List<CacheService> cacheServices = Collections.emptyList();
+
+    @Autowired
+    private FintEvents fintEvents;
+
+    @Autowired
+    private EventListener eventListener;
 
     @GetMapping("/health")
     public ResponseEntity healthCheck(@RequestHeader(HeaderConstants.ORG_ID) String orgId,
@@ -42,4 +57,32 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body(event);
         }
     }
+
+    @GetMapping("/organisations")
+    public List<String> getOrganisations() {
+        return CacheUri.getCacheUris(cacheServices);
+    }
+
+    @GetMapping("/organisations/{orgId:.+}")
+    public List<String> getOrganization(@PathVariable String orgId) {
+        List<String> cacheUris = CacheUri.getCacheUris(cacheServices);
+        return cacheUris.stream().filter(key -> CacheUri.containsOrgId(key, orgId)).collect(Collectors.toList());
+    }
+
+    @PostMapping("/organisations/{orgId:.+}")
+    public ResponseEntity registerOrganization(@PathVariable String orgId) {
+        if (CacheUri.containsOrgId(cacheServices, orgId)) {
+            return ResponseEntity.badRequest().body(String.format("OrgId %s is already registered", orgId));
+        } else {
+            Event event = new Event(orgId, Constants.COMPONENT, DefaultActions.REGISTER_ORG_ID, "consumer");
+            fintEvents.sendDownstream(event);
+
+            cacheServices.forEach(cache -> cache.createCache(orgId));
+            fintEvents.registerUpstreamListener(orgId, eventListener);
+
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest().buildAndExpand().toUri();
+            return ResponseEntity.created(location).build();
+        }
+    }
+
 }
