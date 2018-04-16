@@ -1,5 +1,7 @@
 package no.fint.consumer.admin;
 
+import lombok.extern.slf4j.Slf4j;
+import no.fint.cache.CacheManager;
 import no.fint.cache.CacheService;
 import no.fint.cache.utils.CacheUri;
 import no.fint.consumer.config.Constants;
@@ -20,11 +22,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequestMapping(value = RestEndpoints.ADMIN, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class AdminController {
@@ -33,7 +37,7 @@ public class AdminController {
     private ConsumerEventUtil consumerEventUtil;
 
     @Autowired
-    private List<CacheService> cacheServices = Collections.emptyList();
+    private CacheManager<?> cacheManager;
 
     @Autowired
     private FintEvents fintEvents;
@@ -59,16 +63,16 @@ public class AdminController {
     }
 
     @GetMapping("/organisations")
-    public List<String> getOrganisations() {
-        return CacheUri.getCacheUris(cacheServices);
+    public Collection<String> getOrganisations() {
+        return cacheManager.getKeys();
     }
 
     @GetMapping("/organisations/{orgId:.+}")
-    public List<String> getOrganization(@PathVariable String orgId) {
-        List<String> cacheUris = CacheUri.getCacheUris(cacheServices);
-        return cacheUris.stream().filter(key -> CacheUri.containsOrgId(key, orgId)).collect(Collectors.toList());
+    public Collection<String> getOrganization(@PathVariable String orgId) {
+        return cacheManager.getKeys().stream().filter(key -> CacheUri.containsOrgId(key, orgId)).collect(Collectors.toList());
     }
 
+    /*
     @PostMapping("/organisations/{orgId:.+}")
     public ResponseEntity registerOrganization(@PathVariable String orgId) {
         if (CacheUri.containsOrgId(cacheServices, orgId)) {
@@ -84,5 +88,5 @@ public class AdminController {
             return ResponseEntity.created(location).build();
         }
     }
-
+*/
 }
