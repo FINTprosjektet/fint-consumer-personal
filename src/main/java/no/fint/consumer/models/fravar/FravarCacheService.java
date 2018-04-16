@@ -54,7 +54,7 @@ public class FravarCacheService extends CacheService<FravarResource> {
     private ObjectMapper objectMapper;
 
     public FravarCacheService() {
-        super(MODEL, PersonalActions.GET_ALL_FRAVAR);
+        super(MODEL, PersonalActions.GET_ALL_FRAVAR, PersonalActions.UPDATE_FRAVAR);
         objectMapper = new ObjectMapper();
         javaType = objectMapper.getTypeFactory().constructCollectionType(List.class, FravarResource.class);
         objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);

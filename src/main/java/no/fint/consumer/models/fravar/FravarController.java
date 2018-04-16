@@ -1,6 +1,5 @@
 package no.fint.consumer.models.fravar;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.collect.ImmutableMap;
@@ -77,7 +76,7 @@ public class FravarController {
         if (e.getResponseStatus() == null) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).build();
         }
-        List<FravarResource> result = objectMapper.convertValue(e.getData(), new TypeReference<List<FravarResource>>() {});
+        List<FravarResource> result = objectMapper.convertValue(e.getData(), objectMapper.getTypeFactory().constructCollectionType(List.class, FravarResource.class));
         switch (e.getResponseStatus()) {
             case ACCEPTED:
                 URI location = UriComponentsBuilder.fromUriString(linker.getSelfHref(result.get(0))).build().toUri();
