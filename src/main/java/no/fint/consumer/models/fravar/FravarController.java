@@ -72,7 +72,7 @@ public class FravarController {
         log.info("Event: {}", e);
         log.info("Data: {}", e.getData());
         if (!e.getOrgId().equals(orgId)) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(new ErrorResponse("Invalid orgId"));
         }
         if (e.getResponseStatus() == null) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).build();
@@ -80,13 +80,15 @@ public class FravarController {
         List<FravarResource> result = objectMapper.convertValue(e.getData(), new TypeReference<List<FravarResource>>() {});
         switch (e.getResponseStatus()) {
             case ACCEPTED:
-                return ResponseEntity.ok(linker.toResources(result));
+                URI location = UriComponentsBuilder.fromUriString(linker.getSelfHref(result.get(0))).build().toUri();
+                log.info("Location: {}", location);
+                return ResponseEntity.status(HttpStatus.SEE_OTHER).location(location).build();
             case ERROR:
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(e.getMessage()));
             case CONFLICT:
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(linker.toResources(result));
             case REJECTED:
-                return ResponseEntity.badRequest().body(e.getMessage());
+                return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
         }
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
