@@ -1,8 +1,7 @@
 pipeline {
-    agent none
+    agent { label 'docker' }
     stages {
         stage('Build') {
-            agent { label 'docker' }
             steps {
                 script {
                     props=readProperties file: 'gradle.properties'
@@ -12,7 +11,6 @@ pipeline {
             }
         }
         stage('Publish') {
-            agent { label 'docker' }
             when {
                 branch 'master'
             }
@@ -24,12 +22,12 @@ pipeline {
             }
         }
         stage('Publish PR') {
-            agent { label 'docker' }
             when { changeRequest() }
             steps {
-                sh "docker tag ${GIT_COMMIT} dtr.rogfk.no/fint-beta/consumer-personal:${CHANGE_ID}"
+                sh "env"
+                sh "docker tag ${GIT_COMMIT} dtr.rogfk.no/fint-beta/consumer-personal:${CHANGE_BRANCH}"
                 withDockerRegistry([credentialsId: 'dtr-rogfk-no', url: 'https://dtr.rogfk.no']) {
-                    sh "docker push 'dtr.rogfk.no/fint-beta/consumer-personal:${CHANGE_ID}'"
+                    sh "docker push 'dtr.rogfk.no/fint-beta/consumer-personal:${CHANGE_BRANCH}'"
                 }
             }
         }
