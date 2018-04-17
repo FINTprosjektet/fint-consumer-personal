@@ -24,10 +24,9 @@ pipeline {
         stage('Publish PR') {
             when { changeRequest() }
             steps {
-                sh "env"
-                sh "docker tag ${GIT_COMMIT} dtr.rogfk.no/fint-beta/consumer-personal:${CHANGE_BRANCH}"
+                sh "docker tag ${GIT_COMMIT} dtr.rogfk.no/fint-beta/consumer-personal:${BRANCH_NAME}"
                 withDockerRegistry([credentialsId: 'dtr-rogfk-no', url: 'https://dtr.rogfk.no']) {
-                    sh "docker push 'dtr.rogfk.no/fint-beta/consumer-personal:${CHANGE_BRANCH}'"
+                    sh "docker push 'dtr.rogfk.no/fint-beta/consumer-personal:${BRANCH_NAME}'"
                 }
             }
         }
