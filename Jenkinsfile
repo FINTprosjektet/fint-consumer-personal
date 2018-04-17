@@ -27,9 +27,9 @@ pipeline {
             agent { label 'docker' }
             when { changeRequest() }
             steps {
-                sh "docker tag ${GIT_COMMIT} dtr.rogfk.no/fint-beta/consumer-personal:${CHANGE_BRANCH}"
+                sh "docker tag ${GIT_COMMIT} dtr.rogfk.no/fint-beta/consumer-personal:${CHANGE_ID}"
                 withDockerRegistry([credentialsId: 'dtr-rogfk-no', url: 'https://dtr.rogfk.no']) {
-                    sh "docker push 'dtr.rogfk.no/fint-beta/consumer-personal:${CHANGE_BRANCH}'"
+                    sh "docker push 'dtr.rogfk.no/fint-beta/consumer-personal:${CHANGE_ID}'"
                 }
             }
         }
