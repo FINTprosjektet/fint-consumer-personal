@@ -59,39 +59,6 @@ public class FravarController {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @GetMapping("/status/{id}")
-    public ResponseEntity getStatus(@PathVariable String id,
-                                    @RequestHeader(HeaderConstants.ORG_ID) String orgId,
-                                    @RequestHeader(HeaderConstants.CLIENT) String client) {
-        log.info("/status/{} for {} from {}", id, orgId, client);
-        if (!statusCache.containsKey(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        Event e = statusCache.get(id);
-        log.info("Event: {}", e);
-        log.info("Data: {}", e.getData());
-        if (!e.getOrgId().equals(orgId)) {
-            return ResponseEntity.badRequest().body(new ErrorResponse("Invalid orgId"));
-        }
-        if (e.getResponseStatus() == null) {
-            return ResponseEntity.status(HttpStatus.ACCEPTED).build();
-        }
-        List<FravarResource> result = objectMapper.convertValue(e.getData(), objectMapper.getTypeFactory().constructCollectionType(List.class, FravarResource.class));
-        switch (e.getResponseStatus()) {
-            case ACCEPTED:
-                URI location = UriComponentsBuilder.fromUriString(linker.getSelfHref(result.get(0))).build().toUri();
-                log.info("Location: {}", location);
-                return ResponseEntity.status(HttpStatus.SEE_OTHER).location(location).build();
-            case ERROR:
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(e.getMessage()));
-            case CONFLICT:
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(linker.toResources(result));
-            case REJECTED:
-                return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
-        }
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
-    }
-
     @GetMapping("/last-updated")
     public Map<String, String> getLastUpdated(@RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId) {
         if (props.isOverrideOrgId() || orgId == null) {
@@ -147,25 +114,6 @@ public class FravarController {
         return linker.toResources(fravar);
     }
 
-    @PostMapping
-    public ResponseEntity postFravar(
-            @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
-            @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client,
-            @RequestBody FravarResource body
-    ) {
-        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_FRAVAR, client);
-        event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
-        fintAuditService.audit(event);
-
-        consumerEventUtil.send(event);
-
-        statusCache.put(event.getCorrId(), event);
-
-        URI location = UriComponentsBuilder.fromUriString(linker.self()).path("status/{id}").buildAndExpand(event.getCorrId()).toUri();
-        log.info("Location: {}", location);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).location(location).build();
-    }
-
 
     @GetMapping("/systemid/{id}")
     public FravarResource getFravarBySystemId(@PathVariable String id,
@@ -191,6 +139,83 @@ public class FravarController {
         return fravar.orElseThrow(() -> new EntityNotFoundException(id));
     }
 
+
+
+    @GetMapping("/status/{id}")
+    public ResponseEntity getStatus(@PathVariable String id,
+                                    @RequestHeader(HeaderConstants.ORG_ID) String orgId,
+                                    @RequestHeader(HeaderConstants.CLIENT) String client) {
+        log.info("/status/{} for {} from {}", id, orgId, client);
+        if (!statusCache.containsKey(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        Event e = statusCache.get(id);
+        log.debug("Event: {}", e);
+        log.trace("Data: {}", e.getData());
+        if (!e.getOrgId().equals(orgId)) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("Invalid orgId"));
+        }
+        if (e.getResponseStatus() == null) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+        }
+        List<FravarResource> result = objectMapper.convertValue(e.getData(), objectMapper.getTypeFactory().constructCollectionType(List.class, FravarResource.class));
+        switch (e.getResponseStatus()) {
+            case ACCEPTED:
+                URI location = UriComponentsBuilder.fromUriString(linker.getSelfHref(result.get(0))).build().toUri();
+                return ResponseEntity.status(HttpStatus.SEE_OTHER).location(location).build();
+            case ERROR:
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(e.getMessage()));
+            case CONFLICT:
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(linker.toResources(result));
+            case REJECTED:
+                return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+        }
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+    }
+
+    @PostMapping
+    public ResponseEntity postFravar(
+            @RequestHeader(name = HeaderConstants.ORG_ID) String orgId,
+            @RequestHeader(name = HeaderConstants.CLIENT) String client,
+            @RequestBody FravarResource body
+    ) {
+        log.info("postFravar, OrgId: {}, Client: {}", orgId, client);
+        log.trace("Body: {}", body);
+        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_FRAVAR, client);
+        event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
+        fintAuditService.audit(event);
+
+        consumerEventUtil.send(event);
+
+        statusCache.put(event.getCorrId(), event);
+
+        URI location = UriComponentsBuilder.fromUriString(linker.self()).path("status/{id}").buildAndExpand(event.getCorrId()).toUri();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).location(location).build();
+    }
+
+  
+    @PutMapping("/systemid/{id}")
+    public ResponseEntity putFravarBySystemId(
+            @PathVariable String id,
+            @RequestHeader(name = HeaderConstants.ORG_ID) String orgId,
+            @RequestHeader(name = HeaderConstants.CLIENT) String client,
+            @RequestBody FravarResource body
+    ) {
+        log.info("putFravarBySystemId {}, OrgId: {}, Client: {}", id, orgId, client);
+        log.trace("Body: {}", body);
+        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_FRAVAR, client);
+        event.setQuery("systemid:" + id);
+        event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
+        fintAuditService.audit(event);
+
+        consumerEventUtil.send(event);
+
+        statusCache.put(event.getCorrId(), event);
+
+        URI location = UriComponentsBuilder.fromUriString(linker.self()).path("status/{id}").buildAndExpand(event.getCorrId()).toUri();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).location(location).build();
+    }
+    
 
     //
     // Exception handlers
@@ -226,3 +251,4 @@ public class FravarController {
     }
 
 }
+

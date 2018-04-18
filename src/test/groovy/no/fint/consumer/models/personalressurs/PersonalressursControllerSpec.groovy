@@ -9,7 +9,6 @@ import no.fint.relations.FintResources
 import no.fint.test.utils.MockMvcSpecification
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
 import org.springframework.test.web.servlet.MockMvc
 
 class PersonalressursControllerSpec extends MockMvcSpecification {

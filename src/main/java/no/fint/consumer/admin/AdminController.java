@@ -2,7 +2,6 @@ package no.fint.consumer.admin;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.cache.CacheManager;
-import no.fint.cache.CacheService;
 import no.fint.cache.utils.CacheUri;
 import no.fint.consumer.config.Constants;
 import no.fint.consumer.event.ConsumerEventUtil;
@@ -19,12 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 

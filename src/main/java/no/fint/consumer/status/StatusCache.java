@@ -10,11 +10,11 @@ import javax.annotation.PostConstruct;
 import java.util.Objects;
 
 @Component
-public class StatusCache  {
+public class StatusCache {
 
     private Cache<String, Event> cache;
 
-    @Value("${no.fint.consumer.status-cache:expireAfterAccess=30m}")
+    @Value("${no.fint.consumer.status-cache:expireAfterAccess=30m,expireAfterWrite=6h}")
     private String cacheSpec;
 
     @PostConstruct

@@ -2,7 +2,7 @@ version: '3'
 
 services:
   provider:
-   image: dtr.rogfk.no/k48402217/provider
+   image: dtr.rogfk.no/fint-beta/provider:PR-9
    ports:
      - "8400:8080"
    environment:
@@ -26,7 +26,7 @@ services:
      window: 120s
 
   consumer:
-   image: dtr.rogfk.no/fint-beta/consumer-personal:resource-model
+   image: dtr.rogfk.no/fint-beta/consumer-personal:PR-2
    ports:
      - "8401:8080"
    environment:
@@ -39,7 +39,7 @@ services:
     fint.audit.mongo.hostname: 152.93.213.138
     fint.audit.mongo.databasename: fint-audit-pwf
     fint.hazelcast.members: consumer,provider
-    fint.consumer.cache-manager: hazelcast
+    fint.cache.manager: hazelcast
     fint.consumer.default-org-id: "pwf.no"
     fint.consumer.override-org-id: "true"
    deploy:

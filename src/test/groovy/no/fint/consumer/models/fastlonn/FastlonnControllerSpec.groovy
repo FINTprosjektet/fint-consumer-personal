@@ -20,6 +20,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.*
 import org.springframework.test.context.ActiveProfiles
+import spock.lang.Ignore
 import spock.lang.Specification
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -31,6 +32,7 @@ public class FastlonnControllerSpec extends Specification {
     @Autowired
     private TestRestTemplate restTemplate;
 
+    @Ignore
     def "POST Fastlonn"() {
         given:
         def beskjeftigelse = new Beskjeftigelse(prosent: 10000L, kontostreng: new Kontostreng(), periode: new Periode(start: new Date(), slutt: new Date()))

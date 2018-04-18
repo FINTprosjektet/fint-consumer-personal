@@ -1,10 +1,7 @@
 package no.fint.consumer.config;
 
-import no.fint.consumer.utils.RestEndpoints;
-
-import java.util.Map;
-
 import com.google.common.collect.ImmutableMap;
+import no.fint.consumer.utils.RestEndpoints;
 import no.fint.model.administrasjon.fullmakt.Fullmakt;
 import no.fint.model.administrasjon.fullmakt.Rolle;
 import no.fint.model.administrasjon.kodeverk.*;
@@ -14,6 +11,8 @@ import no.fint.model.felles.Person;
 import no.fint.model.felles.kodeverk.iso.Kjonn;
 import no.fint.model.felles.kodeverk.iso.Landkode;
 import no.fint.model.felles.kodeverk.iso.Sprak;
+
+import java.util.Map;
 
 public class LinkMapper {
 
