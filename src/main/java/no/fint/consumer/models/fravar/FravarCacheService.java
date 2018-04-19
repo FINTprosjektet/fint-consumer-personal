@@ -3,17 +3,17 @@ package no.fint.consumer.models.fravar;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+
 import lombok.extern.slf4j.Slf4j;
+
 import no.fint.cache.CacheService;
 import no.fint.consumer.config.Constants;
 import no.fint.consumer.config.ConsumerProps;
 import no.fint.consumer.event.ConsumerEventUtil;
 import no.fint.event.model.Event;
-import no.fint.model.administrasjon.personal.Fravar;
-import no.fint.model.administrasjon.personal.PersonalActions;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
-import no.fint.model.resource.administrasjon.personal.FravarResource;
 import no.fint.relations.FintResourceCompatibility;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,6 +23,10 @@ import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import no.fint.model.administrasjon.personal.Fravar;
+import no.fint.model.resource.administrasjon.personal.FravarResource;
+import no.fint.model.administrasjon.personal.PersonalActions;
 
 @Slf4j
 @Service
