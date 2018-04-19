@@ -98,7 +98,12 @@ public class FravarCacheService extends CacheService<FravarResource> {
             data = objectMapper.convertValue(event.getData(), javaType);
         }
         data.forEach(linker::toResource);
-        update(event.getOrgId(), data);
-        log.info("Updated cache for {} with {} elements", event.getOrgId(), data.size());
+        if (PersonalActions.valueOf(event.getAction()) == PersonalActions.UPDATE_FRAVAR) {
+            add(event.getOrgId(), data);
+            log.info("Added {} elements to cache for {}", data.size(), event.getOrgId());
+        } else {
+            update(event.getOrgId(), data);
+            log.info("Updated cache for {} with {} elements", event.getOrgId(), data.size());
+        }
     }
 }
