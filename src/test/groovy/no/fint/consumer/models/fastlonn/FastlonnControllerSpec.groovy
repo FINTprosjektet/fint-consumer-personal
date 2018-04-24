@@ -20,6 +20,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.*
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.web.util.UriComponentsBuilder
 import spock.lang.Ignore
 import spock.lang.Specification
 
@@ -51,7 +52,7 @@ public class FastlonnControllerSpec extends Specification {
         result.getStatusCode().is2xxSuccessful()
     }
 
-    def "POST fastlonn.json"() {
+    def "POST fastlonn.json and GET /status/"() {
         given:
         String content = IOUtils.toString(new ClassPathResource("fastlonn.json").getInputStream(), "UTF-8")
         HttpHeaders headers = new HttpHeaders()
@@ -65,6 +66,16 @@ public class FastlonnControllerSpec extends Specification {
 
         then:
         result.getStatusCode().is2xxSuccessful()
+        result.getHeaders().getLocation()
+
+        when:
+        def location = UriComponentsBuilder.fromUri(result.getHeaders().getLocation()).port(port).build().toUri()
+        result = restTemplate.exchange(location, HttpMethod.GET, new HttpEntity<>(null, headers), String.class)
+        println(result)
+
+        then:
+        result.getStatusCode() == HttpStatus.ACCEPTED
+
     }
 
     def "POST FastlonnResource"() {

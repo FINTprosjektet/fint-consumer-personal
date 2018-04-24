@@ -15,6 +15,7 @@ import no.fint.consumer.status.StatusCache;
 import no.fint.consumer.utils.RestEndpoints;
 
 import no.fint.event.model.Event;
+import no.fint.event.model.EventResponse;
 import no.fint.event.model.HeaderConstants;
 import no.fint.event.model.Status;
 
@@ -26,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.UnknownHostException;
@@ -157,28 +159,28 @@ public class FravarController {
         if (!statusCache.containsKey(id)) {
             return ResponseEntity.notFound().build();
         }
-        Event e = statusCache.get(id);
-        log.debug("Event: {}", e);
-        log.trace("Data: {}", e.getData());
-        if (!e.getOrgId().equals(orgId)) {
-            return ResponseEntity.badRequest().body(new ErrorResponse("Invalid orgId"));
+        Event event = statusCache.get(id);
+        log.debug("Event: {}", event);
+        log.trace("Data: {}", event.getData());
+        if (!event.getOrgId().equals(orgId)) {
+            return ResponseEntity.badRequest().body(new EventResponse(){{setMessage("Invalid OrgId");}});
         }
-        if (e.getResponseStatus() == null) {
+        if (event.getResponseStatus() == null) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).build();
         }
-        List<FravarResource> result = objectMapper.convertValue(e.getData(), objectMapper.getTypeFactory().constructCollectionType(List.class, FravarResource.class));
-        switch (e.getResponseStatus()) {
+        List<FravarResource> result = objectMapper.convertValue(event.getData(), objectMapper.getTypeFactory().constructCollectionType(List.class, FravarResource.class));
+        switch (event.getResponseStatus()) {
             case ACCEPTED:
                 URI location = UriComponentsBuilder.fromUriString(linker.getSelfHref(result.get(0))).build().toUri();
                 return ResponseEntity.status(HttpStatus.SEE_OTHER).location(location).build();
             case ERROR:
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(e.getMessage()));
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(event.getResponse());
             case CONFLICT:
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(linker.toResources(result));
             case REJECTED:
-                return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+                return ResponseEntity.badRequest().body(event.getResponse());
         }
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(event.getResponse());
     }
 
     @PostMapping
