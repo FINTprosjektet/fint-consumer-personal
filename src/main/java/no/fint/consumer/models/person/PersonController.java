@@ -15,6 +15,7 @@ import no.fint.consumer.status.StatusCache;
 import no.fint.consumer.utils.RestEndpoints;
 
 import no.fint.event.model.Event;
+import no.fint.event.model.EventResponse;
 import no.fint.event.model.HeaderConstants;
 import no.fint.event.model.Status;
 
@@ -157,28 +158,28 @@ public class PersonController {
         if (!statusCache.containsKey(id)) {
             return ResponseEntity.notFound().build();
         }
-        Event e = statusCache.get(id);
-        log.debug("Event: {}", e);
-        log.trace("Data: {}", e.getData());
-        if (!e.getOrgId().equals(orgId)) {
-            return ResponseEntity.badRequest().body(new ErrorResponse("Invalid orgId"));
+        Event event = statusCache.get(id);
+        log.debug("Event: {}", event);
+        log.trace("Data: {}", event.getData());
+        if (!event.getOrgId().equals(orgId)) {
+            return ResponseEntity.badRequest().body(new EventResponse() { { setMessage("Invalid OrgId"); } } );
         }
-        if (e.getResponseStatus() == null) {
+        if (event.getResponseStatus() == null) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).build();
         }
-        List<PersonResource> result = objectMapper.convertValue(e.getData(), objectMapper.getTypeFactory().constructCollectionType(List.class, PersonResource.class));
-        switch (e.getResponseStatus()) {
+        List<PersonResource> result = objectMapper.convertValue(event.getData(), objectMapper.getTypeFactory().constructCollectionType(List.class, PersonResource.class));
+        switch (event.getResponseStatus()) {
             case ACCEPTED:
                 URI location = UriComponentsBuilder.fromUriString(linker.getSelfHref(result.get(0))).build().toUri();
                 return ResponseEntity.status(HttpStatus.SEE_OTHER).location(location).build();
             case ERROR:
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(e.getMessage()));
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(event.getResponse());
             case CONFLICT:
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(linker.toResources(result));
             case REJECTED:
-                return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+                return ResponseEntity.badRequest().body(event.getResponse());
         }
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(event.getResponse());
     }
 
     @PostMapping
@@ -212,7 +213,7 @@ public class PersonController {
         log.info("putPersonByFodselsnummer {}, OrgId: {}, Client: {}", id, orgId, client);
         log.trace("Body: {}", body);
         Event event = new Event(orgId, Constants.COMPONENT, FellesActions.UPDATE_PERSON, client);
-        event.setQuery("fodselsnummer:" + id);
+        event.setQuery("fodselsnummer/" + id);
         event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
         fintAuditService.audit(event);
 
@@ -230,32 +231,32 @@ public class PersonController {
     //
     @ExceptionHandler(UpdateEntityMismatchException.class)
     public ResponseEntity handleUpdateEntityMismatch(Exception e) {
-        return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+        return ResponseEntity.badRequest().body(e);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity handleEntityNotFound(Exception e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(e.getMessage()));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e);
     }
 
     @ExceptionHandler(CreateEntityMismatchException.class)
     public ResponseEntity handleCreateEntityMismatch(Exception e) {
-        return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+        return ResponseEntity.badRequest().body(e);
     }
 
     @ExceptionHandler(EntityFoundException.class)
     public ResponseEntity handleEntityFound(Exception e) {
-        return ResponseEntity.status(HttpStatus.FOUND).body(new ErrorResponse(e.getMessage()));
+        return ResponseEntity.status(HttpStatus.FOUND).body(e);
     }
 
     @ExceptionHandler(NameNotFoundException.class)
     public ResponseEntity handleNameNotFound(Exception e) {
-        return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+        return ResponseEntity.badRequest().body(e);
     }
 
     @ExceptionHandler(UnknownHostException.class)
     public ResponseEntity handleUnkownHost(Exception e) {
-        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ErrorResponse(e.getMessage()));
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e);
     }
 
 }
