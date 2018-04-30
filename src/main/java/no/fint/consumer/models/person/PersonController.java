@@ -134,7 +134,7 @@ public class PersonController {
         if (client == null) {
             client = props.getDefaultClient();
         }
-        log.info("Fodselsnummer: {}, OrgId: {}, Client: {}", id, orgId, client);
+        log.info("Fodselsnummer: {}xxxxx, OrgId: {}, Client: {}", id.substring(0,6), orgId, client);
 
         Event event = new Event(orgId, Constants.COMPONENT, FellesActions.GET_PERSON, client);
         fintAuditService.audit(event);
