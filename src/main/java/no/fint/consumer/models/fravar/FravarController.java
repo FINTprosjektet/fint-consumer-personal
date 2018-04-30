@@ -14,10 +14,7 @@ import no.fint.consumer.exceptions.*;
 import no.fint.consumer.status.StatusCache;
 import no.fint.consumer.utils.RestEndpoints;
 
-import no.fint.event.model.Event;
-import no.fint.event.model.EventResponse;
-import no.fint.event.model.HeaderConstants;
-import no.fint.event.model.Status;
+import no.fint.event.model.*;
 
 import no.fint.relations.FintRelationsMediaType;
 import no.fint.relations.FintResources;
@@ -186,12 +183,19 @@ public class FravarController {
     public ResponseEntity postFravar(
             @RequestHeader(name = HeaderConstants.ORG_ID) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT) String client,
-            @RequestBody FravarResource body
+            @RequestBody FravarResource body,
+            @RequestParam(name = "validate", required = false) boolean validate
     ) {
         log.info("postFravar, OrgId: {}, Client: {}", orgId, client);
+        log.info("Validate: {}", validate);
         log.trace("Body: {}", body);
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_FRAVAR, client);
         event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
+        event.setOperation(Operation.CREATE);
+        if (validate) {
+            event.setQuery("VALIDATE");
+            event.setOperation(Operation.VALIDATE);
+        }
         fintAuditService.audit(event);
 
         consumerEventUtil.send(event);
@@ -213,6 +217,7 @@ public class FravarController {
         log.info("putFravarBySystemId {}, OrgId: {}, Client: {}", id, orgId, client);
         log.trace("Body: {}", body);
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_FRAVAR, client);
+        event.setOperation(Operation.UPDATE);
         event.setQuery("systemid/" + id);
         event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
         fintAuditService.audit(event);
