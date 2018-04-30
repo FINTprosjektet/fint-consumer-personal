@@ -14,10 +14,7 @@ import no.fint.consumer.exceptions.*;
 import no.fint.consumer.status.StatusCache;
 import no.fint.consumer.utils.RestEndpoints;
 
-import no.fint.event.model.Event;
-import no.fint.event.model.EventResponse;
-import no.fint.event.model.HeaderConstants;
-import no.fint.event.model.Status;
+import no.fint.event.model.*;
 
 import no.fint.relations.FintRelationsMediaType;
 import no.fint.relations.FintResources;
@@ -124,7 +121,7 @@ public class PersonController {
     }
 
 
-    @GetMapping("/fodselsnummer/{id}")
+    @GetMapping("/fodselsnummer/{id:.+}")
     public PersonResource getPersonByFodselsnummer(@PathVariable String id,
             @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client) {
@@ -186,12 +183,18 @@ public class PersonController {
     public ResponseEntity postPerson(
             @RequestHeader(name = HeaderConstants.ORG_ID) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT) String client,
-            @RequestBody PersonResource body
+            @RequestBody PersonResource body,
+            @RequestParam(name = "validate", required = false) boolean validate
     ) {
-        log.info("postPerson, OrgId: {}, Client: {}", orgId, client);
+        log.info("postPerson, Validate: {}, OrgId: {}, Client: {}", validate, orgId, client);
         log.trace("Body: {}", body);
         Event event = new Event(orgId, Constants.COMPONENT, FellesActions.UPDATE_PERSON, client);
         event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
+        event.setOperation(Operation.CREATE);
+        if (validate) {
+            event.setQuery("VALIDATE");
+            event.setOperation(Operation.VALIDATE);
+        }
         fintAuditService.audit(event);
 
         consumerEventUtil.send(event);
@@ -215,6 +218,7 @@ public class PersonController {
         Event event = new Event(orgId, Constants.COMPONENT, FellesActions.UPDATE_PERSON, client);
         event.setQuery("fodselsnummer/" + id);
         event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
+        event.setOperation(Operation.UPDATE);
         fintAuditService.audit(event);
 
         consumerEventUtil.send(event);

@@ -121,7 +121,7 @@ public class FravarController {
     }
 
 
-    @GetMapping("/systemid/{id}")
+    @GetMapping("/systemid/{id:.+}")
     public FravarResource getFravarBySystemId(@PathVariable String id,
             @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client) {
@@ -186,8 +186,7 @@ public class FravarController {
             @RequestBody FravarResource body,
             @RequestParam(name = "validate", required = false) boolean validate
     ) {
-        log.info("postFravar, OrgId: {}, Client: {}", orgId, client);
-        log.info("Validate: {}", validate);
+        log.info("postFravar, Validate: {}, OrgId: {}, Client: {}", validate, orgId, client);
         log.trace("Body: {}", body);
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_FRAVAR, client);
         event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
@@ -217,9 +216,9 @@ public class FravarController {
         log.info("putFravarBySystemId {}, OrgId: {}, Client: {}", id, orgId, client);
         log.trace("Body: {}", body);
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_FRAVAR, client);
-        event.setOperation(Operation.UPDATE);
         event.setQuery("systemid/" + id);
         event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
+        event.setOperation(Operation.UPDATE);
         fintAuditService.audit(event);
 
         consumerEventUtil.send(event);

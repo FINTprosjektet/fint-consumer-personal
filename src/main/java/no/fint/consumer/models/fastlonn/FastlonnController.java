@@ -14,10 +14,7 @@ import no.fint.consumer.exceptions.*;
 import no.fint.consumer.status.StatusCache;
 import no.fint.consumer.utils.RestEndpoints;
 
-import no.fint.event.model.Event;
-import no.fint.event.model.EventResponse;
-import no.fint.event.model.HeaderConstants;
-import no.fint.event.model.Status;
+import no.fint.event.model.*;
 
 import no.fint.relations.FintRelationsMediaType;
 import no.fint.relations.FintResources;
@@ -124,7 +121,7 @@ public class FastlonnController {
     }
 
 
-    @GetMapping("/systemid/{id}")
+    @GetMapping("/systemid/{id:.+}")
     public FastlonnResource getFastlonnBySystemId(@PathVariable String id,
             @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client) {
@@ -186,12 +183,18 @@ public class FastlonnController {
     public ResponseEntity postFastlonn(
             @RequestHeader(name = HeaderConstants.ORG_ID) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT) String client,
-            @RequestBody FastlonnResource body
+            @RequestBody FastlonnResource body,
+            @RequestParam(name = "validate", required = false) boolean validate
     ) {
-        log.info("postFastlonn, OrgId: {}, Client: {}", orgId, client);
+        log.info("postFastlonn, Validate: {}, OrgId: {}, Client: {}", validate, orgId, client);
         log.trace("Body: {}", body);
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_FASTLONN, client);
         event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
+        event.setOperation(Operation.CREATE);
+        if (validate) {
+            event.setQuery("VALIDATE");
+            event.setOperation(Operation.VALIDATE);
+        }
         fintAuditService.audit(event);
 
         consumerEventUtil.send(event);
@@ -215,6 +218,7 @@ public class FastlonnController {
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_FASTLONN, client);
         event.setQuery("systemid/" + id);
         event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
+        event.setOperation(Operation.UPDATE);
         fintAuditService.audit(event);
 
         consumerEventUtil.send(event);
