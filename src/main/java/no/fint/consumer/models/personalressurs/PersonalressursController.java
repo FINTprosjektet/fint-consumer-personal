@@ -101,7 +101,7 @@ public class PersonalressursController {
         if (client == null) {
             client = props.getDefaultClient();
         }
-        log.info("OrgId: {}, Client: {}", orgId, client);
+        log.debug("OrgId: {}, Client: {}", orgId, client);
 
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_PERSONALRESSURS, client);
         fintAuditService.audit(event);
@@ -122,7 +122,8 @@ public class PersonalressursController {
 
 
     @GetMapping("/ansattnummer/{id:.+}")
-    public PersonalressursResource getPersonalressursByAnsattnummer(@PathVariable String id,
+    public PersonalressursResource getPersonalressursByAnsattnummer(
+            @PathVariable String id,
             @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client) {
         if (props.isOverrideOrgId() || orgId == null) {
@@ -131,9 +132,10 @@ public class PersonalressursController {
         if (client == null) {
             client = props.getDefaultClient();
         }
-        log.info("Ansattnummer: {}, OrgId: {}, Client: {}", id, orgId, client);
+        log.debug("Ansattnummer: {}, OrgId: {}, Client: {}", id, orgId, client);
 
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_PERSONALRESSURS, client);
+        event.setQuery("ansattnummer/" + id);
         fintAuditService.audit(event);
 
         fintAuditService.audit(event, Status.CACHE);
@@ -146,7 +148,8 @@ public class PersonalressursController {
     }
 
     @GetMapping("/brukernavn/{id:.+}")
-    public PersonalressursResource getPersonalressursByBrukernavn(@PathVariable String id,
+    public PersonalressursResource getPersonalressursByBrukernavn(
+            @PathVariable String id,
             @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client) {
         if (props.isOverrideOrgId() || orgId == null) {
@@ -155,9 +158,10 @@ public class PersonalressursController {
         if (client == null) {
             client = props.getDefaultClient();
         }
-        log.info("Brukernavn: {}, OrgId: {}, Client: {}", id, orgId, client);
+        log.debug("Brukernavn: {}, OrgId: {}, Client: {}", id, orgId, client);
 
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_PERSONALRESSURS, client);
+        event.setQuery("brukernavn/" + id);
         fintAuditService.audit(event);
 
         fintAuditService.audit(event, Status.CACHE);
@@ -170,7 +174,8 @@ public class PersonalressursController {
     }
 
     @GetMapping("/systemid/{id:.+}")
-    public PersonalressursResource getPersonalressursBySystemId(@PathVariable String id,
+    public PersonalressursResource getPersonalressursBySystemId(
+            @PathVariable String id,
             @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client) {
         if (props.isOverrideOrgId() || orgId == null) {
@@ -179,9 +184,10 @@ public class PersonalressursController {
         if (client == null) {
             client = props.getDefaultClient();
         }
-        log.info("SystemId: {}, OrgId: {}, Client: {}", id, orgId, client);
+        log.debug("SystemId: {}, OrgId: {}, Client: {}", id, orgId, client);
 
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_PERSONALRESSURS, client);
+        event.setQuery("systemid/" + id);
         fintAuditService.audit(event);
 
         fintAuditService.audit(event, Status.CACHE);
@@ -196,10 +202,11 @@ public class PersonalressursController {
 
 
     @GetMapping("/status/{id}")
-    public ResponseEntity getStatus(@PathVariable String id,
-                                    @RequestHeader(HeaderConstants.ORG_ID) String orgId,
-                                    @RequestHeader(HeaderConstants.CLIENT) String client) {
-        log.info("/status/{} for {} from {}", id, orgId, client);
+    public ResponseEntity getStatus(
+            @PathVariable String id,
+            @RequestHeader(HeaderConstants.ORG_ID) String orgId,
+            @RequestHeader(HeaderConstants.CLIENT) String client) {
+        log.debug("/status/{} for {} from {}", id, orgId, client);
         if (!statusCache.containsKey(id)) {
             return ResponseEntity.notFound().build();
         }
@@ -234,7 +241,7 @@ public class PersonalressursController {
             @RequestBody PersonalressursResource body,
             @RequestParam(name = "validate", required = false) boolean validate
     ) {
-        log.info("postPersonalressurs, Validate: {}, OrgId: {}, Client: {}", validate, orgId, client);
+        log.debug("postPersonalressurs, Validate: {}, OrgId: {}, Client: {}", validate, orgId, client);
         log.trace("Body: {}", body);
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_PERSONALRESSURS, client);
         event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
@@ -261,7 +268,7 @@ public class PersonalressursController {
             @RequestHeader(name = HeaderConstants.CLIENT) String client,
             @RequestBody PersonalressursResource body
     ) {
-        log.info("putPersonalressursByAnsattnummer {}, OrgId: {}, Client: {}", id, orgId, client);
+        log.debug("putPersonalressursByAnsattnummer {}, OrgId: {}, Client: {}", id, orgId, client);
         log.trace("Body: {}", body);
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_PERSONALRESSURS, client);
         event.setQuery("ansattnummer/" + id);

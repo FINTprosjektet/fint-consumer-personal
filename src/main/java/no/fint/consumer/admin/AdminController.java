@@ -1,18 +1,15 @@
 package no.fint.consumer.admin;
 
-import lombok.extern.slf4j.Slf4j;
 import no.fint.cache.CacheManager;
 import no.fint.cache.utils.CacheUri;
 import no.fint.consumer.config.Constants;
 import no.fint.consumer.event.ConsumerEventUtil;
-import no.fint.consumer.event.EventListener;
 import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.DefaultActions;
 import no.fint.event.model.Event;
 import no.fint.event.model.HeaderConstants;
 import no.fint.event.model.health.Health;
 import no.fint.event.model.health.HealthStatus;
-import no.fint.events.FintEvents;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,7 +20,6 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Slf4j
 @RestController
 @RequestMapping(value = RestEndpoints.ADMIN, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class AdminController {
@@ -33,12 +29,6 @@ public class AdminController {
 
     @Autowired
     private CacheManager<?> cacheManager;
-
-    @Autowired
-    private FintEvents fintEvents;
-
-    @Autowired
-    private EventListener eventListener;
 
     @GetMapping("/health")
     public ResponseEntity healthCheck(@RequestHeader(HeaderConstants.ORG_ID) String orgId,
@@ -67,21 +57,4 @@ public class AdminController {
         return cacheManager.getKeys().stream().filter(key -> CacheUri.containsOrgId(key, orgId)).collect(Collectors.toList());
     }
 
-    /*
-    @PostMapping("/organisations/{orgId:.+}")
-    public ResponseEntity registerOrganization(@PathVariable String orgId) {
-        if (CacheUri.containsOrgId(cacheServices, orgId)) {
-            return ResponseEntity.badRequest().body(String.format("OrgId %s is already registered", orgId));
-        } else {
-            Event event = new Event(orgId, Constants.COMPONENT, DefaultActions.REGISTER_ORG_ID, "consumer");
-            fintEvents.sendDownstream(event);
-
-            cacheServices.forEach(cache -> cache.createCache(orgId));
-            fintEvents.registerUpstreamListener(orgId, eventListener);
-
-            URI location = ServletUriComponentsBuilder.fromCurrentRequest().buildAndExpand().toUri();
-            return ResponseEntity.created(location).build();
-        }
-    }
-*/
 }

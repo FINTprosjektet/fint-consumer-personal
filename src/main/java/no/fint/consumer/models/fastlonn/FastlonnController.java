@@ -101,7 +101,7 @@ public class FastlonnController {
         if (client == null) {
             client = props.getDefaultClient();
         }
-        log.info("OrgId: {}, Client: {}", orgId, client);
+        log.debug("OrgId: {}, Client: {}", orgId, client);
 
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_FASTLONN, client);
         fintAuditService.audit(event);
@@ -122,7 +122,8 @@ public class FastlonnController {
 
 
     @GetMapping("/systemid/{id:.+}")
-    public FastlonnResource getFastlonnBySystemId(@PathVariable String id,
+    public FastlonnResource getFastlonnBySystemId(
+            @PathVariable String id,
             @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client) {
         if (props.isOverrideOrgId() || orgId == null) {
@@ -131,9 +132,10 @@ public class FastlonnController {
         if (client == null) {
             client = props.getDefaultClient();
         }
-        log.info("SystemId: {}, OrgId: {}, Client: {}", id, orgId, client);
+        log.debug("SystemId: {}, OrgId: {}, Client: {}", id, orgId, client);
 
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_FASTLONN, client);
+        event.setQuery("systemid/" + id);
         fintAuditService.audit(event);
 
         fintAuditService.audit(event, Status.CACHE);
@@ -148,10 +150,11 @@ public class FastlonnController {
 
 
     @GetMapping("/status/{id}")
-    public ResponseEntity getStatus(@PathVariable String id,
-                                    @RequestHeader(HeaderConstants.ORG_ID) String orgId,
-                                    @RequestHeader(HeaderConstants.CLIENT) String client) {
-        log.info("/status/{} for {} from {}", id, orgId, client);
+    public ResponseEntity getStatus(
+            @PathVariable String id,
+            @RequestHeader(HeaderConstants.ORG_ID) String orgId,
+            @RequestHeader(HeaderConstants.CLIENT) String client) {
+        log.debug("/status/{} for {} from {}", id, orgId, client);
         if (!statusCache.containsKey(id)) {
             return ResponseEntity.notFound().build();
         }
@@ -186,7 +189,7 @@ public class FastlonnController {
             @RequestBody FastlonnResource body,
             @RequestParam(name = "validate", required = false) boolean validate
     ) {
-        log.info("postFastlonn, Validate: {}, OrgId: {}, Client: {}", validate, orgId, client);
+        log.debug("postFastlonn, Validate: {}, OrgId: {}, Client: {}", validate, orgId, client);
         log.trace("Body: {}", body);
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_FASTLONN, client);
         event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
@@ -213,7 +216,7 @@ public class FastlonnController {
             @RequestHeader(name = HeaderConstants.CLIENT) String client,
             @RequestBody FastlonnResource body
     ) {
-        log.info("putFastlonnBySystemId {}, OrgId: {}, Client: {}", id, orgId, client);
+        log.debug("putFastlonnBySystemId {}, OrgId: {}, Client: {}", id, orgId, client);
         log.trace("Body: {}", body);
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_FASTLONN, client);
         event.setQuery("systemid/" + id);
