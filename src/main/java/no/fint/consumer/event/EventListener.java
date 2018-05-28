@@ -9,6 +9,7 @@ import no.fint.event.model.Event;
 import no.fint.event.model.Status;
 import no.fint.events.FintEventListener;
 import no.fint.events.FintEvents;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -53,9 +54,17 @@ public class EventListener implements FintEventListener {
         String action = event.getAction();
         List<CacheService> supportedCacheServices = cacheServices.stream().filter(cacheService -> cacheService.supportsAction(action)).collect(Collectors.toList());
         if (supportedCacheServices.size() > 0) {
-            supportedCacheServices.forEach(cacheService -> cacheService.onAction(event));
-            fintAuditService.audit(event, Status.CACHE);
+            try {
+                supportedCacheServices.forEach(cacheService -> cacheService.onAction(event));
+                fintAuditService.audit(event, Status.CACHE);
+            } catch (Exception e) {
+                log.warn("Error handling event {}", event.getCorrId(), e);
+                event.setMessage(ExceptionUtils.getStackTrace(e));
+                fintAuditService.audit(event, Status.ERROR);
+            }
         } else {
+            event.setMessage("No Cache Service supports action");
+            fintAuditService.audit(event, Status.ERROR);
             log.warn("Unhandled event: {}", event);
         }
     }
