@@ -58,7 +58,7 @@ public class EventListener implements FintEventListener {
                 supportedCacheServices.forEach(cacheService -> cacheService.onAction(event));
                 fintAuditService.audit(event, Status.CACHE);
             } catch (Exception e) {
-                log.warn("Error handling event {}", event.getCorrId(), e);
+                log.warn("Error handling event {}: {}", event, e);
                 event.setMessage(ExceptionUtils.getStackTrace(e));
                 fintAuditService.audit(event, Status.ERROR);
             }
