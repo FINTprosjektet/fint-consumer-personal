@@ -101,7 +101,7 @@ public class VariabellonnCacheService extends CacheService<VariabellonnResource>
         } else {
             data = objectMapper.convertValue(event.getData(), javaType);
         }
-        data.forEach(linker::toResource);
+        data.forEach(linker::mapLinks);
         if (PersonalActions.valueOf(event.getAction()) == PersonalActions.UPDATE_VARIABELLONN) {
             add(event.getOrgId(), data);
             log.info("Added {} elements to cache for {}", data.size(), event.getOrgId());

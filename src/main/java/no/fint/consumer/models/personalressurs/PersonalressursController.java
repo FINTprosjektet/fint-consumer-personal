@@ -243,7 +243,7 @@ public class PersonalressursController {
     ) {
         log.debug("postPersonalressurs, Validate: {}, OrgId: {}, Client: {}", validate, orgId, client);
         log.trace("Body: {}", body);
-        linker.toResource(body);
+        linker.mapLinks(body);
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_PERSONALRESSURS, client);
         event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
         event.setOperation(Operation.CREATE);
@@ -271,7 +271,7 @@ public class PersonalressursController {
     ) {
         log.debug("putPersonalressursByAnsattnummer {}, OrgId: {}, Client: {}", id, orgId, client);
         log.trace("Body: {}", body);
-        linker.toResource(body);
+        linker.mapLinks(body);
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_PERSONALRESSURS, client);
         event.setQuery("ansattnummer/" + id);
         event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));

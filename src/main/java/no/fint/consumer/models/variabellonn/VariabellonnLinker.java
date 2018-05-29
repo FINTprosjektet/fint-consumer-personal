@@ -11,6 +11,10 @@ public class VariabellonnLinker extends FintLinker<VariabellonnResource> {
         super(VariabellonnResource.class);
     }
 
+    public void mapLinks(VariabellonnResource resource) {
+        super.mapLinks(resource);
+    }
+    
 
     @Override
     public String getSelfHref(VariabellonnResource variabellonn) {

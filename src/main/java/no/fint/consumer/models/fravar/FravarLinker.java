@@ -11,6 +11,10 @@ public class FravarLinker extends FintLinker<FravarResource> {
         super(FravarResource.class);
     }
 
+    public void mapLinks(FravarResource resource) {
+        super.mapLinks(resource);
+    }
+    
 
     @Override
     public String getSelfHref(FravarResource fravar) {

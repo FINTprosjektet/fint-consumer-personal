@@ -11,6 +11,10 @@ public class ArbeidsforholdLinker extends FintLinker<ArbeidsforholdResource> {
         super(ArbeidsforholdResource.class);
     }
 
+    public void mapLinks(ArbeidsforholdResource resource) {
+        super.mapLinks(resource);
+    }
+    
 
     @Override
     public String getSelfHref(ArbeidsforholdResource arbeidsforhold) {

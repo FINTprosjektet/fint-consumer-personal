@@ -11,6 +11,10 @@ public class FastlonnLinker extends FintLinker<FastlonnResource> {
         super(FastlonnResource.class);
     }
 
+    public void mapLinks(FastlonnResource resource) {
+        super.mapLinks(resource);
+    }
+    
 
     @Override
     public String getSelfHref(FastlonnResource fastlonn) {

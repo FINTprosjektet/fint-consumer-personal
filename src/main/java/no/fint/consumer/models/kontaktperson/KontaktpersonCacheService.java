@@ -101,7 +101,7 @@ public class KontaktpersonCacheService extends CacheService<KontaktpersonResourc
         } else {
             data = objectMapper.convertValue(event.getData(), javaType);
         }
-        data.forEach(linker::toResource);
+        data.forEach(linker::mapLinks);
         if (FellesActions.valueOf(event.getAction()) == FellesActions.UPDATE_KONTAKTPERSON) {
             add(event.getOrgId(), data);
             log.info("Added {} elements to cache for {}", data.size(), event.getOrgId());

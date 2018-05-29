@@ -191,7 +191,7 @@ public class FastlonnController {
     ) {
         log.debug("postFastlonn, Validate: {}, OrgId: {}, Client: {}", validate, orgId, client);
         log.trace("Body: {}", body);
-        linker.toResource(body);
+        linker.mapLinks(body);
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_FASTLONN, client);
         event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
         event.setOperation(Operation.CREATE);
@@ -219,7 +219,7 @@ public class FastlonnController {
     ) {
         log.debug("putFastlonnBySystemId {}, OrgId: {}, Client: {}", id, orgId, client);
         log.trace("Body: {}", body);
-        linker.toResource(body);
+        linker.mapLinks(body);
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_FASTLONN, client);
         event.setQuery("systemid/" + id);
         event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));

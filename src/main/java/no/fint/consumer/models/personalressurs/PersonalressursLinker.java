@@ -11,6 +11,10 @@ public class PersonalressursLinker extends FintLinker<PersonalressursResource> {
         super(PersonalressursResource.class);
     }
 
+    public void mapLinks(PersonalressursResource resource) {
+        super.mapLinks(resource);
+    }
+    
 
     @Override
     public String getSelfHref(PersonalressursResource personalressurs) {
