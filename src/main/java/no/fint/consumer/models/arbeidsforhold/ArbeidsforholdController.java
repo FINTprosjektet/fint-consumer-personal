@@ -191,6 +191,7 @@ public class ArbeidsforholdController {
     ) {
         log.debug("postArbeidsforhold, Validate: {}, OrgId: {}, Client: {}", validate, orgId, client);
         log.trace("Body: {}", body);
+        linker.toResource(body);
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_ARBEIDSFORHOLD, client);
         event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
         event.setOperation(Operation.CREATE);
@@ -218,6 +219,7 @@ public class ArbeidsforholdController {
     ) {
         log.debug("putArbeidsforholdBySystemId {}, OrgId: {}, Client: {}", id, orgId, client);
         log.trace("Body: {}", body);
+        linker.toResource(body);
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_ARBEIDSFORHOLD, client);
         event.setQuery("systemid/" + id);
         event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));

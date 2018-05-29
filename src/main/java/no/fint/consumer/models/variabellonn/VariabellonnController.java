@@ -191,6 +191,7 @@ public class VariabellonnController {
     ) {
         log.debug("postVariabellonn, Validate: {}, OrgId: {}, Client: {}", validate, orgId, client);
         log.trace("Body: {}", body);
+        linker.toResource(body);
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_VARIABELLONN, client);
         event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
         event.setOperation(Operation.CREATE);
@@ -218,6 +219,7 @@ public class VariabellonnController {
     ) {
         log.debug("putVariabellonnBySystemId {}, OrgId: {}, Client: {}", id, orgId, client);
         log.trace("Body: {}", body);
+        linker.toResource(body);
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_VARIABELLONN, client);
         event.setQuery("systemid/" + id);
         event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
