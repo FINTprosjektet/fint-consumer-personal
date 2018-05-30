@@ -52,7 +52,7 @@ public class EventListener implements FintEventListener {
         if (statusCache.containsKey(event.getCorrId())) {
             statusCache.put(event.getCorrId(), event);
         }
-        if (event.getResponseStatus() == ResponseStatus.ACCEPTED) {
+        if (event.getResponseStatus() == null || event.getResponseStatus() == ResponseStatus.ACCEPTED) {
             String action = event.getAction();
             List<CacheService> supportedCacheServices = cacheServices.stream().filter(cacheService -> cacheService.supportsAction(action)).collect(Collectors.toList());
             if (supportedCacheServices.size() > 0) {
