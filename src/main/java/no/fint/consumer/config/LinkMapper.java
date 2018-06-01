@@ -21,6 +21,7 @@ public class LinkMapper {
         return ImmutableMap.<String, String>builder()
                 .put(Arbeidsforhold.class.getName(), contextPath + RestEndpoints.ARBEIDSFORHOLD)
                 .put(Fastlonn.class.getName(), contextPath + RestEndpoints.FASTLONN)
+                .put(Fasttillegg.class.getName(), contextPath + RestEndpoints.FASTTILLEGG)
                 .put(Fravar.class.getName(), contextPath + RestEndpoints.FRAVAR)
                 .put(Person.class.getName(), contextPath + RestEndpoints.PERSON)
                 .put(Kontaktperson.class.getName(), contextPath + RestEndpoints.KONTAKTPERSON)

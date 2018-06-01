@@ -210,30 +210,6 @@ public class FastlonnController {
     }
 
   
-    @PutMapping("/systemid/{id}")
-    public ResponseEntity putFastlonnBySystemId(
-            @PathVariable String id,
-            @RequestHeader(name = HeaderConstants.ORG_ID) String orgId,
-            @RequestHeader(name = HeaderConstants.CLIENT) String client,
-            @RequestBody FastlonnResource body
-    ) {
-        log.debug("putFastlonnBySystemId {}, OrgId: {}, Client: {}", id, orgId, client);
-        log.trace("Body: {}", body);
-        linker.mapLinks(body);
-        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_FASTLONN, client);
-        event.setQuery("systemid/" + id);
-        event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
-        event.setOperation(Operation.UPDATE);
-        fintAuditService.audit(event);
-
-        consumerEventUtil.send(event);
-
-        statusCache.put(event.getCorrId(), event);
-
-        URI location = UriComponentsBuilder.fromUriString(linker.self()).path("status/{id}").buildAndExpand(event.getCorrId()).toUri();
-        return ResponseEntity.status(HttpStatus.ACCEPTED).location(location).build();
-    }
-    
 
     //
     // Exception handlers

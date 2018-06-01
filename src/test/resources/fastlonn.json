@@ -1,82 +1,44 @@
 {
   "anvist": "2018-04-05T14:51:20Z",
   "attestert": "2018-04-05T14:51:10Z",
+  "kontert": null,
   "periode": {
+    "beskrivelse": null,
+    "slutt": null,
     "start": "2018-04-05T14:51:20Z"
   },
-  "beskjeftigelse": [
-    {
-      "beskrivelse": "Test",
-      "kontostreng": {
-        "_links": {
-          "art": [
-            {
-              "href": "${administrasjon.kodeverk.art}/systemid/1"
-            }
-          ],
-          "ansvar": [
-            {
-              "href": "${administrasjon.kodeverk.ansvar}/systemid/2"
-            }
-          ],
-          "funksjon": [
-            {
-              "href": "${administrasjon.kodeverk.funksjon}/systemid/3"
-            }
-          ]
+  "beskrivelse": "Test",
+  "kontostreng": {
+    "_links": {
+      "art": [
+        {
+          "href": "${administrasjon.kodeverk.art}/systemid/1"
         }
-      },
-      "periode": {
-        "beskrivelse": null,
-        "slutt": null,
-        "start": "2018-04-05T14:51:20Z"
-      },
-      "prosent": 10000,
-      "_links": {
-        "lonnsart": [
-          {
-            "href": "${administrasjon.kodeverk.lonnsart}/systemid/4"
-          }
-        ]
-      }
-    }
-  ],
-  "fasttillegg": [
-    {
-      "beskrivelse": "Kontaktlærertillegg",
-      "belop": 1000000,
-      "periode": {
-        "start": "2018-04-05T14:51:20Z"
-      },
-      "kontostreng": {
-        "_links": {
-          "art": [
-            {
-              "href": "${administrasjon.kodeverk.art}/systemid/5"
-            }
-          ],
-          "ansvar": [
-            {
-              "href": "${administrasjon.kodeverk.ansvar}/systemid/6"
-            }
-          ],
-          "funksjon": [
-            {
-              "href": "${administrasjon.kodeverk.funksjon}/systemid/7"
-            }
-          ]
+      ],
+      "ansvar": [
+        {
+          "href": "${administrasjon.kodeverk.ansvar}/systemid/2"
         }
-      },
-      "_links": {
-        "lonnsart": [
-          {
-            "href": "${administrasjon.kodeverk.lonnsart}/systemid/8"
-          }
-        ]
-      }
+      ],
+      "funksjon": [
+        {
+          "href": "${administrasjon.kodeverk.funksjon}/systemid/3"
+        }
+      ]
     }
-  ],
+  },
+  "opptjent": {
+    "beskrivelse": null,
+    "slutt": null,
+    "start": "2018-04-05T14:51:20Z"
+  },
+  "prosent": 10000,
   "_links": {
+    "lonnsart": [
+      {
+        "href": "${administrasjon.kodeverk.lonnsart}/systemid/8"
+      }
+    ],
     "arbeidsforhold": [
       {
         "href": "${administrasjon.personal.arbeidsforhold}/systemid/1234"

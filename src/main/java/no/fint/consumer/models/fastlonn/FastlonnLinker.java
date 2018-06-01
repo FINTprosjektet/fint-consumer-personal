@@ -15,13 +15,14 @@ public class FastlonnLinker extends FintLinker<FastlonnResource> {
         super.mapLinks(resource);
     }
     
-
     @Override
     public String getSelfHref(FastlonnResource fastlonn) {
-        return createHrefWithId(fastlonn.getSystemId().getIdentifikatorverdi(), "systemid");
+        if (fastlonn.getSystemId() != null && fastlonn.getSystemId().getIdentifikatorverdi() != null) {
+            return createHrefWithId(fastlonn.getSystemId().getIdentifikatorverdi(), "systemid");
+        }
+        
+        return null;
     }
-    
-    
     
 }
 

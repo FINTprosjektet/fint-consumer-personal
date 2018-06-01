@@ -5,7 +5,6 @@ import no.fint.cache.FintCacheManager
 import no.fint.consumer.config.ConsumerProps
 import no.fint.consumer.event.ConsumerEventUtil
 import no.fint.event.model.Event
-import no.fint.model.administrasjon.kompleksedatatyper.Beskjeftigelse
 import no.fint.model.administrasjon.kompleksedatatyper.Kontostreng
 import no.fint.model.administrasjon.personal.Fastlonn
 import no.fint.model.administrasjon.personal.PersonalActions
@@ -13,7 +12,6 @@ import no.fint.model.felles.kompleksedatatyper.Identifikator
 import no.fint.model.felles.kompleksedatatyper.Periode
 import no.fint.model.relation.FintResource
 import no.fint.model.resource.Link
-import no.fint.model.resource.administrasjon.kompleksedatatyper.BeskjeftigelseResource
 import no.fint.model.resource.administrasjon.kompleksedatatyper.KontostrengResource
 import no.fint.model.resource.administrasjon.personal.FastlonnResource
 import no.fint.relations.FintResourceCompatibility
@@ -44,12 +42,11 @@ class FastlonnCacheServiceSpec extends Specification {
                 attestert: new Date(System.currentTimeMillis()-10000),
                 anvist: new Date(),
                 periode: new Periode(start: new Date()),
-        )
-        def beskjeftigelse = new BeskjeftigelseResource(prosent: 10000, beskrivelse: "Test", kontostreng: kontostreng)
-        beskjeftigelse.addLonnsart(Link.with("/administrasjon/kodeverk/lonnsart/systemid/4"))
+                prosent: 10000,
+                beskrivelse: "Test",
+                kontostreng: kontostreng)
+        fastlonn.addLonnsart(Link.with("/administrasjon/kodeverk/lonnsart/systemid/4"))
         fastlonn.addArbeidsforhold(Link.with("/administrasjon/personal/arbeidsforhold/systemid/1234"))
-        fastlonn.setBeskjeftigelse([ beskjeftigelse ] )
-        fastlonn.setFasttillegg([])
 
         when:
         def event = new Event(data: [fastlonn], orgId: "mock.no", action: PersonalActions.GET_ALL_FASTLONN, client: "Spock")
@@ -71,12 +68,11 @@ class FastlonnCacheServiceSpec extends Specification {
                 attestert: new Date(System.currentTimeMillis()-10000),
                 anvist: new Date(),
                 periode: new Periode(start: new Date()),
-        )
-        def beskjeftigelse = new BeskjeftigelseResource(prosent: 10000, beskrivelse: "Test", kontostreng: kontostreng)
-        beskjeftigelse.addLonnsart(Link.with("/administrasjon/kodeverk/lonnsart/systemid/4"))
+                prosent: 10000,
+                beskrivelse: "Test",
+                kontostreng: kontostreng)
+        fastlonn.addLonnsart(Link.with("/administrasjon/kodeverk/lonnsart/systemid/4"))
         fastlonn.addArbeidsforhold(Link.with("/administrasjon/personal/arbeidsforhold/systemid/1234"))
-        fastlonn.setBeskjeftigelse([ beskjeftigelse ] )
-        fastlonn.setFasttillegg([])
 
         when:
         def event = new Event(data: [FintResource.with(fastlonn)], orgId: "mock.no", action: PersonalActions.GET_ALL_FASTLONN, client: "Spock")
@@ -94,9 +90,7 @@ class FastlonnCacheServiceSpec extends Specification {
                 attestert: new Date(System.currentTimeMillis()-10000),
                 anvist: new Date(),
                 periode: new Periode(start: new Date()),
-                beskjeftigelse: [ new Beskjeftigelse(prosent: 10000, beskrivelse: "Test", kontostreng: new Kontostreng()) ],
-                fasttillegg: []
-        )
+                prosent: 10000, beskrivelse: "Test", kontostreng: new Kontostreng())
 
         when:
         def event = new Event(data: [FintResource.with(fastlonn)], orgId: "mock.no", action: PersonalActions.GET_ALL_FASTLONN, client: "Spock")

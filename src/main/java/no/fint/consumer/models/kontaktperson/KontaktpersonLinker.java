@@ -15,13 +15,14 @@ public class KontaktpersonLinker extends FintLinker<KontaktpersonResource> {
         super.mapLinks(resource);
     }
     
-
     @Override
     public String getSelfHref(KontaktpersonResource kontaktperson) {
-        return createHrefWithId(kontaktperson.getSystemId().getIdentifikatorverdi(), "systemid");
+        if (kontaktperson.getSystemId() != null && kontaktperson.getSystemId().getIdentifikatorverdi() != null) {
+            return createHrefWithId(kontaktperson.getSystemId().getIdentifikatorverdi(), "systemid");
+        }
+        
+        return null;
     }
-    
-    
     
 }
 

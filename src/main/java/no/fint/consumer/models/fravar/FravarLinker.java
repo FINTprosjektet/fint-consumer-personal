@@ -15,13 +15,14 @@ public class FravarLinker extends FintLinker<FravarResource> {
         super.mapLinks(resource);
     }
     
-
     @Override
     public String getSelfHref(FravarResource fravar) {
-        return createHrefWithId(fravar.getSystemId().getIdentifikatorverdi(), "systemid");
+        if (fravar.getSystemId() != null && fravar.getSystemId().getIdentifikatorverdi() != null) {
+            return createHrefWithId(fravar.getSystemId().getIdentifikatorverdi(), "systemid");
+        }
+        
+        return null;
     }
-    
-    
     
 }
 
