@@ -10,17 +10,10 @@ import no.fint.model.administrasjon.kompleksedatatyper.Fasttillegg;
 import no.fint.model.administrasjon.kompleksedatatyper.Kontostreng;
 import no.fint.model.administrasjon.kompleksedatatyper.Variabelttillegg;
 import no.fint.model.administrasjon.personal.*;
-import no.fint.model.felles.FellesActions;
-import no.fint.model.felles.Kontaktperson;
-import no.fint.model.felles.Person;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.model.felles.kompleksedatatyper.Periode;
-import no.fint.model.felles.kompleksedatatyper.Personnavn;
 import no.fint.model.relation.FintResource;
 import no.fint.model.relation.Relation;
-import no.fint.model.resource.Link;
-import no.fint.model.resource.felles.KontaktpersonResource;
-import no.fint.model.resource.felles.PersonResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -42,33 +35,10 @@ public class TestData {
 
     @PostConstruct
     public void init() {
-        eventListener.accept(createEvent(FellesActions.GET_ALL_KONTAKTPERSON, Collections.singletonList(fakeKontaktperson())));
-        eventListener.accept(createEvent(FellesActions.GET_ALL_PERSON, Collections.singletonList(fakePerson())));
         eventListener.accept(createEvent(PersonalActions.GET_ALL_FRAVAR, Collections.singletonList(fakeFravar())));
         eventListener.accept(createEvent(PersonalActions.GET_ALL_FASTLONN, Collections.singletonList(fakeFastlonn())));
         eventListener.accept(createEvent(PersonalActions.GET_ALL_VARIABELLONN, Collections.singletonList(fakeVariabellonn())));
         log.info("Alternative facts restored for mock.no");
-    }
-
-    private PersonResource fakePerson() {
-        PersonResource person = new PersonResource();
-        person.setFodselsnummer(newIdentifikator("12345678901"));
-        person.setFodselsdato(new Date());
-        Personnavn navn = new Personnavn();
-        navn.setFornavn("Tore");
-        navn.setEtternavn("Test");
-        person.setNavn(navn);
-        person.addParorende(Link.with(Kontaktperson.class, "systemid", "PR12345"));
-        return person;
-    }
-
-    private KontaktpersonResource fakeKontaktperson() {
-        KontaktpersonResource kontaktperson = new KontaktpersonResource();
-        kontaktperson.setForeldreansvar(true);
-        kontaktperson.setType("forelder");
-        kontaktperson.setSystemId(newIdentifikator("PR12345"));
-        kontaktperson.addKontaktperson(Link.with(Person.class, "fodselsnummer", "12345678901"));
-        return kontaktperson;
     }
 
     private Event createEvent(Enum action, List list) {
@@ -81,6 +51,8 @@ public class TestData {
     }
 
     public static FintResource<Variabellonn> fakeVariabellonn() {
+        Identifikator identifikator = new Identifikator();
+        identifikator.setIdentifikatorverdi(UUID.randomUUID().toString());
 
         Variabelttillegg variabelttillegg = new Variabelttillegg();
         variabelttillegg.setAntall(1045L);
@@ -89,7 +61,7 @@ public class TestData {
         variabelttillegg.setKontostreng(new Kontostreng());
 
         Variabellonn variabellonn = new Variabellonn();
-        variabellonn.setSystemId(newIdentifikator(UUID.randomUUID().toString()));
+        variabellonn.setSystemId(identifikator);
         variabellonn.setAttestert(new Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1)));
         variabellonn.setAnvist(new Date(System.currentTimeMillis() - TimeUnit.HOURS.toMillis(5)));
         variabellonn.setPeriode(getPeriode());
@@ -109,6 +81,8 @@ public class TestData {
     }
 
     public static FintResource<Fastlonn> fakeFastlonn() {
+        Identifikator identifikator = new Identifikator();
+        identifikator.setIdentifikatorverdi(UUID.randomUUID().toString());
 
         Beskjeftigelse beskjeftigelse = new Beskjeftigelse();
         beskjeftigelse.setProsent(10000L);
@@ -123,7 +97,7 @@ public class TestData {
         fasttillegg.setPeriode(getPeriode());
 
         Fastlonn fastlonn = new Fastlonn();
-        fastlonn.setSystemId(newIdentifikator(UUID.randomUUID().toString()));
+        fastlonn.setSystemId(identifikator);
         fastlonn.setBeskjeftigelse(Collections.singletonList(beskjeftigelse));
         fastlonn.setFasttillegg(Collections.singletonList(fasttillegg));
         fastlonn.setAttestert(new Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1)));
@@ -137,13 +111,9 @@ public class TestData {
 
     }
 
-    private static Identifikator newIdentifikator(String identifikatorverdi) {
-        Identifikator identifikator = new Identifikator();
-        identifikator.setIdentifikatorverdi(identifikatorverdi);
-        return identifikator;
-    }
-
     public static FintResource<Fravar> fakeFravar() {
+        Identifikator identifikator = new Identifikator();
+        identifikator.setIdentifikatorverdi(UUID.randomUUID().toString());
 
         Periode periode = new Periode();
         periode.setStart(new Date(2018 - 1900, 1, 1));
@@ -151,7 +121,7 @@ public class TestData {
 
         Fravar fravar = new Fravar();
         fravar.setProsent(10000L);
-        fravar.setSystemId(newIdentifikator(UUID.randomUUID().toString()));
+        fravar.setSystemId(identifikator);
         fravar.setPeriode(periode);
 
         return FintResource.with(fravar)

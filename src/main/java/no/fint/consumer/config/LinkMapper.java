@@ -7,7 +7,6 @@ import no.fint.model.administrasjon.fullmakt.Rolle;
 import no.fint.model.administrasjon.kodeverk.*;
 import no.fint.model.administrasjon.organisasjon.Organisasjonselement;
 import no.fint.model.administrasjon.personal.*;
-import no.fint.model.felles.Kontaktperson;
 import no.fint.model.felles.Person;
 import no.fint.model.felles.kodeverk.iso.Kjonn;
 import no.fint.model.felles.kodeverk.iso.Landkode;
@@ -23,7 +22,6 @@ public class LinkMapper {
                 .put(Fastlonn.class.getName(), contextPath + RestEndpoints.FASTLONN)
                 .put(Fravar.class.getName(), contextPath + RestEndpoints.FRAVAR)
                 .put(Person.class.getName(), contextPath + RestEndpoints.PERSON)
-                .put(Kontaktperson.class.getName(), contextPath + RestEndpoints.KONTAKTPERSON)
                 .put(Personalressurs.class.getName(), contextPath + RestEndpoints.PERSONALRESSURS)
                 .put(Variabellonn.class.getName(), contextPath + RestEndpoints.VARIABELLONN)
                 .put(Art.class.getName(), "/administrasjon/kodeverk/art")
