@@ -4,47 +4,10 @@
   "periode": {
     "start": "2018-04-05T14:51:20Z"
   },
-  "beskjeftigelse": [
+  "variabelttillegg": [
     {
-      "beskrivelse": "Test",
-      "kontostreng": {
-        "_links": {
-          "art": [
-            {
-              "href": "${administrasjon.kodeverk.art}/systemid/1"
-            }
-          ],
-          "ansvar": [
-            {
-              "href": "${administrasjon.kodeverk.ansvar}/systemid/2"
-            }
-          ],
-          "funksjon": [
-            {
-              "href": "${administrasjon.kodeverk.funksjon}/systemid/3"
-            }
-          ]
-        }
-      },
-      "periode": {
-        "beskrivelse": null,
-        "slutt": null,
-        "start": "2018-04-05T14:51:20Z"
-      },
-      "prosent": 10000,
-      "_links": {
-        "lonnsart": [
-          {
-            "href": "${administrasjon.kodeverk.lonnsart}/systemid/4"
-          }
-        ]
-      }
-    }
-  ],
-  "fasttillegg": [
-    {
-      "beskrivelse": "Kontaktlærertillegg",
-      "belop": 1000000,
+      "beskrivelse": "Tjenestereise",
+      "antall": 1000,
       "periode": {
         "start": "2018-04-05T14:51:20Z"
       },

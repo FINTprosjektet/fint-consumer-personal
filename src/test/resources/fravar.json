@@ -4,9 +4,6 @@
     "start": "2018-01-31T23:00:00Z"
   },
   "prosent": 10000,
-  "systemId": {
-    "identifikatorverdi": "3736db63-eae6-4e58-ad63-57e649d6322f"
-  },
   "_links": {
     "arbeidsforhold": [
       {
