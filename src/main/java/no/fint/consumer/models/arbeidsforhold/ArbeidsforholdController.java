@@ -144,7 +144,7 @@ public class ArbeidsforholdController {
 
         fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
-        return arbeidsforhold.orElseThrow(() -> new EntityNotFoundException(id));
+        return arbeidsforhold.map(linker::toResource).orElseThrow(() -> new EntityNotFoundException(id));
     }
 
 

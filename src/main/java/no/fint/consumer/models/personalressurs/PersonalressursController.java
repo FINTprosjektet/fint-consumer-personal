@@ -144,7 +144,7 @@ public class PersonalressursController {
 
         fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
-        return personalressurs.orElseThrow(() -> new EntityNotFoundException(id));
+        return personalressurs.map(linker::toResource).orElseThrow(() -> new EntityNotFoundException(id));
     }
 
     @GetMapping("/brukernavn/{id:.+}")
@@ -170,7 +170,7 @@ public class PersonalressursController {
 
         fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
-        return personalressurs.orElseThrow(() -> new EntityNotFoundException(id));
+        return personalressurs.map(linker::toResource).orElseThrow(() -> new EntityNotFoundException(id));
     }
 
     @GetMapping("/systemid/{id:.+}")
@@ -196,7 +196,7 @@ public class PersonalressursController {
 
         fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
-        return personalressurs.orElseThrow(() -> new EntityNotFoundException(id));
+        return personalressurs.map(linker::toResource).orElseThrow(() -> new EntityNotFoundException(id));
     }
 
 

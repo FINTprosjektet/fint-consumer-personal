@@ -144,7 +144,7 @@ public class FravarController {
 
         fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
-        return fravar.orElseThrow(() -> new EntityNotFoundException(id));
+        return fravar.map(linker::toResource).orElseThrow(() -> new EntityNotFoundException(id));
     }
 
 

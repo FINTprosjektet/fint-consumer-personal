@@ -144,7 +144,7 @@ public class KontaktpersonController {
 
         fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
-        return kontaktperson.orElseThrow(() -> new EntityNotFoundException(id));
+        return kontaktperson.map(linker::toResource).orElseThrow(() -> new EntityNotFoundException(id));
     }
 
 

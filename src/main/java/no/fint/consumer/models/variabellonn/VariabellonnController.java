@@ -144,7 +144,7 @@ public class VariabellonnController {
 
         fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
-        return variabellonn.orElseThrow(() -> new EntityNotFoundException(id));
+        return variabellonn.map(linker::toResource).orElseThrow(() -> new EntityNotFoundException(id));
     }
 
 
