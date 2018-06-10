@@ -15,13 +15,14 @@ public class VariabellonnLinker extends FintLinker<VariabellonnResource> {
         super.mapLinks(resource);
     }
     
-
     @Override
     public String getSelfHref(VariabellonnResource variabellonn) {
-        return createHrefWithId(variabellonn.getSystemId().getIdentifikatorverdi(), "systemid");
+        if (variabellonn.getSystemId() != null && variabellonn.getSystemId().getIdentifikatorverdi() != null) {
+            return createHrefWithId(variabellonn.getSystemId().getIdentifikatorverdi(), "systemid");
+        }
+        
+        return null;
     }
-    
-    
     
 }
 

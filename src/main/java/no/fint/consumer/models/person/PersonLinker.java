@@ -15,13 +15,14 @@ public class PersonLinker extends FintLinker<PersonResource> {
         super.mapLinks(resource);
     }
     
-
     @Override
     public String getSelfHref(PersonResource person) {
-        return createHrefWithId(person.getFodselsnummer().getIdentifikatorverdi(), "fodselsnummer");
+        if (person.getFodselsnummer() != null && person.getFodselsnummer().getIdentifikatorverdi() != null) {
+            return createHrefWithId(person.getFodselsnummer().getIdentifikatorverdi(), "fodselsnummer");
+        }
+        
+        return null;
     }
-    
-    
     
 }
 

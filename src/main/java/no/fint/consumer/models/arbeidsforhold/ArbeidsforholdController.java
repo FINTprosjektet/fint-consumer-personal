@@ -144,7 +144,7 @@ public class ArbeidsforholdController {
 
         fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
-        return arbeidsforhold.orElseThrow(() -> new EntityNotFoundException(id));
+        return arbeidsforhold.map(linker::toResource).orElseThrow(() -> new EntityNotFoundException(id));
     }
 
 
@@ -233,7 +233,7 @@ public class ArbeidsforholdController {
         URI location = UriComponentsBuilder.fromUriString(linker.self()).path("status/{id}").buildAndExpand(event.getCorrId()).toUri();
         return ResponseEntity.status(HttpStatus.ACCEPTED).location(location).build();
     }
-    
+  
 
     //
     // Exception handlers

@@ -15,13 +15,14 @@ public class ArbeidsforholdLinker extends FintLinker<ArbeidsforholdResource> {
         super.mapLinks(resource);
     }
     
-
     @Override
     public String getSelfHref(ArbeidsforholdResource arbeidsforhold) {
-        return createHrefWithId(arbeidsforhold.getSystemId().getIdentifikatorverdi(), "systemid");
+        if (arbeidsforhold.getSystemId() != null && arbeidsforhold.getSystemId().getIdentifikatorverdi() != null) {
+            return createHrefWithId(arbeidsforhold.getSystemId().getIdentifikatorverdi(), "systemid");
+        }
+        
+        return null;
     }
-    
-    
     
 }
 
