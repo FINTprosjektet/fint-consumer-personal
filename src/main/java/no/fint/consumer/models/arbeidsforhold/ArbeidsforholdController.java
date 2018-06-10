@@ -233,7 +233,7 @@ public class ArbeidsforholdController {
         URI location = UriComponentsBuilder.fromUriString(linker.self()).path("status/{id}").buildAndExpand(event.getCorrId()).toUri();
         return ResponseEntity.status(HttpStatus.ACCEPTED).location(location).build();
     }
-    
+  
 
     //
     // Exception handlers
