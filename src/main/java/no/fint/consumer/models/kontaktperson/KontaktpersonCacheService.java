@@ -1,4 +1,4 @@
-package no.fint.consumer.models.fastlonn;
+package no.fint.consumer.models.kontaktperson;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,15 +24,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import no.fint.model.administrasjon.personal.Fastlonn;
-import no.fint.model.resource.administrasjon.personal.FastlonnResource;
-import no.fint.model.administrasjon.personal.PersonalActions;
+import no.fint.model.felles.Kontaktperson;
+import no.fint.model.resource.felles.KontaktpersonResource;
+import no.fint.model.felles.FellesActions;
 
 @Slf4j
 @Service
-public class FastlonnCacheService extends CacheService<FastlonnResource> {
+public class KontaktpersonCacheService extends CacheService<KontaktpersonResource> {
 
-    public static final String MODEL = Fastlonn.class.getSimpleName().toLowerCase();
+    public static final String MODEL = Kontaktperson.class.getSimpleName().toLowerCase();
 
     @Value("${fint.consumer.compatibility.fintresource:true}")
     private boolean checkFintResourceCompatibility;
@@ -47,16 +47,16 @@ public class FastlonnCacheService extends CacheService<FastlonnResource> {
     private ConsumerProps props;
 
     @Autowired
-    private FastlonnLinker linker;
+    private KontaktpersonLinker linker;
 
     private JavaType javaType;
 
     private ObjectMapper objectMapper;
 
-    public FastlonnCacheService() {
-        super(MODEL, PersonalActions.GET_ALL_FASTLONN, PersonalActions.UPDATE_FASTLONN);
+    public KontaktpersonCacheService() {
+        super(MODEL, FellesActions.GET_ALL_KONTAKTPERSON, FellesActions.UPDATE_KONTAKTPERSON);
         objectMapper = new ObjectMapper();
-        javaType = objectMapper.getTypeFactory().constructCollectionType(List.class, FastlonnResource.class);
+        javaType = objectMapper.getTypeFactory().constructCollectionType(List.class, KontaktpersonResource.class);
         objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
     }
 
@@ -65,7 +65,7 @@ public class FastlonnCacheService extends CacheService<FastlonnResource> {
         Arrays.stream(props.getOrgs()).forEach(this::createCache);
     }
 
-    @Scheduled(initialDelayString = ConsumerProps.CACHE_INITIALDELAY_FASTLONN, fixedRateString = ConsumerProps.CACHE_FIXEDRATE_FASTLONN)
+    @Scheduled(initialDelayString = ConsumerProps.CACHE_INITIALDELAY_KONTAKTPERSON, fixedRateString = ConsumerProps.CACHE_FIXEDRATE_KONTAKTPERSON)
     public void populateCacheAll() {
         Arrays.stream(props.getOrgs()).forEach(this::populateCache);
     }
@@ -76,16 +76,16 @@ public class FastlonnCacheService extends CacheService<FastlonnResource> {
 	}
 
     private void populateCache(String orgId) {
-		log.info("Populating Fastlonn cache for {}", orgId);
-        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_FASTLONN, Constants.CACHE_SERVICE);
+		log.info("Populating Kontaktperson cache for {}", orgId);
+        Event event = new Event(orgId, Constants.COMPONENT, FellesActions.GET_ALL_KONTAKTPERSON, Constants.CACHE_SERVICE);
         consumerEventUtil.send(event);
     }
 
 
-    public Optional<FastlonnResource> getFastlonnBySystemId(String orgId, String systemId) {
+    public Optional<KontaktpersonResource> getKontaktpersonBySystemId(String orgId, String systemId) {
         return getOne(orgId, (resource) -> Optional
                 .ofNullable(resource)
-                .map(FastlonnResource::getSystemId)
+                .map(KontaktpersonResource::getSystemId)
                 .map(Identifikator::getIdentifikatorverdi)
                 .map(_id -> _id.equals(systemId))
                 .orElse(false));
@@ -94,15 +94,15 @@ public class FastlonnCacheService extends CacheService<FastlonnResource> {
 
 	@Override
     public void onAction(Event event) {
-        List<FastlonnResource> data;
+        List<KontaktpersonResource> data;
         if (checkFintResourceCompatibility && fintResourceCompatibility.isFintResourceData(event.getData())) {
-            log.info("Compatibility: Converting FintResource<FastlonnResource> to FastlonnResource ...");
-            data = fintResourceCompatibility.convertResourceData(event.getData(), FastlonnResource.class);
+            log.info("Compatibility: Converting FintResource<KontaktpersonResource> to KontaktpersonResource ...");
+            data = fintResourceCompatibility.convertResourceData(event.getData(), KontaktpersonResource.class);
         } else {
             data = objectMapper.convertValue(event.getData(), javaType);
         }
         data.forEach(linker::mapLinks);
-        if (PersonalActions.valueOf(event.getAction()) == PersonalActions.UPDATE_FASTLONN) {
+        if (FellesActions.valueOf(event.getAction()) == FellesActions.UPDATE_KONTAKTPERSON) {
             add(event.getOrgId(), data);
             log.info("Added {} elements to cache for {}", data.size(), event.getOrgId());
         } else {

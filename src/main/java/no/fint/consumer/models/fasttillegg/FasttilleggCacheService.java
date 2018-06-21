@@ -1,4 +1,4 @@
-package no.fint.consumer.models.fastlonn;
+package no.fint.consumer.models.fasttillegg;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,15 +24,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import no.fint.model.administrasjon.personal.Fastlonn;
-import no.fint.model.resource.administrasjon.personal.FastlonnResource;
+import no.fint.model.administrasjon.personal.Fasttillegg;
+import no.fint.model.resource.administrasjon.personal.FasttilleggResource;
 import no.fint.model.administrasjon.personal.PersonalActions;
 
 @Slf4j
 @Service
-public class FastlonnCacheService extends CacheService<FastlonnResource> {
+public class FasttilleggCacheService extends CacheService<FasttilleggResource> {
 
-    public static final String MODEL = Fastlonn.class.getSimpleName().toLowerCase();
+    public static final String MODEL = Fasttillegg.class.getSimpleName().toLowerCase();
 
     @Value("${fint.consumer.compatibility.fintresource:true}")
     private boolean checkFintResourceCompatibility;
@@ -47,16 +47,16 @@ public class FastlonnCacheService extends CacheService<FastlonnResource> {
     private ConsumerProps props;
 
     @Autowired
-    private FastlonnLinker linker;
+    private FasttilleggLinker linker;
 
     private JavaType javaType;
 
     private ObjectMapper objectMapper;
 
-    public FastlonnCacheService() {
-        super(MODEL, PersonalActions.GET_ALL_FASTLONN, PersonalActions.UPDATE_FASTLONN);
+    public FasttilleggCacheService() {
+        super(MODEL, PersonalActions.GET_ALL_FASTTILLEGG, PersonalActions.UPDATE_FASTTILLEGG);
         objectMapper = new ObjectMapper();
-        javaType = objectMapper.getTypeFactory().constructCollectionType(List.class, FastlonnResource.class);
+        javaType = objectMapper.getTypeFactory().constructCollectionType(List.class, FasttilleggResource.class);
         objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
     }
 
@@ -65,7 +65,7 @@ public class FastlonnCacheService extends CacheService<FastlonnResource> {
         Arrays.stream(props.getOrgs()).forEach(this::createCache);
     }
 
-    @Scheduled(initialDelayString = ConsumerProps.CACHE_INITIALDELAY_FASTLONN, fixedRateString = ConsumerProps.CACHE_FIXEDRATE_FASTLONN)
+    @Scheduled(initialDelayString = ConsumerProps.CACHE_INITIALDELAY_FASTTILLEGG, fixedRateString = ConsumerProps.CACHE_FIXEDRATE_FASTTILLEGG)
     public void populateCacheAll() {
         Arrays.stream(props.getOrgs()).forEach(this::populateCache);
     }
@@ -76,16 +76,16 @@ public class FastlonnCacheService extends CacheService<FastlonnResource> {
 	}
 
     private void populateCache(String orgId) {
-		log.info("Populating Fastlonn cache for {}", orgId);
-        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_FASTLONN, Constants.CACHE_SERVICE);
+		log.info("Populating Fasttillegg cache for {}", orgId);
+        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_FASTTILLEGG, Constants.CACHE_SERVICE);
         consumerEventUtil.send(event);
     }
 
 
-    public Optional<FastlonnResource> getFastlonnBySystemId(String orgId, String systemId) {
+    public Optional<FasttilleggResource> getFasttilleggBySystemId(String orgId, String systemId) {
         return getOne(orgId, (resource) -> Optional
                 .ofNullable(resource)
-                .map(FastlonnResource::getSystemId)
+                .map(FasttilleggResource::getSystemId)
                 .map(Identifikator::getIdentifikatorverdi)
                 .map(_id -> _id.equals(systemId))
                 .orElse(false));
@@ -94,15 +94,15 @@ public class FastlonnCacheService extends CacheService<FastlonnResource> {
 
 	@Override
     public void onAction(Event event) {
-        List<FastlonnResource> data;
+        List<FasttilleggResource> data;
         if (checkFintResourceCompatibility && fintResourceCompatibility.isFintResourceData(event.getData())) {
-            log.info("Compatibility: Converting FintResource<FastlonnResource> to FastlonnResource ...");
-            data = fintResourceCompatibility.convertResourceData(event.getData(), FastlonnResource.class);
+            log.info("Compatibility: Converting FintResource<FasttilleggResource> to FasttilleggResource ...");
+            data = fintResourceCompatibility.convertResourceData(event.getData(), FasttilleggResource.class);
         } else {
             data = objectMapper.convertValue(event.getData(), javaType);
         }
         data.forEach(linker::mapLinks);
-        if (PersonalActions.valueOf(event.getAction()) == PersonalActions.UPDATE_FASTLONN) {
+        if (PersonalActions.valueOf(event.getAction()) == PersonalActions.UPDATE_FASTTILLEGG) {
             add(event.getOrgId(), data);
             log.info("Added {} elements to cache for {}", data.size(), event.getOrgId());
         } else {

@@ -4,6 +4,9 @@ fint:
   test-mode: true
   queue-endpoint-enabled: true
 
+ consumer:
+  default-org-id: mock.no
+
  audit:
   test-mode: true
 
@@ -15,4 +18,5 @@ fint:
   members: localhost
 
 server:
- context-path: /
+ context-path: ""
+ port: 8080
