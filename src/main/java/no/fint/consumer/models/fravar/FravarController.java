@@ -165,11 +165,12 @@ public class FravarController {
             return ResponseEntity.badRequest().body(new EventResponse() { { setMessage("Invalid OrgId"); } } );
         }
         if (event.getResponseStatus() == null) {
-            return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+            return ResponseEntity.status(HttpStatus.PROCESSING).build();
         }
         List<FravarResource> result = objectMapper.convertValue(event.getData(), objectMapper.getTypeFactory().constructCollectionType(List.class, FravarResource.class));
         switch (event.getResponseStatus()) {
             case ACCEPTED:
+                fintAuditService.audit(event, Status.SENT_TO_CLIENT);
                 URI location = UriComponentsBuilder.fromUriString(linker.getSelfHref(result.get(0))).build().toUri();
                 return ResponseEntity.status(HttpStatus.SEE_OTHER).location(location).build();
             case ERROR:
