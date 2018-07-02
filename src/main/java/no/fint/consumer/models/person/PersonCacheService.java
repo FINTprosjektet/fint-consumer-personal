@@ -11,6 +11,7 @@ import no.fint.consumer.config.Constants;
 import no.fint.consumer.config.ConsumerProps;
 import no.fint.consumer.event.ConsumerEventUtil;
 import no.fint.event.model.Event;
+import no.fint.event.model.ResponseStatus;
 import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.relations.FintResourceCompatibility;
 
@@ -103,8 +104,12 @@ public class PersonCacheService extends CacheService<PersonResource> {
         }
         data.forEach(linker::mapLinks);
         if (FellesActions.valueOf(event.getAction()) == FellesActions.UPDATE_PERSON) {
-            add(event.getOrgId(), data);
-            log.info("Added {} elements to cache for {}", data.size(), event.getOrgId());
+            if (event.getResponseStatus() == ResponseStatus.ACCEPTED || event.getResponseStatus() == ResponseStatus.CONFLICT) {
+                add(event.getOrgId(), data);
+                log.info("Added {} elements to cache for {}", data.size(), event.getOrgId());
+            } else {
+                log.debug("Ignoring payload for {} with response status {}", event.getOrgId(), event.getResponseStatus());
+            }
         } else {
             update(event.getOrgId(), data);
             log.info("Updated cache for {} with {} elements", event.getOrgId(), data.size());

@@ -223,6 +223,7 @@ public class PersonalressursController {
         switch (event.getResponseStatus()) {
             case ACCEPTED:
                 URI location = UriComponentsBuilder.fromUriString(linker.getSelfHref(result.get(0))).build().toUri();
+                fintAuditService.audit(event, Status.SENT_TO_CLIENT);
                 return ResponseEntity.status(HttpStatus.SEE_OTHER).location(location).build();
             case ERROR:
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(event.getResponse());
@@ -262,7 +263,7 @@ public class PersonalressursController {
     }
 
   
-    @PutMapping("/ansattnummer/{id}")
+    @PutMapping("/ansattnummer/{id:.+}")
     public ResponseEntity putPersonalressursByAnsattnummer(
             @PathVariable String id,
             @RequestHeader(name = HeaderConstants.ORG_ID) String orgId,
@@ -286,7 +287,7 @@ public class PersonalressursController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).location(location).build();
     }
   
-    @PutMapping("/brukernavn/{id}")
+    @PutMapping("/brukernavn/{id:.+}")
     public ResponseEntity putPersonalressursByBrukernavn(
             @PathVariable String id,
             @RequestHeader(name = HeaderConstants.ORG_ID) String orgId,
@@ -310,7 +311,7 @@ public class PersonalressursController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).location(location).build();
     }
   
-    @PutMapping("/systemid/{id}")
+    @PutMapping("/systemid/{id:.+}")
     public ResponseEntity putPersonalressursBySystemId(
             @PathVariable String id,
             @RequestHeader(name = HeaderConstants.ORG_ID) String orgId,

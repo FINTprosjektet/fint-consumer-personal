@@ -171,6 +171,7 @@ public class ArbeidsforholdController {
         switch (event.getResponseStatus()) {
             case ACCEPTED:
                 URI location = UriComponentsBuilder.fromUriString(linker.getSelfHref(result.get(0))).build().toUri();
+                fintAuditService.audit(event, Status.SENT_TO_CLIENT);
                 return ResponseEntity.status(HttpStatus.SEE_OTHER).location(location).build();
             case ERROR:
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(event.getResponse());
@@ -210,7 +211,7 @@ public class ArbeidsforholdController {
     }
 
   
-    @PutMapping("/systemid/{id}")
+    @PutMapping("/systemid/{id:.+}")
     public ResponseEntity putArbeidsforholdBySystemId(
             @PathVariable String id,
             @RequestHeader(name = HeaderConstants.ORG_ID) String orgId,

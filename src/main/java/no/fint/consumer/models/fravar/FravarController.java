@@ -165,13 +165,13 @@ public class FravarController {
             return ResponseEntity.badRequest().body(new EventResponse() { { setMessage("Invalid OrgId"); } } );
         }
         if (event.getResponseStatus() == null) {
-            return ResponseEntity.status(HttpStatus.PROCESSING).build();
+            return ResponseEntity.status(HttpStatus.ACCEPTED).build();
         }
         List<FravarResource> result = objectMapper.convertValue(event.getData(), objectMapper.getTypeFactory().constructCollectionType(List.class, FravarResource.class));
         switch (event.getResponseStatus()) {
             case ACCEPTED:
-                fintAuditService.audit(event, Status.SENT_TO_CLIENT);
                 URI location = UriComponentsBuilder.fromUriString(linker.getSelfHref(result.get(0))).build().toUri();
+                fintAuditService.audit(event, Status.SENT_TO_CLIENT);
                 return ResponseEntity.status(HttpStatus.SEE_OTHER).location(location).build();
             case ERROR:
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(event.getResponse());
@@ -211,7 +211,7 @@ public class FravarController {
     }
 
   
-    @PutMapping("/systemid/{id}")
+    @PutMapping("/systemid/{id:.+}")
     public ResponseEntity putFravarBySystemId(
             @PathVariable String id,
             @RequestHeader(name = HeaderConstants.ORG_ID) String orgId,

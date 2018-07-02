@@ -171,6 +171,7 @@ public class PersonController {
         switch (event.getResponseStatus()) {
             case ACCEPTED:
                 URI location = UriComponentsBuilder.fromUriString(linker.getSelfHref(result.get(0))).build().toUri();
+                fintAuditService.audit(event, Status.SENT_TO_CLIENT);
                 return ResponseEntity.status(HttpStatus.SEE_OTHER).location(location).build();
             case ERROR:
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(event.getResponse());
@@ -210,7 +211,7 @@ public class PersonController {
     }
 
   
-    @PutMapping("/fodselsnummer/{id}")
+    @PutMapping("/fodselsnummer/{id:.+}")
     public ResponseEntity putPersonByFodselsnummer(
             @PathVariable String id,
             @RequestHeader(name = HeaderConstants.ORG_ID) String orgId,
