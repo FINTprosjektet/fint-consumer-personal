@@ -1,5 +1,6 @@
 package no.fint.consumer.models.person;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -59,6 +60,7 @@ public class PersonCacheService extends CacheService<PersonResource> {
         objectMapper = new ObjectMapper();
         javaType = objectMapper.getTypeFactory().constructCollectionType(List.class, PersonResource.class);
         objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     }
 
     @PostConstruct
@@ -95,6 +97,7 @@ public class PersonCacheService extends CacheService<PersonResource> {
 
 	@Override
     public void onAction(Event event) {
+        log.trace("onAction {}\n{}", event, event.getData());
         List<PersonResource> data;
         if (checkFintResourceCompatibility && fintResourceCompatibility.isFintResourceData(event.getData())) {
             log.info("Compatibility: Converting FintResource<PersonResource> to PersonResource ...");
