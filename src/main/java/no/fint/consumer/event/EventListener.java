@@ -48,6 +48,10 @@ public class EventListener implements FintEventListener {
 	public void accept(Event event) {
         log.debug("Received event: {}", event);
         log.trace("Event data: {}", event.getData());
+        if (event.isHealthCheck()) {
+            log.debug("Ignoring health check.");
+            return;
+        }
         if (statusCache.containsKey(event.getCorrId())) {
             statusCache.put(event.getCorrId(), event);
         }
