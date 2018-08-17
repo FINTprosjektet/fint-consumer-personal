@@ -6,6 +6,7 @@ import no.fint.cache.CacheService;
 import no.fint.consumer.config.ConsumerProps;
 import no.fint.consumer.status.StatusCache;
 import no.fint.event.model.Event;
+import no.fint.event.model.Operation;
 import no.fint.event.model.Status;
 import no.fint.events.FintEventListener;
 import no.fint.events.FintEvents;
@@ -54,6 +55,10 @@ public class EventListener implements FintEventListener {
         }
         if (statusCache.containsKey(event.getCorrId())) {
             statusCache.put(event.getCorrId(), event);
+        }
+        if (event.getOperation() == Operation.VALIDATE) {
+            log.debug("Ignoring validation event.");
+            return;
         }
         String action = event.getAction();
         List<CacheService> supportedCacheServices = cacheServices.stream().filter(cacheService -> cacheService.supportsAction(action)).collect(Collectors.toList());

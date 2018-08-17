@@ -170,6 +170,10 @@ public class FravarController {
         List<FravarResource> result = objectMapper.convertValue(event.getData(), objectMapper.getTypeFactory().constructCollectionType(List.class, FravarResource.class));
         switch (event.getResponseStatus()) {
             case ACCEPTED:
+                if (event.getOperation() == Operation.VALIDATE) {
+                    fintAuditService.audit(event, Status.SENT_TO_CLIENT);
+                    return ResponseEntity.ok(event.getResponse());
+                }
                 URI location = UriComponentsBuilder.fromUriString(linker.getSelfHref(result.get(0))).build().toUri();
                 fintAuditService.audit(event, Status.SENT_TO_CLIENT);
                 return ResponseEntity.status(HttpStatus.SEE_OTHER).location(location).build();
