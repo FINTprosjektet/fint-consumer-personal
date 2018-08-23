@@ -15,18 +15,18 @@ pipeline {
                 branch 'master'
             }
             steps {
-                sh "docker tag ${GIT_COMMIT} dtr.fintlabs.no/fint-beta/consumer-personal:${VERSION}"
+                sh "docker tag ${GIT_COMMIT} dtr.fintlabs.no/beta/consumer-personal:${VERSION}"
                 withDockerRegistry([credentialsId: 'dtr-fintlabs-no', url: 'https://dtr.fintlabs.no']) {
-                    sh "docker push 'dtr.fintlabs.no/fint-beta/consumer-personal:${VERSION}'"
+                    sh "docker push 'dtr.fintlabs.no/beta/consumer-personal:${VERSION}'"
                 }
             }
         }
         stage('Publish PR') {
             when { changeRequest() }
             steps {
-                sh "docker tag ${GIT_COMMIT} dtr.fintlabs.no/fint-beta/consumer-personal:${BRANCH_NAME}"
+                sh "docker tag ${GIT_COMMIT} dtr.fintlabs.no/beta/consumer-personal:${BRANCH_NAME}"
                 withDockerRegistry([credentialsId: 'dtr-fintlabs-no', url: 'https://dtr.fintlabs.no']) {
-                    sh "docker push 'dtr.fintlabs.no/fint-beta/consumer-personal:${BRANCH_NAME}'"
+                    sh "docker push 'dtr.fintlabs.no/beta/consumer-personal:${BRANCH_NAME}'"
                 }
             }
         }
