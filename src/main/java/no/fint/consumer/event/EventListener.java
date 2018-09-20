@@ -7,6 +7,7 @@ import no.fint.consumer.config.ConsumerProps;
 import no.fint.consumer.status.StatusCache;
 import no.fint.event.model.Event;
 import no.fint.event.model.Operation;
+import no.fint.event.model.ResponseStatus;
 import no.fint.event.model.Status;
 import no.fint.events.FintEventListener;
 import no.fint.events.FintEvents;
@@ -58,6 +59,10 @@ public class EventListener implements FintEventListener {
         }
         if (event.getOperation() == Operation.VALIDATE) {
             log.debug("Ignoring validation event.");
+            return;
+        }
+        if (event.getResponseStatus() == ResponseStatus.REJECTED || event.getResponseStatus() == ResponseStatus.ERROR) {
+            log.debug("Ignoring response status {}", event.getResponseStatus());
             return;
         }
         String action = event.getAction();
