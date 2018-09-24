@@ -4,6 +4,7 @@ import no.fint.audit.FintAuditService
 import no.fint.consumer.config.ConsumerProps
 import no.fint.consumer.utils.RestEndpoints
 import no.fint.event.model.HeaderConstants
+import no.fint.model.felles.kompleksedatatyper.Identifikator
 import no.fint.model.resource.felles.PersonResource
 import no.fint.relations.FintResources
 import no.fint.test.utils.MockMvcSpecification
@@ -51,6 +52,27 @@ class PersonControllerSpec extends MockMvcSpecification {
         1 * linker.toResources([]) >> new FintResources<PersonResource>()
         response.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+    }
+
+    def "GET person by fodselsnummer ids"() {
+        given:
+        def resource1 = new PersonResource(fodselsnummer: new Identifikator(identifikatorverdi: '123'))
+        def resource2 = new PersonResource(fodselsnummer: new Identifikator(identifikatorverdi: '234'))
+        def resource3 = new PersonResource(fodselsnummer: new Identifikator(identifikatorverdi: '345'))
+
+        when:
+        def response = mockMvc.perform(post("${RestEndpoints.PERSON}/fodselsnummer")
+                .header(HeaderConstants.ORG_ID, 'rogfk.no')
+                .header(HeaderConstants.CLIENT, 'test')
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content('["123", "234"]'))
+
+        then:
+        1 * cacheService.getAll('rogfk.no') >> [resource1, resource2, resource3]
+        1 * linker.toResources(_) >> new FintResources<PersonResource>([resource1, resource2], 'http://localhost')
+        response.andExpect(status().isOk())
+                .andExpect(jsonPathSize('$._embedded._entries', 2))
     }
 
 }

@@ -4,21 +4,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
-
 import no.fint.audit.FintAuditService;
-
 import no.fint.consumer.config.Constants;
 import no.fint.consumer.config.ConsumerProps;
 import no.fint.consumer.event.ConsumerEventUtil;
-import no.fint.consumer.exceptions.*;
+import no.fint.consumer.exceptions.CreateEntityMismatchException;
+import no.fint.consumer.exceptions.EntityFoundException;
+import no.fint.consumer.exceptions.EntityNotFoundException;
+import no.fint.consumer.exceptions.UpdateEntityMismatchException;
 import no.fint.consumer.status.StatusCache;
 import no.fint.consumer.utils.RestEndpoints;
-
 import no.fint.event.model.*;
-
+import no.fint.model.felles.FellesActions;
+import no.fint.model.resource.felles.PersonResource;
 import no.fint.relations.FintRelationsMediaType;
 import no.fint.relations.FintResources;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,17 +26,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.UnknownHostException;
+import javax.naming.NameNotFoundException;
 import java.net.URI;
-
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import javax.naming.NameNotFoundException;
-
-import no.fint.model.resource.felles.PersonResource;
-import no.fint.model.felles.FellesActions;
+import java.util.stream.Collectors;
 
 @Slf4j
 @CrossOrigin
@@ -75,7 +71,7 @@ public class PersonController {
     }
 
     @GetMapping("/cache/size")
-     public ImmutableMap<String, Integer> getCacheSize(@RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId) {
+    public ImmutableMap<String, Integer> getCacheSize(@RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId) {
         if (props.isOverrideOrgId() || orgId == null) {
             orgId = props.getDefaultOrgId();
         }
@@ -147,7 +143,31 @@ public class PersonController {
         return person.map(linker::toResource).orElseThrow(() -> new EntityNotFoundException(id));
     }
 
+    @PostMapping("/fodselsnummer")
+    public FintResources getPersonByFodselsnummer(
+            @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
+            @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client,
+            @RequestBody List<String> ids) {
+        if (props.isOverrideOrgId() || orgId == null) {
+            orgId = props.getDefaultOrgId();
+        }
+        if (client == null) {
+            client = props.getDefaultClient();
+        }
 
+        Event event = new Event(orgId, Constants.COMPONENT, FellesActions.GET_PERSON, client);
+        event.setQuery("fodselsnummer ids:" + ids.size());
+        fintAuditService.audit(event);
+
+        fintAuditService.audit(event, Status.CACHE);
+
+        List<PersonResource> resources = cacheService.getAll(orgId).stream()
+                .filter(person -> ids.contains(person.getFodselsnummer().getIdentifikatorverdi()))
+                .collect(Collectors.toList());
+
+        fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
+        return linker.toResources(resources);
+    }
 
     @GetMapping("/status/{id}")
     public ResponseEntity getStatus(
@@ -162,7 +182,11 @@ public class PersonController {
         log.debug("Event: {}", event);
         log.trace("Data: {}", event.getData());
         if (!event.getOrgId().equals(orgId)) {
-            return ResponseEntity.badRequest().body(new EventResponse() { { setMessage("Invalid OrgId"); } } );
+            return ResponseEntity.badRequest().body(new EventResponse() {
+                {
+                    setMessage("Invalid OrgId");
+                }
+            });
         }
         if (event.getResponseStatus() == null) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).build();
@@ -210,7 +234,7 @@ public class PersonController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).location(location).build();
     }
 
-  
+
     @PutMapping("/fodselsnummer/{id:.+}")
     public ResponseEntity putPersonByFodselsnummer(
             @PathVariable String id,
@@ -234,7 +258,7 @@ public class PersonController {
         URI location = UriComponentsBuilder.fromUriString(linker.self()).path("status/{id}").buildAndExpand(event.getCorrId()).toUri();
         return ResponseEntity.status(HttpStatus.ACCEPTED).location(location).build();
     }
-  
+
 
     //
     // Exception handlers
