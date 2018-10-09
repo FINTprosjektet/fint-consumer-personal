@@ -21,6 +21,15 @@ pipeline {
                 }
             }
         }
+        stage('Publish Tag') {
+            when { buildingTag() }
+            steps {
+                sh "docker tag ${GIT_COMMIT} dtr.fintlabs.no/beta/consumer-personal:${TAG_NAME}"
+                withDockerRegistry([credentialsId: 'dtr-fintlabs-no', url: 'https://dtr.fintlabs.no']) {
+                    sh "docker push 'dtr.fintlabs.no/beta/consumer-personal:${TAG_NAME}'"
+                }
+            }
+        }
         stage('Publish PR') {
             when { changeRequest() }
             steps {

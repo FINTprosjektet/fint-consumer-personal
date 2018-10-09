@@ -1,8 +1,16 @@
 package no.fint.consumer.models.person;
 
+import no.fint.model.resource.Link;
 import no.fint.model.resource.felles.PersonResource;
+import no.fint.model.resource.felles.PersonResources;
 import no.fint.relations.FintLinker;
 import org.springframework.stereotype.Component;
+
+import java.util.Collection;
+
+import static java.util.Objects.isNull;
+import static org.springframework.util.StringUtils.isEmpty;
+
 
 @Component
 public class PersonLinker extends FintLinker<PersonResource> {
@@ -14,10 +22,18 @@ public class PersonLinker extends FintLinker<PersonResource> {
     public void mapLinks(PersonResource resource) {
         super.mapLinks(resource);
     }
-    
+
+    @Override
+    public PersonResources toResources(Collection<PersonResource> collection) {
+        PersonResources resources = new PersonResources();
+        collection.stream().map(this::toResource).forEach(resources::addResource);
+        resources.addSelf(Link.with(self()));
+        return resources;
+    }
+
     @Override
     public String getSelfHref(PersonResource person) {
-        if (person.getFodselsnummer() != null && person.getFodselsnummer().getIdentifikatorverdi() != null) {
+        if (!isNull(person.getFodselsnummer()) && !isEmpty(person.getFodselsnummer().getIdentifikatorverdi())) {
             return createHrefWithId(person.getFodselsnummer().getIdentifikatorverdi(), "fodselsnummer");
         }
         
