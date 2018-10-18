@@ -1,3 +1,7 @@
+spring:
+ application:
+  name: fint-consumer-personal
+
 fint:
  events:
   orgIds: mock.no

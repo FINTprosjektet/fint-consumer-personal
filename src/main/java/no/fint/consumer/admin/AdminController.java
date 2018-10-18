@@ -3,6 +3,7 @@ package no.fint.consumer.admin;
 import no.fint.cache.CacheManager;
 import no.fint.cache.utils.CacheUri;
 import no.fint.consumer.config.Constants;
+import no.fint.consumer.config.ConsumerProps;
 import no.fint.consumer.event.ConsumerEventUtil;
 import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.DefaultActions;
@@ -29,6 +30,9 @@ public class AdminController {
 
     @Autowired
     private CacheManager<?> cacheManager;
+
+    @Autowired
+    private ConsumerProps props;
 
     @GetMapping("/health")
     public ResponseEntity healthCheck(@RequestHeader(HeaderConstants.ORG_ID) String orgId,
@@ -57,4 +61,8 @@ public class AdminController {
         return cacheManager.getKeys().stream().filter(key -> CacheUri.containsOrgId(key, orgId)).collect(Collectors.toList());
     }
 
+    @GetMapping("/assets")
+    public Collection<String> getAssets() {
+        return props.getAssets();
+    }
 }

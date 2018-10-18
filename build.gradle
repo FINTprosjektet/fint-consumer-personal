@@ -37,11 +37,11 @@ dependencies {
 
     compile("no.fint:fint-administrasjon-resource-model-java:${apiVersion}")
 
-    compile('no.fint:fint-events:2.2.0-rc-1')
     compile('no.fint:fint-event-model:3.0.0')
     compile('no.fint:fint-relations:2.0.0')
+    compile('no.fint:fint-events:2.2.0-rc-1')
     compile('no.fint:fint-audit-mongo-plugin:1.4.1')
-    compile('no.fint:fint-cache:2.0.1-rc-3')
+    compile('no.fint:fint-cache:2.0.1')
     compile('no.fint:fint-dependencies:0.0.3')
 
     compile('org.projectlombok:lombok')
@@ -49,6 +49,7 @@ dependencies {
 
     compile('org.springframework.boot:spring-boot-starter-web')
     runtime('org.springframework.boot:spring-boot-devtools')
+    runtime('org.springframework.boot:spring-boot-starter-actuator')
 
     testCompile('no.fint:fint-test-utils:0.0.4')
     testCompile("cglib:cglib-nodep:${cglibVersion}")
@@ -58,13 +59,13 @@ dependencies {
 }
 
 task copyExternalDependencies(type: Copy) {
-    from configurations.compile
+    from configurations.runtime
     into "$buildDir/deps/external"
     exclude '**/fint-*.jar'
 }
 
 task copyFintDependencies(type: Copy) {
-    from configurations.compile
+    from configurations.runtime
     into "$buildDir/deps/fint"
     include '**/fint-*.jar'
 }
@@ -79,7 +80,7 @@ jar {
                 "Main-Class": "no.fint.consumer.Application",
                 "Specification-Version": "${apiVersion}",
                 "Implementation-Version": "${version}",
-                "Class-Path": configurations.compile.collect { it.getName() }.join(' ')
+                "Class-Path": configurations.runtime.collect { it.getName() }.join(' ')
         )
     }
 }
