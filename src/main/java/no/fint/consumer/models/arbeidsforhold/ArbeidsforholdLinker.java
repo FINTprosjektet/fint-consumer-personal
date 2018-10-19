@@ -1,8 +1,16 @@
 package no.fint.consumer.models.arbeidsforhold;
 
+import no.fint.model.resource.Link;
 import no.fint.model.resource.administrasjon.personal.ArbeidsforholdResource;
+import no.fint.model.resource.administrasjon.personal.ArbeidsforholdResources;
 import no.fint.relations.FintLinker;
 import org.springframework.stereotype.Component;
+
+import java.util.Collection;
+
+import static java.util.Objects.isNull;
+import static org.springframework.util.StringUtils.isEmpty;
+
 
 @Component
 public class ArbeidsforholdLinker extends FintLinker<ArbeidsforholdResource> {
@@ -14,10 +22,18 @@ public class ArbeidsforholdLinker extends FintLinker<ArbeidsforholdResource> {
     public void mapLinks(ArbeidsforholdResource resource) {
         super.mapLinks(resource);
     }
-    
+
+    @Override
+    public ArbeidsforholdResources toResources(Collection<ArbeidsforholdResource> collection) {
+        ArbeidsforholdResources resources = new ArbeidsforholdResources();
+        collection.stream().map(this::toResource).forEach(resources::addResource);
+        resources.addSelf(Link.with(self()));
+        return resources;
+    }
+
     @Override
     public String getSelfHref(ArbeidsforholdResource arbeidsforhold) {
-        if (arbeidsforhold.getSystemId() != null && arbeidsforhold.getSystemId().getIdentifikatorverdi() != null) {
+        if (!isNull(arbeidsforhold.getSystemId()) && !isEmpty(arbeidsforhold.getSystemId().getIdentifikatorverdi())) {
             return createHrefWithId(arbeidsforhold.getSystemId().getIdentifikatorverdi(), "systemid");
         }
         

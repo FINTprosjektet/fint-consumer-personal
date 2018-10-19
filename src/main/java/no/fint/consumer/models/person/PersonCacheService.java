@@ -1,6 +1,5 @@
 package no.fint.consumer.models.person;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -22,7 +21,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,17 +58,16 @@ public class PersonCacheService extends CacheService<PersonResource> {
         objectMapper = new ObjectMapper();
         javaType = objectMapper.getTypeFactory().constructCollectionType(List.class, PersonResource.class);
         objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     }
 
     @PostConstruct
     public void init() {
-        Arrays.stream(props.getOrgs()).forEach(this::createCache);
+        props.getAssets().forEach(this::createCache);
     }
 
-    @Scheduled(initialDelayString = ConsumerProps.CACHE_INITIALDELAY_PERSON, fixedRateString = ConsumerProps.CACHE_FIXEDRATE_PERSON)
+    @Scheduled(initialDelayString = Constants.CACHE_INITIALDELAY_PERSON, fixedRateString = Constants.CACHE_FIXEDRATE_PERSON)
     public void populateCacheAll() {
-        Arrays.stream(props.getOrgs()).forEach(this::populateCache);
+        props.getAssets().forEach(this::populateCache);
     }
 
     public void rebuildCache(String orgId) {
@@ -97,7 +94,6 @@ public class PersonCacheService extends CacheService<PersonResource> {
 
 	@Override
     public void onAction(Event event) {
-        log.trace("onAction {}\n{}", event, event.getData());
         List<PersonResource> data;
         if (checkFintResourceCompatibility && fintResourceCompatibility.isFintResourceData(event.getData())) {
             log.info("Compatibility: Converting FintResource<PersonResource> to PersonResource ...");

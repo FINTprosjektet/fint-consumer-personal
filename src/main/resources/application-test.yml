@@ -1,11 +1,12 @@
+spring:
+ application:
+  name: fint-consumer-personal
+
 fint:
  events:
   orgIds: mock.no
   test-mode: true
   queue-endpoint-enabled: true
-
- consumer:
-  default-org-id: mock.no
 
  audit:
   test-mode: true

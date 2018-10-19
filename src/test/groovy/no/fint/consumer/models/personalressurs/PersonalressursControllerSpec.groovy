@@ -4,8 +4,7 @@ import no.fint.audit.FintAuditService
 import no.fint.consumer.config.ConsumerProps
 import no.fint.consumer.utils.RestEndpoints
 import no.fint.event.model.HeaderConstants
-import no.fint.model.resource.felles.PersonResource
-import no.fint.relations.FintResources
+import no.fint.model.resource.administrasjon.personal.PersonalressursResources
 import no.fint.test.utils.MockMvcSpecification
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -48,7 +47,7 @@ class PersonalressursControllerSpec extends MockMvcSpecification {
         then:
         1 * props.isOverrideOrgId() >> false
         1 * cacheService.getAll('rogfk.no') >> []
-        1 * linker.toResources([]) >> new FintResources<PersonResource>()
+        1 * linker.toResources([]) >> new PersonalressursResources()
         personalressurser.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
     }
