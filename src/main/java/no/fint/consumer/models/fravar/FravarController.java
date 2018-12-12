@@ -169,13 +169,14 @@ public class FravarController {
         if (event.getResponseStatus() == null) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).build();
         }
-        List<FravarResource> result = objectMapper.convertValue(event.getData(), objectMapper.getTypeFactory().constructCollectionType(List.class, FravarResource.class));
+        List<FravarResource> result;
         switch (event.getResponseStatus()) {
             case ACCEPTED:
                 if (event.getOperation() == Operation.VALIDATE) {
                     fintAuditService.audit(event, Status.SENT_TO_CLIENT);
                     return ResponseEntity.ok(event.getResponse());
                 }
+                result = objectMapper.convertValue(event.getData(), objectMapper.getTypeFactory().constructCollectionType(List.class, FravarResource.class));
                 URI location = UriComponentsBuilder.fromUriString(linker.getSelfHref(result.get(0))).build().toUri();
                 event.setMessage(location.toString());
                 fintAuditService.audit(event, Status.SENT_TO_CLIENT);
@@ -185,6 +186,7 @@ public class FravarController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(event.getResponse());
             case CONFLICT:
                 fintAuditService.audit(event, Status.SENT_TO_CLIENT);
+                result = objectMapper.convertValue(event.getData(), objectMapper.getTypeFactory().constructCollectionType(List.class, FravarResource.class));
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(linker.toResources(result));
             case REJECTED:
                 fintAuditService.audit(event, Status.SENT_TO_CLIENT);
