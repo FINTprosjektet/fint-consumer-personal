@@ -5,7 +5,6 @@ pipeline {
             steps {
                 script {
                     props=readProperties file: 'gradle.properties'
-                    VERSION="${props.version}-${props.apiVersion}"
                 }
                 sh "docker build --tag ${GIT_COMMIT} --build-arg apiVersion=${props.apiVersion} ."
             }
@@ -15,9 +14,13 @@ pipeline {
                 branch 'master'
             }
             steps {
-                sh "docker tag ${GIT_COMMIT} dtr.fintlabs.no/beta/consumer-personal:${VERSION}"
+                sh "docker tag ${GIT_COMMIT} dtr.fintlabs.no/beta/consumer-personal:build.${BUILD_NUMBER}"
                 withDockerRegistry([credentialsId: 'dtr-fintlabs-no', url: 'https://dtr.fintlabs.no']) {
-                    sh "docker push dtr.fintlabs.no/beta/consumer-personal:${VERSION}"
+                    sh "docker push dtr.fintlabs.no/beta/consumer-personal:build.${BUILD_NUMBER}"
+                }
+                sh "docker tag ${GIT_COMMIT} fintlabs.azurecr.io/consumer-personal:build.${BUILD_NUMBER}"
+                withDockerRegistry([credentialsId: 'fintlabs.azurecr.io', url: 'https://fintlabs.azurecr.io']) {
+                    sh "docker push fintlabs.azurecr.io/consumer-personal:build.${BUILD_NUMBER}"
                 }
             }
         }
@@ -38,9 +41,9 @@ pipeline {
         stage('Publish PR') {
             when { changeRequest() }
             steps {
-                sh "docker tag ${GIT_COMMIT} dtr.fintlabs.no/beta/consumer-personal:${BRANCH_NAME}"
+                sh "docker tag ${GIT_COMMIT} dtr.fintlabs.no/beta/consumer-personal:${BRANCH_NAME}.${BUILD_NUMBER}"
                 withDockerRegistry([credentialsId: 'dtr-fintlabs-no', url: 'https://dtr.fintlabs.no']) {
-                    sh "docker push dtr.fintlabs.no/beta/consumer-personal:${BRANCH_NAME}"
+                    sh "docker push dtr.fintlabs.no/beta/consumer-personal:${BRANCH_NAME}.${BUILD_NUMBER}"
                 }
             }
         }
