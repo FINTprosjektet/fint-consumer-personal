@@ -44,6 +44,7 @@ public class LinkMapper {
                 .put(Sprak.class.getName(), "/felles/kodeverk/sprak")
                 .put(Landkode.class.getName(), "/felles/kodeverk/land")
                 .put(Kjonn.class.getName(), "/felles/kodeverk/kjonn")
+                .put("no.fint.model.utdanning.elev.Elev", "/utdanning/elev/elev")
                 .build();
     }
 
