@@ -11,6 +11,7 @@ import no.fint.audit.FintAuditService;
 import no.fint.consumer.config.Constants;
 import no.fint.consumer.config.ConsumerProps;
 import no.fint.consumer.event.ConsumerEventUtil;
+import no.fint.consumer.event.SynchronousEvents;
 import no.fint.consumer.exceptions.*;
 import no.fint.consumer.status.StatusCache;
 import no.fint.consumer.utils.RestEndpoints;
@@ -32,8 +33,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import javax.naming.NameNotFoundException;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import no.fint.model.resource.administrasjon.personal.FastlonnResource;
 import no.fint.model.resource.administrasjon.personal.FastlonnResources;
@@ -46,7 +47,7 @@ import no.fint.model.administrasjon.personal.PersonalActions;
 @RequestMapping(name = "Fastlonn", value = RestEndpoints.FASTLONN, produces = {FintRelationsMediaType.APPLICATION_HAL_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
 public class FastlonnController {
 
-    @Autowired
+    @Autowired(required = false)
     private FastlonnCacheService cacheService;
 
     @Autowired
@@ -67,8 +68,14 @@ public class FastlonnController {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private SynchronousEvents synchronousEvents;
+
     @GetMapping("/last-updated")
     public Map<String, String> getLastUpdated(@RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId) {
+        if (cacheService == null) {
+            throw new CacheDisabledException("Fastlonn cache is disabled.");
+        }
         if (props.isOverrideOrgId() || orgId == null) {
             orgId = props.getDefaultOrgId();
         }
@@ -78,6 +85,9 @@ public class FastlonnController {
 
     @GetMapping("/cache/size")
      public ImmutableMap<String, Integer> getCacheSize(@RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId) {
+        if (cacheService == null) {
+            throw new CacheDisabledException("Fastlonn cache is disabled.");
+        }
         if (props.isOverrideOrgId() || orgId == null) {
             orgId = props.getDefaultOrgId();
         }
@@ -86,6 +96,9 @@ public class FastlonnController {
 
     @PostMapping("/cache/rebuild")
     public void rebuildCache(@RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId) {
+        if (cacheService == null) {
+            throw new CacheDisabledException("Fastlonn cache is disabled.");
+        }
         if (props.isOverrideOrgId() || orgId == null) {
             orgId = props.getDefaultOrgId();
         }
@@ -97,6 +110,9 @@ public class FastlonnController {
             @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client,
             @RequestParam(required = false) Long sinceTimeStamp) {
+        if (cacheService == null) {
+            throw new CacheDisabledException("Fastlonn cache is disabled.");
+        }
         if (props.isOverrideOrgId() || orgId == null) {
             orgId = props.getDefaultOrgId();
         }
@@ -107,7 +123,6 @@ public class FastlonnController {
 
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_FASTLONN, client);
         fintAuditService.audit(event);
-
         fintAuditService.audit(event, Status.CACHE);
 
         List<FastlonnResource> fastlonn;
@@ -127,7 +142,7 @@ public class FastlonnController {
     public FastlonnResource getFastlonnBySystemId(
             @PathVariable String id,
             @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
-            @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client) {
+            @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client) throws InterruptedException {
         if (props.isOverrideOrgId() || orgId == null) {
             orgId = props.getDefaultOrgId();
         }
@@ -138,15 +153,33 @@ public class FastlonnController {
 
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_FASTLONN, client);
         event.setQuery("systemid/" + id);
-        fintAuditService.audit(event);
 
-        fintAuditService.audit(event, Status.CACHE);
+        if (cacheService != null) {
+            fintAuditService.audit(event);
+            fintAuditService.audit(event, Status.CACHE);
 
-        Optional<FastlonnResource> fastlonn = cacheService.getFastlonnBySystemId(orgId, id);
+            Optional<FastlonnResource> fastlonn = cacheService.getFastlonnBySystemId(orgId, id);
 
-        fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
+            fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
-        return fastlonn.map(linker::toResource).orElseThrow(() -> new EntityNotFoundException(id));
+            return fastlonn.map(linker::toResource).orElseThrow(() -> new EntityNotFoundException(id));
+
+        } else {
+            BlockingQueue<Event> queue = synchronousEvents.register(event);
+            consumerEventUtil.send(event);
+
+            Event response = queue.poll(5, TimeUnit.MINUTES);
+
+            if (response == null ||
+                    response.getData() == null ||
+                    response.getData().isEmpty()) throw new EntityNotFoundException(id);
+
+            FastlonnResource fastlonn = objectMapper.convertValue(response.getData().get(0), FastlonnResource.class);
+
+            fintAuditService.audit(event, Status.SENT_TO_CLIENT);
+
+            return linker.toResource(fastlonn);
+        }    
     }
 
 
@@ -212,8 +245,6 @@ public class FastlonnController {
             event.setQuery("VALIDATE");
             event.setOperation(Operation.VALIDATE);
         }
-        fintAuditService.audit(event);
-
         consumerEventUtil.send(event);
 
         statusCache.put(event.getCorrId(), event);
@@ -253,32 +284,37 @@ public class FastlonnController {
     //
     @ExceptionHandler(UpdateEntityMismatchException.class)
     public ResponseEntity handleUpdateEntityMismatch(Exception e) {
-        return ResponseEntity.badRequest().body(e);
+        return ResponseEntity.badRequest().body(ErrorResponse.of(e));
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity handleEntityNotFound(Exception e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse.of(e));
     }
 
     @ExceptionHandler(CreateEntityMismatchException.class)
     public ResponseEntity handleCreateEntityMismatch(Exception e) {
-        return ResponseEntity.badRequest().body(e);
+        return ResponseEntity.badRequest().body(ErrorResponse.of(e));
     }
 
     @ExceptionHandler(EntityFoundException.class)
     public ResponseEntity handleEntityFound(Exception e) {
-        return ResponseEntity.status(HttpStatus.FOUND).body(e);
+        return ResponseEntity.status(HttpStatus.FOUND).body(ErrorResponse.of(e));
     }
 
-    @ExceptionHandler(NameNotFoundException.class)
-    public ResponseEntity handleNameNotFound(Exception e) {
-        return ResponseEntity.badRequest().body(e);
+    @ExceptionHandler(CacheDisabledException.class)
+    public ResponseEntity handleBadRequest(Exception e) {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ErrorResponse.of(e));
     }
 
     @ExceptionHandler(UnknownHostException.class)
     public ResponseEntity handleUnkownHost(Exception e) {
-        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e);
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ErrorResponse.of(e));
+    }
+
+    @ExceptionHandler(InterruptedException.class)
+    public ResponseEntity handlieInterrupted(Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.of(e));
     }
 
 }

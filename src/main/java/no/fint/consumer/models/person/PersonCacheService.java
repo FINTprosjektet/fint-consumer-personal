@@ -17,6 +17,7 @@ import no.fint.relations.FintResourceCompatibility;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,7 @@ import no.fint.model.felles.FellesActions;
 
 @Slf4j
 @Service
+@ConditionalOnProperty(name = "fint.consumer.cache.disabled.person", havingValue = "false", matchIfMissing = true)
 public class PersonCacheService extends CacheService<PersonResource> {
 
     public static final String MODEL = Person.class.getSimpleName().toLowerCase();

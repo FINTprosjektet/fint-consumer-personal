@@ -17,6 +17,7 @@ import no.fint.relations.FintResourceCompatibility;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,7 @@ import no.fint.model.administrasjon.personal.PersonalActions;
 
 @Slf4j
 @Service
+@ConditionalOnProperty(name = "fint.consumer.cache.disabled.fravar", havingValue = "false", matchIfMissing = true)
 public class FravarCacheService extends CacheService<FravarResource> {
 
     public static final String MODEL = Fravar.class.getSimpleName().toLowerCase();

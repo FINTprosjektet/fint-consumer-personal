@@ -20,6 +20,15 @@ pipeline {
                 }
             }
         }
+        stage('Publish PR') {
+            when { changeRequest() }
+            steps {
+                sh "docker tag ${GIT_COMMIT} fintlabs.azurecr.io/consumer-personal:${BRANCH_NAME}.${BUILD_NUMBER}"
+                withDockerRegistry([credentialsId: 'fintlabs.azurecr.io', url: 'https://fintlabs.azurecr.io']) {
+                    sh "docker push fintlabs.azurecr.io/consumer-personal:${BRANCH_NAME}.${BUILD_NUMBER}"
+                }
+            }
+        }
         stage('Publish Version') {
             when {
                 tag pattern: "v\\d+\\.\\d+\\.\\d+(-\\w+-\\d+)?", comparator: "REGEXP"
@@ -31,15 +40,6 @@ pipeline {
                 sh "docker tag ${GIT_COMMIT} fintlabs.azurecr.io/consumer-personal:${VERSION}"
                 withDockerRegistry([credentialsId: 'fintlabs.azurecr.io', url: 'https://fintlabs.azurecr.io']) {
                     sh "docker push fintlabs.azurecr.io/consumer-personal:${VERSION}"
-                }
-            }
-        }
-        stage('Publish PR') {
-            when { changeRequest() }
-            steps {
-                sh "docker tag ${GIT_COMMIT} fintlabs.azurecr.io/consumer-personal:${BRANCH_NAME}.${BUILD_NUMBER}"
-                withDockerRegistry([credentialsId: 'fintlabs.azurecr.io', url: 'https://fintlabs.azurecr.io']) {
-                    sh "docker push fintlabs.azurecr.io/consumer-personal:${BRANCH_NAME}.${BUILD_NUMBER}"
                 }
             }
         }
