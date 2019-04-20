@@ -110,6 +110,7 @@ public class FasttilleggControllerSpec extends Specification {
 
     }
 
+    @Ignore
     def "GET /fasttillegg"() {
         given:
         HttpHeaders headers = new HttpHeaders()

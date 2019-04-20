@@ -24,10 +24,10 @@ import spock.lang.Specification
 @ActiveProfiles("test")
 public class FastlonnControllerSpec extends Specification {
     @LocalServerPort
-    private int port;
+    private int port
 
     @Autowired
-    private TestRestTemplate restTemplate;
+    private TestRestTemplate restTemplate
 
     @Ignore("Jackson serializer issues with emtpy Kontostreng")
     def "POST Fastlonn"() {
@@ -106,6 +106,7 @@ public class FastlonnControllerSpec extends Specification {
 
     }
 
+    @Ignore
     def "GET /fastlonn"() {
         given:
         HttpHeaders headers = new HttpHeaders()

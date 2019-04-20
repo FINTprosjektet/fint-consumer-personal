@@ -22,7 +22,8 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import spock.lang.Specification
 
-@SpringBootTest(classes = [FastlonnCacheService, FintCacheManager, ConsumerProps, ObjectMapper, FintResourceCompatibility, FastlonnLinker, FintLinkMapper, FintRelationsProps], properties = ["fint.events.orgIds=mock.no"])
+@SpringBootTest(classes = [FastlonnCacheService, FintCacheManager, ConsumerProps, ObjectMapper, FintResourceCompatibility, FastlonnLinker, FintLinkMapper, FintRelationsProps],
+        properties = ["fint.events.orgIds=mock.no", 'fint.consumer.cache.disabled.fastlonn=false'])
 class FastlonnCacheServiceSpec extends Specification {
 
     @MockBean

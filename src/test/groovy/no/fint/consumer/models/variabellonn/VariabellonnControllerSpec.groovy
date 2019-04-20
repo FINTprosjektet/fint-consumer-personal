@@ -106,6 +106,7 @@ public class VariabellonnControllerSpec extends Specification {
 
     }
 
+    @Ignore
     def "GET /variabellonn"() {
         given:
         HttpHeaders headers = new HttpHeaders()

@@ -17,6 +17,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.*
 import org.springframework.test.context.ActiveProfiles
+import spock.lang.Ignore
 import spock.lang.Specification
 
 import java.util.concurrent.TimeUnit
@@ -103,6 +104,7 @@ public class FravarControllerSpec extends Specification {
 
     }
 
+    @Ignore
     def "GET /fravar"() {
         given:
         HttpHeaders headers = new HttpHeaders()
