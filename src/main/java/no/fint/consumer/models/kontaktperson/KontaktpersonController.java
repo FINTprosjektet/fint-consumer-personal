@@ -149,10 +149,10 @@ public class KontaktpersonController {
         if (client == null) {
             client = props.getDefaultClient();
         }
-        log.debug("SystemId: {}, OrgId: {}, Client: {}", id, orgId, client);
+        log.debug("systemId: {}, OrgId: {}, Client: {}", id, orgId, client);
 
         Event event = new Event(orgId, Constants.COMPONENT, FellesActions.GET_KONTAKTPERSON, client);
-        event.setQuery("systemid/" + id);
+        event.setQuery("systemId/" + id);
 
         if (cacheService != null) {
             fintAuditService.audit(event);

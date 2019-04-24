@@ -149,7 +149,7 @@ public class PersonController {
         if (client == null) {
             client = props.getDefaultClient();
         }
-        log.debug("Fodselsnummer: {}, OrgId: {}, Client: {}", id, orgId, client);
+        log.debug("fodselsnummer: {}, OrgId: {}, Client: {}", id, orgId, client);
 
         Event event = new Event(orgId, Constants.COMPONENT, FellesActions.GET_PERSON, client);
         event.setQuery("fodselsnummer/" + id);

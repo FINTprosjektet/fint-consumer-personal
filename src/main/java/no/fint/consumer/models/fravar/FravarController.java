@@ -149,10 +149,10 @@ public class FravarController {
         if (client == null) {
             client = props.getDefaultClient();
         }
-        log.debug("SystemId: {}, OrgId: {}, Client: {}", id, orgId, client);
+        log.debug("systemId: {}, OrgId: {}, Client: {}", id, orgId, client);
 
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_FRAVAR, client);
-        event.setQuery("systemid/" + id);
+        event.setQuery("systemId/" + id);
 
         if (cacheService != null) {
             fintAuditService.audit(event);

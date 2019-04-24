@@ -149,7 +149,7 @@ public class PersonalressursController {
         if (client == null) {
             client = props.getDefaultClient();
         }
-        log.debug("Ansattnummer: {}, OrgId: {}, Client: {}", id, orgId, client);
+        log.debug("ansattnummer: {}, OrgId: {}, Client: {}", id, orgId, client);
 
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_PERSONALRESSURS, client);
         event.setQuery("ansattnummer/" + id);
@@ -193,7 +193,7 @@ public class PersonalressursController {
         if (client == null) {
             client = props.getDefaultClient();
         }
-        log.debug("Brukernavn: {}, OrgId: {}, Client: {}", id, orgId, client);
+        log.debug("brukernavn: {}, OrgId: {}, Client: {}", id, orgId, client);
 
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_PERSONALRESSURS, client);
         event.setQuery("brukernavn/" + id);
@@ -237,10 +237,10 @@ public class PersonalressursController {
         if (client == null) {
             client = props.getDefaultClient();
         }
-        log.debug("SystemId: {}, OrgId: {}, Client: {}", id, orgId, client);
+        log.debug("systemId: {}, OrgId: {}, Client: {}", id, orgId, client);
 
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_PERSONALRESSURS, client);
-        event.setQuery("systemid/" + id);
+        event.setQuery("systemId/" + id);
 
         if (cacheService != null) {
             fintAuditService.audit(event);
