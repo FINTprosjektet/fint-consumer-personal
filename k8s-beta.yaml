@@ -41,7 +41,7 @@ spec:
       containers:
         - env:
             - {name: TZ, value: Europe/Oslo}
-            - {name: JAVA_TOOL_OPTIONS, value: '-XX:+ExitOnOutOfMemoryError -Xmx9G
+            - {name: JAVA_TOOL_OPTIONS, value: '-XX:+ExitOnOutOfMemoryError -Xmx16G
             -verbose:gc'}
             - {name: fint.audit.mongo.databasename, value: fint-audit-beta}
             - name: fint.audit.mongo.connection-string
@@ -64,8 +64,8 @@ spec:
             initialDelaySeconds: 60
             timeoutSeconds: 5
           resources:
-            requests: {memory: 10Gi, cpu: 250m}
-            limits: {memory: 12Gi, cpu: 2000m}
+            requests: {memory: 16Gi, cpu: 250m}
+            limits: {memory: 20Gi, cpu: 2000m}
       restartPolicy: Always
 ---
 apiVersion: apps/v1
@@ -87,8 +87,7 @@ spec:
       containers:
         - env:
             - {name: TZ, value: Europe/Oslo}
-            - {name: JAVA_TOOL_OPTIONS, value: '-XX:+ExitOnOutOfMemoryError -Xmx5G
-            -verbose:gc'}
+            - {name: JAVA_TOOL_OPTIONS, value: '-XX:+ExitOnOutOfMemoryError -Xmx10G -verbose:gc'}
             - {name: fint.audit.mongo.databasename, value: fint-audit-beta}
             - name: fint.audit.mongo.connection-string
               valueFrom:
@@ -100,8 +99,10 @@ spec:
             - {name: fint.hazelcast.kubernetes.labelValue, value: administrasjon-personal}
             - {name: fint.provider.assets.endpoint, value: 'https://admin-beta.fintlabs.no/api/components/assets/administrasjon_personal'}
             - {name: fint.provider.max-number-of-emitters, value: '5'}
+            - {name: fint.provider.sse.heartbeat.enabled, value: 'true'}
             - {name: server.context-path, value: /administrasjon/personal/provider}
-          image: fintlabs.azurecr.io/provider:build.9
+            - {name: management.security.enabled, value: 'false'}
+          image: fintlabs.azurecr.io/provider:PR-29.1
           name: provider-administrasjon-personal
           ports:
             - {containerPort: 8080}
@@ -109,7 +110,8 @@ spec:
             httpGet: {path: /administrasjon/personal/provider/health, port: 8080}
             initialDelaySeconds: 60
             timeoutSeconds: 5
+            timeoutSeconds: 30
           resources:
-            requests: {memory: 5Gi, cpu: 250m}
-            limits: {memory: 7Gi, cpu: 1500m}
+            requests: {memory: 10Gi, cpu: 250m}
+            limits: {memory: 12Gi, cpu: 2000m}
       restartPolicy: Always
