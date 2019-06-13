@@ -14,6 +14,7 @@ import no.fint.consumer.event.ConsumerEventUtil;
 import no.fint.consumer.event.SynchronousEvents;
 import no.fint.consumer.exceptions.*;
 import no.fint.consumer.status.StatusCache;
+import no.fint.consumer.utils.EventResponses;
 import no.fint.consumer.utils.RestEndpoints;
 
 import no.fint.event.model.*;
@@ -168,15 +169,14 @@ public class FastlonnController {
             BlockingQueue<Event> queue = synchronousEvents.register(event);
             consumerEventUtil.send(event);
 
-            Event response = queue.poll(5, TimeUnit.MINUTES);
+            Event response = EventResponses.handle(queue.poll(5, TimeUnit.MINUTES));
 
-            if (response == null ||
-                    response.getData() == null ||
+            if (response.getData() == null ||
                     response.getData().isEmpty()) throw new EntityNotFoundException(id);
 
             FastlonnResource fastlonn = objectMapper.convertValue(response.getData().get(0), FastlonnResource.class);
 
-            fintAuditService.audit(event, Status.SENT_TO_CLIENT);
+            fintAuditService.audit(response, Status.SENT_TO_CLIENT);
 
             return linker.toResource(fastlonn);
         }    
@@ -282,6 +282,11 @@ public class FastlonnController {
     //
     // Exception handlers
     //
+    @ExceptionHandler(EventResponseException.class)
+    public ResponseEntity handleEventResponseException(EventResponseException e) {
+        return ResponseEntity.status(e.getStatus()).body(e.getResponse());
+    }
+
     @ExceptionHandler(UpdateEntityMismatchException.class)
     public ResponseEntity handleUpdateEntityMismatch(Exception e) {
         return ResponseEntity.badRequest().body(ErrorResponse.of(e));
