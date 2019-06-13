@@ -55,7 +55,7 @@ spec:
             - {name: fint.hazelcast.kubernetes.labelValue, value: administrasjon-personal}
             - {name: fint.relations.default-base-url, value: 'https://beta.felleskomponent.no'}
             - {name: server.context-path, value: /administrasjon/personal}
-          image: fintlabs.azurecr.io/consumer-personal:3.6.2
+          image: fintlabs.azurecr.io/consumer-personal:3.6.2-rc-1
           name: consumer-administrasjon-personal
           ports:
             - {containerPort: 8080}

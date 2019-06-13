@@ -42,7 +42,7 @@ public class LinkMapper {
                 .put(Rolle.class.getName(), "/administrasjon/fullmakt/rolle")
                 .put(Fullmakt.class.getName(), "/administrasjon/fullmakt/fullmakt")
                 .put(Sprak.class.getName(), "/felles/kodeverk/sprak")
-                .put(Landkode.class.getName(), "/felles/kodeverk/land")
+                .put(Landkode.class.getName(), "/felles/kodeverk/landkode")
                 .put(Kjonn.class.getName(), "/felles/kodeverk/kjonn")
                 .put("no.fint.model.utdanning.elev.Elev", "/utdanning/elev/elev")
                 .build();
