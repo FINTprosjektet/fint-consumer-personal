@@ -41,8 +41,7 @@ spec:
       containers:
         - env:
             - {name: TZ, value: Europe/Oslo}
-            - {name: JAVA_TOOL_OPTIONS, value: '-XX:+ExitOnOutOfMemoryError -Xmx16G
-            -verbose:gc'}
+            - {name: JAVA_TOOL_OPTIONS, value: '-XX:+ExitOnOutOfMemoryError -Xmx16G -verbose:gc'}
             - {name: fint.audit.mongo.databasename, value: fint-audit-beta}
             - name: fint.audit.mongo.connection-string
               valueFrom:
@@ -55,7 +54,7 @@ spec:
             - {name: fint.hazelcast.kubernetes.labelValue, value: administrasjon-personal}
             - {name: fint.relations.default-base-url, value: 'https://beta.felleskomponent.no'}
             - {name: server.context-path, value: /administrasjon/personal}
-          image: fintlabs.azurecr.io/consumer-personal:3.6.2
+          image: fintlabs.azurecr.io/consumer-personal:PR-6.1
           name: consumer-administrasjon-personal
           ports:
             - {containerPort: 8080}
