@@ -96,7 +96,7 @@ spec:
           value: https://api.felleskomponent.no
         - name: server.context-path
           value: /administrasjon/personal
-        image: fintlabs.azurecr.io/consumer-personal:3.6.1
+        image: fintlabs.azurecr.io/consumer-personal:3.6.2
         imagePullPolicy: IfNotPresent
         name: consumer-administrasjon-personal
         ports:
