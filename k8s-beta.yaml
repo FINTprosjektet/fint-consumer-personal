@@ -61,7 +61,7 @@ spec:
           readinessProbe:
             httpGet: {path: /administrasjon/personal/health, port: 8080}
             initialDelaySeconds: 60
-            timeoutSeconds: 5
+            timeoutSeconds: 30
           resources:
             requests: {memory: 16Gi, cpu: 250m}
             limits: {memory: 20Gi, cpu: 2000m}
@@ -108,7 +108,6 @@ spec:
           readinessProbe:
             httpGet: {path: /administrasjon/personal/provider/health, port: 8080}
             initialDelaySeconds: 60
-            timeoutSeconds: 5
             timeoutSeconds: 30
           resources:
             requests: {memory: 10Gi, cpu: 250m}
