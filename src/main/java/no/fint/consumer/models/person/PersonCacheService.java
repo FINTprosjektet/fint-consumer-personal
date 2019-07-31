@@ -75,7 +75,8 @@ public class PersonCacheService extends CacheService<PersonResource> {
 		populateCache(orgId);
 	}
 
-    private void populateCache(String orgId) {
+    @Override
+    public void populateCache(String orgId) {
 		log.info("Populating Person cache for {}", orgId);
         Event event = new Event(orgId, Constants.COMPONENT, FellesActions.GET_ALL_PERSON, Constants.CACHE_SERVICE);
         consumerEventUtil.send(event);

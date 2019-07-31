@@ -75,7 +75,8 @@ public class PersonalressursCacheService extends CacheService<PersonalressursRes
 		populateCache(orgId);
 	}
 
-    private void populateCache(String orgId) {
+    @Override
+    public void populateCache(String orgId) {
 		log.info("Populating Personalressurs cache for {}", orgId);
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_PERSONALRESSURS, Constants.CACHE_SERVICE);
         consumerEventUtil.send(event);

@@ -75,7 +75,8 @@ public class FastlonnCacheService extends CacheService<FastlonnResource> {
 		populateCache(orgId);
 	}
 
-    private void populateCache(String orgId) {
+    @Override
+    public void populateCache(String orgId) {
 		log.info("Populating Fastlonn cache for {}", orgId);
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_FASTLONN, Constants.CACHE_SERVICE);
         consumerEventUtil.send(event);

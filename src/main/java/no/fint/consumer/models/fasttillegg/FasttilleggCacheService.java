@@ -75,7 +75,8 @@ public class FasttilleggCacheService extends CacheService<FasttilleggResource> {
 		populateCache(orgId);
 	}
 
-    private void populateCache(String orgId) {
+    @Override
+    public void populateCache(String orgId) {
 		log.info("Populating Fasttillegg cache for {}", orgId);
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_FASTTILLEGG, Constants.CACHE_SERVICE);
         consumerEventUtil.send(event);

@@ -75,7 +75,8 @@ public class ArbeidsforholdCacheService extends CacheService<ArbeidsforholdResou
 		populateCache(orgId);
 	}
 
-    private void populateCache(String orgId) {
+    @Override
+    public void populateCache(String orgId) {
 		log.info("Populating Arbeidsforhold cache for {}", orgId);
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_ARBEIDSFORHOLD, Constants.CACHE_SERVICE);
         consumerEventUtil.send(event);
