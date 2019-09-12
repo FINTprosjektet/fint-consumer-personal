@@ -56,6 +56,7 @@ spec:
             - {name: fint.relations.default-base-url, value: 'https://beta.felleskomponent.no'}
             - {name: server.context-path, value: /administrasjon/personal}
             - {name: logging.level.no.fint.consumer.models.variabellonn, value: TRACE}
+            - {name: spring.mvc.logResolvedException,  value: 'false'}
           image: fintlabs.azurecr.io/consumer-personal:PR-8.1
           name: consumer-administrasjon-personal
           ports:
