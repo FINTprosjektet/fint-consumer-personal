@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.Collection;
 import java.util.Objects;
 
 @Component
@@ -34,4 +35,7 @@ public class StatusCache {
         cache.put(corrId, event);
     }
 
+    public Collection<Event> getAll() {
+        return cache.asMap().values();
+    }
 }

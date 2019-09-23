@@ -5,6 +5,7 @@ import no.fint.cache.utils.CacheUri;
 import no.fint.consumer.config.Constants;
 import no.fint.consumer.config.ConsumerProps;
 import no.fint.consumer.event.ConsumerEventUtil;
+import no.fint.consumer.status.StatusCache;
 import no.fint.consumer.utils.RestEndpoints;
 import no.fint.event.model.DefaultActions;
 import no.fint.event.model.Event;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -33,6 +35,9 @@ public class AdminController {
 
     @Autowired
     private ConsumerProps props;
+
+    @Autowired
+    private StatusCache statusCache;
 
     @GetMapping("/health")
     public ResponseEntity healthCheck(@RequestHeader(HeaderConstants.ORG_ID) String orgId,
@@ -64,5 +69,15 @@ public class AdminController {
     @GetMapping("/assets")
     public Collection<String> getAssets() {
         return props.getAssets();
+    }
+
+    @GetMapping("/status")
+    public List<Event> getEvents(
+            @RequestHeader(name = HeaderConstants.ORG_ID) String orgid
+    ) {
+        return statusCache.getAll()
+                .stream()
+                .filter(e -> orgid.equals(e.getOrgId()))
+                .collect(Collectors.toList());
     }
 }
