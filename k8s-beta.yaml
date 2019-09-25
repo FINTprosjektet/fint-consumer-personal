@@ -43,6 +43,7 @@ spec:
             - {name: TZ, value: Europe/Oslo}
             - {name: JAVA_TOOL_OPTIONS, value: '-XX:+ExitOnOutOfMemoryError -Xmx16G -verbose:gc'}
             - {name: fint.audit.mongo.databasename, value: fint-audit-beta}
+            - {name: fint.audit.mongo.collection, value: auditEvent}
             - name: fint.audit.mongo.connection-string
               valueFrom:
                 secretKeyRef: {key: mongodb, name: fint-audit}
@@ -54,7 +55,9 @@ spec:
             - {name: fint.hazelcast.kubernetes.labelValue, value: administrasjon-personal}
             - {name: fint.relations.default-base-url, value: 'https://beta.felleskomponent.no'}
             - {name: server.context-path, value: /administrasjon/personal}
-          image: fintlabs.azurecr.io/consumer-personal:3.6.2
+            - {name: logging.level.no.fint.consumer.models.variabellonn, value: TRACE}
+            - {name: spring.mvc.logResolvedException,  value: 'false'}
+          image: fintlabs.azurecr.io/consumer-personal:PR-8.1
           name: consumer-administrasjon-personal
           ports:
             - {containerPort: 8080}
@@ -98,8 +101,10 @@ spec:
             - {name: fint.hazelcast.kubernetes.labelValue, value: administrasjon-personal}
             - {name: fint.provider.assets.endpoint, value: 'https://admin-beta.fintlabs.no/api/components/assets/administrasjon_personal'}
             - {name: fint.provider.max-number-of-emitters, value: '5'}
-            - {name: fint.provider.sse.heartbeat.enabled, value: 'true'}
+            - {name: fint.provider.sse.heartbeat.enabled, value: 'false'}
             - {name: server.context-path, value: /administrasjon/personal/provider}
+            - {name: server.tomcat.max-threads, value: '400'}
+            - {name: server.tomcat.max-connections, value: '20000'}
             - {name: management.security.enabled, value: 'false'}
           image: fintlabs.azurecr.io/provider:PR-29.1
           name: provider-administrasjon-personal

@@ -75,7 +75,8 @@ public class VariabellonnCacheService extends CacheService<VariabellonnResource>
 		populateCache(orgId);
 	}
 
-    private void populateCache(String orgId) {
+    @Override
+    public void populateCache(String orgId) {
 		log.info("Populating Variabellonn cache for {}", orgId);
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_VARIABELLONN, Constants.CACHE_SERVICE);
         consumerEventUtil.send(event);

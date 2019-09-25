@@ -75,7 +75,8 @@ public class KontaktpersonCacheService extends CacheService<KontaktpersonResourc
 		populateCache(orgId);
 	}
 
-    private void populateCache(String orgId) {
+    @Override
+    public void populateCache(String orgId) {
 		log.info("Populating Kontaktperson cache for {}", orgId);
         Event event = new Event(orgId, Constants.COMPONENT, FellesActions.GET_ALL_KONTAKTPERSON, Constants.CACHE_SERVICE);
         consumerEventUtil.send(event);

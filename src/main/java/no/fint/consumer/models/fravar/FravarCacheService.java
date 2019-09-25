@@ -75,7 +75,8 @@ public class FravarCacheService extends CacheService<FravarResource> {
 		populateCache(orgId);
 	}
 
-    private void populateCache(String orgId) {
+    @Override
+    public void populateCache(String orgId) {
 		log.info("Populating Fravar cache for {}", orgId);
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_FRAVAR, Constants.CACHE_SERVICE);
         consumerEventUtil.send(event);
