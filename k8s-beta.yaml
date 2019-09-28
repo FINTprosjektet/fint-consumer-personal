@@ -43,7 +43,7 @@ spec:
             - {name: TZ, value: Europe/Oslo}
             - {name: JAVA_TOOL_OPTIONS, value: '-XX:+ExitOnOutOfMemoryError -Xmx21G -verbose:gc'}
             - {name: fint.audit.mongo.databasename, value: fint-audit-beta}
-            - {name: fint.audit.mongo.collection, value: auditEvent}
+            - {name: fint.audit.mongo.collection, value: auditEvents}
             - name: fint.audit.mongo.connection-string
               valueFrom:
                 secretKeyRef: {key: mongodb, name: fint-audit}
@@ -91,6 +91,7 @@ spec:
             - {name: TZ, value: Europe/Oslo}
             - {name: JAVA_TOOL_OPTIONS, value: '-XX:+ExitOnOutOfMemoryError -Xmx10G -verbose:gc'}
             - {name: fint.audit.mongo.databasename, value: fint-audit-beta}
+            - {name: fint.audit.mongo.collection, value: auditEvents}
             - name: fint.audit.mongo.connection-string
               valueFrom:
                 secretKeyRef: {key: mongodb, name: fint-audit}
@@ -106,7 +107,7 @@ spec:
             - {name: server.tomcat.max-threads, value: '400'}
             - {name: server.tomcat.max-connections, value: '30000'}
             - {name: management.security.enabled, value: 'false'}
-          image: fintlabs.azurecr.io/provider:PR-29.1
+          image: fintlabs.azurecr.io/provider:PR-32.5
           name: provider-administrasjon-personal
           ports:
             - {containerPort: 8080}
