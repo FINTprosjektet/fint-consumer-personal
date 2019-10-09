@@ -185,6 +185,10 @@ spec:
           value: "5"
         - name: server.context-path
           value: /administrasjon/personal/provider
+        - name: server.tomcat.max-threads
+          value: '400'
+        - name: server.tomcat.max-connections
+          value: '20000'
         image: fintlabs.azurecr.io/provider:2.1.0
         imagePullPolicy: IfNotPresent
         name: provider-administrasjon-personal
