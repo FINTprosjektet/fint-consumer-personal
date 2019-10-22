@@ -41,12 +41,13 @@ spec:
       containers:
         - env:
             - {name: TZ, value: Europe/Oslo}
-            - {name: JAVA_TOOL_OPTIONS, value: '-XX:+ExitOnOutOfMemoryError -Xmx16G -verbose:gc'}
+            - {name: JAVA_TOOL_OPTIONS, value: '-XX:+ExitOnOutOfMemoryError -Xmx20G -verbose:gc'}
             - {name: fint.audit.mongo.databasename, value: fint-audit-beta}
             - {name: fint.audit.mongo.collection, value: auditEvent}
             - name: fint.audit.mongo.connection-string
               valueFrom:
                 secretKeyRef: {key: mongodb, name: fint-audit}
+            - {name: fint.audit.mongo.buffer-size, value: '250000'}
             - {name: fint.cache.manager, value: default}
             - {name: fint.events.orgIds, value: health.fintlabs.no}
             - {name: fint.hazelcast.kubernetes.enabled, value: 'true'}
@@ -57,7 +58,7 @@ spec:
             - {name: server.context-path, value: /administrasjon/personal}
             - {name: logging.level.no.fint.consumer.models.variabellonn, value: TRACE}
             - {name: spring.mvc.logResolvedException,  value: 'false'}
-          image: fintlabs.azurecr.io/consumer-personal:PR-8.1
+          image: fintlabs.azurecr.io/consumer-personal:PR-9.2
           name: consumer-administrasjon-personal
           ports:
             - {containerPort: 8080}
@@ -66,8 +67,8 @@ spec:
             initialDelaySeconds: 60
             timeoutSeconds: 30
           resources:
-            requests: {memory: 16Gi, cpu: 250m}
-            limits: {memory: 20Gi, cpu: 2000m}
+            requests: {memory: 20Gi, cpu: 250m}
+            limits: {memory: 24Gi, cpu: 2000m}
       restartPolicy: Always
 ---
 apiVersion: apps/v1
