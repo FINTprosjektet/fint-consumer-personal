@@ -7,29 +7,33 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.extern.slf4j.Slf4j;
 
 import no.fint.cache.CacheService;
+import no.fint.cache.model.CacheObject;
 import no.fint.consumer.config.Constants;
 import no.fint.consumer.config.ConsumerProps;
 import no.fint.consumer.event.ConsumerEventUtil;
 import no.fint.event.model.Event;
 import no.fint.event.model.ResponseStatus;
-import no.fint.model.felles.kompleksedatatyper.Identifikator;
 import no.fint.relations.FintResourceCompatibility;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import no.fint.model.felles.Person;
 import no.fint.model.resource.felles.PersonResource;
 import no.fint.model.felles.FellesActions;
+import no.fint.model.felles.kompleksedatatyper.Identifikator;
 
 @Slf4j
 @Service
+@ConditionalOnProperty(name = "fint.consumer.cache.disabled.person", havingValue = "false", matchIfMissing = true)
 public class PersonCacheService extends CacheService<PersonResource> {
 
     public static final String MODEL = Person.class.getSimpleName().toLowerCase();
@@ -84,11 +88,12 @@ public class PersonCacheService extends CacheService<PersonResource> {
 
 
     public Optional<PersonResource> getPersonByFodselsnummer(String orgId, String fodselsnummer) {
-        return getOne(orgId, (resource) -> Optional
+        return getOne(orgId, fodselsnummer.hashCode(),
+            (resource) -> Optional
                 .ofNullable(resource)
                 .map(PersonResource::getFodselsnummer)
                 .map(Identifikator::getIdentifikatorverdi)
-                .map(_id -> _id.equals(fodselsnummer))
+                .map(fodselsnummer::equals)
                 .orElse(false));
     }
 
@@ -105,14 +110,22 @@ public class PersonCacheService extends CacheService<PersonResource> {
         data.forEach(linker::mapLinks);
         if (FellesActions.valueOf(event.getAction()) == FellesActions.UPDATE_PERSON) {
             if (event.getResponseStatus() == ResponseStatus.ACCEPTED || event.getResponseStatus() == ResponseStatus.CONFLICT) {
-                add(event.getOrgId(), data);
-                log.info("Added {} elements to cache for {}", data.size(), event.getOrgId());
+                List<CacheObject<PersonResource>> cacheObjects = data
+                    .stream()
+                    .map(i -> new CacheObject<>(i, linker.hashCodes(i)))
+                    .collect(Collectors.toList());
+                addCache(event.getOrgId(), cacheObjects);
+                log.info("Added {} cache objects to cache for {}", cacheObjects.size(), event.getOrgId());
             } else {
                 log.debug("Ignoring payload for {} with response status {}", event.getOrgId(), event.getResponseStatus());
             }
         } else {
-            update(event.getOrgId(), data);
-            log.info("Updated cache for {} with {} elements", event.getOrgId(), data.size());
+            List<CacheObject<PersonResource>> cacheObjects = data
+                    .stream()
+                    .map(i -> new CacheObject<>(i, linker.hashCodes(i)))
+                    .collect(Collectors.toList());
+            updateCache(event.getOrgId(), cacheObjects);
+            log.info("Updated cache for {} with {} cache objects", event.getOrgId(), cacheObjects.size());
         }
     }
 }
