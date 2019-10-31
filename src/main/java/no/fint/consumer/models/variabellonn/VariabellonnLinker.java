@@ -33,6 +33,9 @@ public class VariabellonnLinker extends FintLinker<VariabellonnResource> {
 
     @Override
     public String getSelfHref(VariabellonnResource variabellonn) {
+        if (!isNull(variabellonn.getKildesystemId()) && !isEmpty(variabellonn.getKildesystemId().getIdentifikatorverdi())) {
+            return createHrefWithId(variabellonn.getKildesystemId().getIdentifikatorverdi(), "kildesystemid");
+        }
         if (!isNull(variabellonn.getSystemId()) && !isEmpty(variabellonn.getSystemId().getIdentifikatorverdi())) {
             return createHrefWithId(variabellonn.getSystemId().getIdentifikatorverdi(), "systemid");
         }

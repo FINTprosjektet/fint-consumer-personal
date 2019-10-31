@@ -115,6 +115,32 @@ public class FastlonnController {
     }
 
 
+    @GetMapping("/kildesystemid/{id:.+}")
+    public FastlonnResource getFastlonnByKildesystemId(
+            @PathVariable String id,
+            @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
+            @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client) {
+        if (props.isOverrideOrgId() || orgId == null) {
+            orgId = props.getDefaultOrgId();
+        }
+        if (client == null) {
+            client = props.getDefaultClient();
+        }
+        log.debug("KildesystemId: {}, OrgId: {}, Client: {}", id, orgId, client);
+
+        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_FASTLONN, client);
+        event.setQuery("kildesystemid/" + id);
+        fintAuditService.audit(event);
+
+        fintAuditService.audit(event, Status.CACHE);
+
+        Optional<FastlonnResource> fastlonn = cacheService.getFastlonnByKildesystemId(orgId, id);
+
+        fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
+
+        return fastlonn.map(linker::toResource).orElseThrow(() -> new EntityNotFoundException(id));
+    }
+
     @GetMapping("/systemid/{id:.+}")
     public FastlonnResource getFastlonnBySystemId(
             @PathVariable String id,
@@ -214,6 +240,30 @@ public class FastlonnController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).location(location).build();
     }
 
+  
+    @PutMapping("/kildesystemid/{id:.+}")
+    public ResponseEntity putFastlonnByKildesystemId(
+            @PathVariable String id,
+            @RequestHeader(name = HeaderConstants.ORG_ID) String orgId,
+            @RequestHeader(name = HeaderConstants.CLIENT) String client,
+            @RequestBody FastlonnResource body
+    ) {
+        log.debug("putFastlonnByKildesystemId {}, OrgId: {}, Client: {}", id, orgId, client);
+        log.trace("Body: {}", body);
+        linker.mapLinks(body);
+        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_FASTLONN, client);
+        event.setQuery("kildesystemid/" + id);
+        event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
+        event.setOperation(Operation.UPDATE);
+        fintAuditService.audit(event);
+
+        consumerEventUtil.send(event);
+
+        statusCache.put(event.getCorrId(), event);
+
+        URI location = UriComponentsBuilder.fromUriString(linker.self()).path("status/{id}").buildAndExpand(event.getCorrId()).toUri();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).location(location).build();
+    }
   
     @PutMapping("/systemid/{id:.+}")
     public ResponseEntity putFastlonnBySystemId(

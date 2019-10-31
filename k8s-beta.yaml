@@ -48,6 +48,7 @@ spec:
               valueFrom:
                 secretKeyRef: {key: mongodb, name: fint-audit}
             - {name: fint.audit.mongo.buffer-size, value: '250000'}
+            - {name: fint.audit.mongo.rate, value: '1000'}
             - {name: fint.cache.manager, value: default}
             - {name: fint.events.orgIds, value: health.fintlabs.no}
             - {name: fint.hazelcast.kubernetes.enabled, value: 'true'}

@@ -83,6 +83,15 @@ public class VariabellonnCacheService extends CacheService<VariabellonnResource>
     }
 
 
+    public Optional<VariabellonnResource> getVariabellonnByKildesystemId(String orgId, String kildesystemId) {
+        return getOne(orgId, (resource) -> Optional
+                .ofNullable(resource)
+                .map(VariabellonnResource::getKildesystemId)
+                .map(Identifikator::getIdentifikatorverdi)
+                .map(_id -> _id.equals(kildesystemId))
+                .orElse(false));
+    }
+
     public Optional<VariabellonnResource> getVariabellonnBySystemId(String orgId, String systemId) {
         return getOne(orgId, (resource) -> Optional
                 .ofNullable(resource)

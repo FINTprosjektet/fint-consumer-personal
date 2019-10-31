@@ -83,6 +83,15 @@ public class FasttilleggCacheService extends CacheService<FasttilleggResource> {
     }
 
 
+    public Optional<FasttilleggResource> getFasttilleggByKildesystemId(String orgId, String kildesystemId) {
+        return getOne(orgId, (resource) -> Optional
+                .ofNullable(resource)
+                .map(FasttilleggResource::getKildesystemId)
+                .map(Identifikator::getIdentifikatorverdi)
+                .map(_id -> _id.equals(kildesystemId))
+                .orElse(false));
+    }
+
     public Optional<FasttilleggResource> getFasttilleggBySystemId(String orgId, String systemId) {
         return getOne(orgId, (resource) -> Optional
                 .ofNullable(resource)
