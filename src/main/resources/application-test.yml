@@ -1,6 +1,6 @@
 spring:
  application:
-  name: fint-consumer-personal
+  name: fint-consumer-administrasjon-personal
 
 fint:
  events:

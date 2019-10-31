@@ -1,3 +1,7 @@
 springfox:
   title: '@title@'
   version: '@version@'
+
+spring:
+  mvc:
+    logResolvedException: false
