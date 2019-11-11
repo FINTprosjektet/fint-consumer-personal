@@ -176,6 +176,7 @@ public class PersonController {
 
 
 
+    // Writable class
     @GetMapping("/status/{id}")
     public ResponseEntity getStatus(
             @PathVariable String id,
