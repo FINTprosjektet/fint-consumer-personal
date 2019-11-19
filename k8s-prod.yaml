@@ -72,7 +72,7 @@ spec:
         - name: TZ
           value: Europe/Oslo
         - name: JAVA_TOOL_OPTIONS
-          value: -XX:+ExitOnOutOfMemoryError -XX:+UseG1GC -Xmx20G -verbose:gc
+          value: -XX:+ExitOnOutOfMemoryError -XX:+UseG1GC -Xmx30G -verbose:gc
         - name: fint.audit.mongo.databasename
           value: fint-audit
         - name: fint.audit.mongo.connection-string
@@ -80,8 +80,6 @@ spec:
             secretKeyRef:
               key: mongodb
               name: fint-audit
-        - name: fint.audit.test-mode
-          value: 'true'
         - name: fint.cache.manager
           value: default
         - name: fint.events.orgIds
@@ -119,8 +117,8 @@ spec:
           timeoutSeconds: 10
         resources:
           limits:
-            cpu: "4"
-            memory: 24Gi
+            cpu: "6"
+            memory: 32Gi
           requests:
             cpu: 250m
             memory: 20Gi
