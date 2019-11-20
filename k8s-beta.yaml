@@ -60,7 +60,7 @@ spec:
             - {name: spring.mvc.logResolvedException,  value: 'false'}
             - {name: endpoints.sensitive, value: 'false'}
             - {name: management.security.enabled, value: 'false'}
-          image: fintlabs.azurecr.io/consumer-administrasjon-personal:PR-9.9
+          image: fintlabs.azurecr.io/consumer-administrasjon-personal:PR-9.12
           name: consumer-administrasjon-personal
           ports:
             - {containerPort: 8080}
