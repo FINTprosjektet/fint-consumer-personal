@@ -41,7 +41,7 @@ spec:
       containers:
         - env:
             - {name: TZ, value: Europe/Oslo}
-            - {name: JAVA_TOOL_OPTIONS, value: '-XX:+ExitOnOutOfMemoryError -Xmx21G -verbose:gc'}
+            - {name: JAVA_TOOL_OPTIONS, value: '-XX:+ExitOnOutOfMemoryError -XX:+UseG1GC -Xmx30G -verbose:gc'}
             - {name: fint.audit.mongo.databasename, value: fint-audit-beta}
             - {name: fint.audit.mongo.collection, value: auditEvents}
             - name: fint.audit.mongo.connection-string
@@ -58,6 +58,8 @@ spec:
             - {name: fint.relations.default-base-url, value: 'https://beta.felleskomponent.no'}
             - {name: server.context-path, value: /administrasjon/personal}
             - {name: spring.mvc.logResolvedException,  value: 'false'}
+            - {name: endpoints.sensitive, value: 'false'}
+            - {name: management.security.enabled, value: 'false'}
           image: fintlabs.azurecr.io/consumer-administrasjon-personal:PR-9.9
           name: consumer-administrasjon-personal
           ports:
@@ -68,7 +70,7 @@ spec:
             timeoutSeconds: 30
           resources:
             requests: {memory: 21Gi, cpu: 250m}
-            limits: {memory: 24Gi, cpu: 2000m}
+            limits: {memory: 32Gi, cpu: '4'}
       restartPolicy: Always
 ---
 apiVersion: apps/v1
@@ -107,6 +109,7 @@ spec:
             - {name: server.context-path, value: /administrasjon/personal/provider}
             - {name: server.tomcat.max-threads, value: '400'}
             - {name: server.tomcat.max-connections, value: '30000'}
+            - {name: endpoints.sensitive, value: 'false'}
             - {name: management.security.enabled, value: 'false'}
           image: fintlabs.azurecr.io/provider:PR-32.5
           name: provider-administrasjon-personal
