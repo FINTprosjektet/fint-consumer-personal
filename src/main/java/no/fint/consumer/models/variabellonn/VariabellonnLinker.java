@@ -7,6 +7,7 @@ import no.fint.relations.FintLinker;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.stream.IntStream;
 
 import static java.util.Objects.isNull;
 import static org.springframework.util.StringUtils.isEmpty;
@@ -42,6 +43,18 @@ public class VariabellonnLinker extends FintLinker<VariabellonnResource> {
         
         return null;
     }
-    
+
+    int[] hashCodes(VariabellonnResource variabellonn) {
+        IntStream.Builder builder = IntStream.builder();
+        if (!isNull(variabellonn.getKildesystemId()) && !isEmpty(variabellonn.getKildesystemId().getIdentifikatorverdi())) {
+            builder.add(variabellonn.getKildesystemId().getIdentifikatorverdi().hashCode());
+        }
+        if (!isNull(variabellonn.getSystemId()) && !isEmpty(variabellonn.getSystemId().getIdentifikatorverdi())) {
+            builder.add(variabellonn.getSystemId().getIdentifikatorverdi().hashCode());
+        }
+        
+        return builder.build().toArray();
+    }
+
 }
 
