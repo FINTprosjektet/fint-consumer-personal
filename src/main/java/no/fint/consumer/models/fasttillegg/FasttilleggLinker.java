@@ -33,6 +33,9 @@ public class FasttilleggLinker extends FintLinker<FasttilleggResource> {
 
     @Override
     public String getSelfHref(FasttilleggResource fasttillegg) {
+        if (!isNull(fasttillegg.getKildesystemId()) && !isEmpty(fasttillegg.getKildesystemId().getIdentifikatorverdi())) {
+            return createHrefWithId(fasttillegg.getKildesystemId().getIdentifikatorverdi(), "kildesystemid");
+        }
         if (!isNull(fasttillegg.getSystemId()) && !isEmpty(fasttillegg.getSystemId().getIdentifikatorverdi())) {
             return createHrefWithId(fasttillegg.getSystemId().getIdentifikatorverdi(), "systemid");
         }

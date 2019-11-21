@@ -83,6 +83,15 @@ public class FastlonnCacheService extends CacheService<FastlonnResource> {
     }
 
 
+    public Optional<FastlonnResource> getFastlonnByKildesystemId(String orgId, String kildesystemId) {
+        return getOne(orgId, (resource) -> Optional
+                .ofNullable(resource)
+                .map(FastlonnResource::getKildesystemId)
+                .map(Identifikator::getIdentifikatorverdi)
+                .map(_id -> _id.equals(kildesystemId))
+                .orElse(false));
+    }
+
     public Optional<FastlonnResource> getFastlonnBySystemId(String orgId, String systemId) {
         return getOne(orgId, (resource) -> Optional
                 .ofNullable(resource)

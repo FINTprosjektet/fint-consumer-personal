@@ -33,6 +33,9 @@ public class FastlonnLinker extends FintLinker<FastlonnResource> {
 
     @Override
     public String getSelfHref(FastlonnResource fastlonn) {
+        if (!isNull(fastlonn.getKildesystemId()) && !isEmpty(fastlonn.getKildesystemId().getIdentifikatorverdi())) {
+            return createHrefWithId(fastlonn.getKildesystemId().getIdentifikatorverdi(), "kildesystemid");
+        }
         if (!isNull(fastlonn.getSystemId()) && !isEmpty(fastlonn.getSystemId().getIdentifikatorverdi())) {
             return createHrefWithId(fastlonn.getSystemId().getIdentifikatorverdi(), "systemid");
         }
