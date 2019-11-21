@@ -43,13 +43,12 @@ spec:
             - {name: TZ, value: Europe/Oslo}
             - {name: JAVA_TOOL_OPTIONS, value: '-XX:+ExitOnOutOfMemoryError -XX:+UseG1GC -Xmx30G -verbose:gc'}
             - {name: fint.audit.mongo.databasename, value: fint-audit-beta}
-            - {name: fint.audit.mongo.collection, value: auditEvents}
             - name: fint.audit.mongo.connection-string
               valueFrom:
                 secretKeyRef: {key: mongodb, name: fint-audit}
+            - {name: fint.audit.mongo.collection, value: auditEvents}
             - {name: fint.audit.mongo.buffer-size, value: '125000'}
             - {name: fint.audit.mongo.rate, value: '1000'}
-            - {name: fint.audit.mongo.workers, value: '2'}
             - {name: fint.cache.manager, value: default}
             - {name: fint.events.orgIds, value: health.fintlabs.no}
             - {name: fint.hazelcast.kubernetes.enabled, value: 'true'}
@@ -61,7 +60,7 @@ spec:
             - {name: spring.mvc.logResolvedException,  value: 'false'}
             - {name: endpoints.sensitive, value: 'false'}
             - {name: management.security.enabled, value: 'false'}
-          image: fintlabs.azurecr.io/consumer-administrasjon-personal:PR-9.14
+          image: fintlabs.azurecr.io/consumer-administrasjon-personal:PR-9.15
           name: consumer-administrasjon-personal
           ports:
             - {containerPort: 8080}
@@ -101,7 +100,6 @@ spec:
                 secretKeyRef: {key: mongodb, name: fint-audit}
             - {name: fint.audit.mongo.buffer-size, value: '125000'}
             - {name: fint.audit.mongo.rate, value: '1000'}
-            - {name: fint.audit.mongo.workers, value: '2'}
             - {name: fint.events.orgIds, value: health.fintlabs.no}
             - {name: fint.hazelcast.kubernetes.enabled, value: 'true'}
             - {name: fint.hazelcast.kubernetes.namespace, value: default}
@@ -115,7 +113,7 @@ spec:
             - {name: server.tomcat.max-connections, value: '30000'}
             - {name: endpoints.sensitive, value: 'false'}
             - {name: management.security.enabled, value: 'false'}
-          image: fintlabs.azurecr.io/provider:PR-32.11
+          image: fintlabs.azurecr.io/provider:PR-32.12
           name: provider-administrasjon-personal
           ports:
             - {containerPort: 8080}
