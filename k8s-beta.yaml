@@ -60,7 +60,7 @@ spec:
             - {name: spring.mvc.logResolvedException,  value: 'false'}
             - {name: endpoints.sensitive, value: 'false'}
             - {name: management.security.enabled, value: 'false'}
-          image: fintlabs.azurecr.io/consumer-administrasjon-personal:PR-9.15
+          image: fintlabs.azurecr.io/consumer-administrasjon-personal:3.3.1
           name: consumer-administrasjon-personal
           ports:
             - {containerPort: 8080}
@@ -113,7 +113,7 @@ spec:
             - {name: server.tomcat.max-connections, value: '30000'}
             - {name: endpoints.sensitive, value: 'false'}
             - {name: management.security.enabled, value: 'false'}
-          image: fintlabs.azurecr.io/provider:PR-32.12
+          image: fintlabs.azurecr.io/provider:2.2.0
           name: provider-administrasjon-personal
           ports:
             - {containerPort: 8080}
