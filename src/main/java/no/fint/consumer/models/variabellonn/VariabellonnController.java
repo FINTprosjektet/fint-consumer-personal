@@ -8,14 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 
 import no.fint.audit.FintAuditService;
 
-import no.fint.cache.exceptions.*;
 import no.fint.consumer.config.Constants;
 import no.fint.consumer.config.ConsumerProps;
 import no.fint.consumer.event.ConsumerEventUtil;
-import no.fint.consumer.event.SynchronousEvents;
 import no.fint.consumer.exceptions.*;
 import no.fint.consumer.status.StatusCache;
-import no.fint.consumer.utils.EventResponses;
 import no.fint.consumer.utils.RestEndpoints;
 
 import no.fint.event.model.*;
@@ -35,8 +32,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
+
+import javax.naming.NameNotFoundException;
 
 import no.fint.model.resource.administrasjon.personal.VariabellonnResource;
 import no.fint.model.resource.administrasjon.personal.VariabellonnResources;
@@ -49,7 +46,7 @@ import no.fint.model.administrasjon.personal.PersonalActions;
 @RequestMapping(name = "Variabellonn", value = RestEndpoints.VARIABELLONN, produces = {FintRelationsMediaType.APPLICATION_HAL_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
 public class VariabellonnController {
 
-    @Autowired(required = false)
+    @Autowired
     private VariabellonnCacheService cacheService;
 
     @Autowired
@@ -70,14 +67,8 @@ public class VariabellonnController {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private SynchronousEvents synchronousEvents;
-
     @GetMapping("/last-updated")
     public Map<String, String> getLastUpdated(@RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId) {
-        if (cacheService == null) {
-            throw new CacheDisabledException("Variabellonn cache is disabled.");
-        }
         if (props.isOverrideOrgId() || orgId == null) {
             orgId = props.getDefaultOrgId();
         }
@@ -87,9 +78,6 @@ public class VariabellonnController {
 
     @GetMapping("/cache/size")
      public ImmutableMap<String, Integer> getCacheSize(@RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId) {
-        if (cacheService == null) {
-            throw new CacheDisabledException("Variabellonn cache is disabled.");
-        }
         if (props.isOverrideOrgId() || orgId == null) {
             orgId = props.getDefaultOrgId();
         }
@@ -101,9 +89,6 @@ public class VariabellonnController {
             @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client,
             @RequestParam(required = false) Long sinceTimeStamp) {
-        if (cacheService == null) {
-            throw new CacheDisabledException("Variabellonn cache is disabled.");
-        }
         if (props.isOverrideOrgId() || orgId == null) {
             orgId = props.getDefaultOrgId();
         }
@@ -113,8 +98,8 @@ public class VariabellonnController {
         log.debug("OrgId: {}, Client: {}", orgId, client);
 
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_VARIABELLONN, client);
-        event.setOperation(Operation.READ);
         fintAuditService.audit(event);
+
         fintAuditService.audit(event, Status.CACHE);
 
         List<VariabellonnResource> variabellonn;
@@ -130,97 +115,34 @@ public class VariabellonnController {
     }
 
 
-    @GetMapping("/kildesystemid/{id:.+}")
-    public VariabellonnResource getVariabellonnByKildesystemId(
-            @PathVariable String id,
-            @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
-            @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client) throws InterruptedException {
-        if (props.isOverrideOrgId() || orgId == null) {
-            orgId = props.getDefaultOrgId();
-        }
-        if (client == null) {
-            client = props.getDefaultClient();
-        }
-        log.debug("kildesystemId: {}, OrgId: {}, Client: {}", id, orgId, client);
-
-        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_VARIABELLONN, client);
-        event.setOperation(Operation.READ);
-        event.setQuery("kildesystemId/" + id);
-
-        if (cacheService != null) {
-            fintAuditService.audit(event);
-            fintAuditService.audit(event, Status.CACHE);
-
-            Optional<VariabellonnResource> variabellonn = cacheService.getVariabellonnByKildesystemId(orgId, id);
-
-            fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
-
-            return variabellonn.map(linker::toResource).orElseThrow(() -> new EntityNotFoundException(id));
-
-        } else {
-            BlockingQueue<Event> queue = synchronousEvents.register(event);
-            consumerEventUtil.send(event);
-
-            Event response = EventResponses.handle(queue.poll(5, TimeUnit.MINUTES));
-
-            if (response.getData() == null ||
-                    response.getData().isEmpty()) throw new EntityNotFoundException(id);
-
-            VariabellonnResource variabellonn = objectMapper.convertValue(response.getData().get(0), VariabellonnResource.class);
-
-            fintAuditService.audit(response, Status.SENT_TO_CLIENT);
-
-            return linker.toResource(variabellonn);
-        }    
-    }
-
     @GetMapping("/systemid/{id:.+}")
     public VariabellonnResource getVariabellonnBySystemId(
             @PathVariable String id,
             @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
-            @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client) throws InterruptedException {
+            @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client) {
         if (props.isOverrideOrgId() || orgId == null) {
             orgId = props.getDefaultOrgId();
         }
         if (client == null) {
             client = props.getDefaultClient();
         }
-        log.debug("systemId: {}, OrgId: {}, Client: {}", id, orgId, client);
+        log.debug("SystemId: {}, OrgId: {}, Client: {}", id, orgId, client);
 
         Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_VARIABELLONN, client);
-        event.setOperation(Operation.READ);
-        event.setQuery("systemId/" + id);
+        event.setQuery("systemid/" + id);
+        fintAuditService.audit(event);
 
-        if (cacheService != null) {
-            fintAuditService.audit(event);
-            fintAuditService.audit(event, Status.CACHE);
+        fintAuditService.audit(event, Status.CACHE);
 
-            Optional<VariabellonnResource> variabellonn = cacheService.getVariabellonnBySystemId(orgId, id);
+        Optional<VariabellonnResource> variabellonn = cacheService.getVariabellonnBySystemId(orgId, id);
 
-            fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
+        fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
-            return variabellonn.map(linker::toResource).orElseThrow(() -> new EntityNotFoundException(id));
-
-        } else {
-            BlockingQueue<Event> queue = synchronousEvents.register(event);
-            consumerEventUtil.send(event);
-
-            Event response = EventResponses.handle(queue.poll(5, TimeUnit.MINUTES));
-
-            if (response.getData() == null ||
-                    response.getData().isEmpty()) throw new EntityNotFoundException(id);
-
-            VariabellonnResource variabellonn = objectMapper.convertValue(response.getData().get(0), VariabellonnResource.class);
-
-            fintAuditService.audit(response, Status.SENT_TO_CLIENT);
-
-            return linker.toResource(variabellonn);
-        }    
+        return variabellonn.map(linker::toResource).orElseThrow(() -> new EntityNotFoundException(id));
     }
 
 
 
-    // Writable class
     @GetMapping("/status/{id}")
     public ResponseEntity getStatus(
             @PathVariable String id,
@@ -228,7 +150,7 @@ public class VariabellonnController {
             @RequestHeader(HeaderConstants.CLIENT) String client) {
         log.debug("/status/{} for {} from {}", id, orgId, client);
         if (!statusCache.containsKey(id)) {
-            return ResponseEntity.status(HttpStatus.GONE).build();
+            return ResponseEntity.notFound().build();
         }
         Event event = statusCache.get(id);
         log.debug("Event: {}", event);
@@ -282,29 +204,6 @@ public class VariabellonnController {
             event.setQuery("VALIDATE");
             event.setOperation(Operation.VALIDATE);
         }
-        consumerEventUtil.send(event);
-
-        statusCache.put(event.getCorrId(), event);
-
-        URI location = UriComponentsBuilder.fromUriString(linker.self()).path("status/{id}").buildAndExpand(event.getCorrId()).toUri();
-        return ResponseEntity.status(HttpStatus.ACCEPTED).location(location).build();
-    }
-
-  
-    @PutMapping("/kildesystemid/{id:.+}")
-    public ResponseEntity putVariabellonnByKildesystemId(
-            @PathVariable String id,
-            @RequestHeader(name = HeaderConstants.ORG_ID) String orgId,
-            @RequestHeader(name = HeaderConstants.CLIENT) String client,
-            @RequestBody VariabellonnResource body
-    ) {
-        log.debug("putVariabellonnByKildesystemId {}, OrgId: {}, Client: {}", id, orgId, client);
-        log.trace("Body: {}", body);
-        linker.mapLinks(body);
-        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_VARIABELLONN, client);
-        event.setQuery("kildesystemid/" + id);
-        event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
-        event.setOperation(Operation.UPDATE);
         fintAuditService.audit(event);
 
         consumerEventUtil.send(event);
@@ -314,6 +213,7 @@ public class VariabellonnController {
         URI location = UriComponentsBuilder.fromUriString(linker.self()).path("status/{id}").buildAndExpand(event.getCorrId()).toUri();
         return ResponseEntity.status(HttpStatus.ACCEPTED).location(location).build();
     }
+
   
     @PutMapping("/systemid/{id:.+}")
     public ResponseEntity putVariabellonnBySystemId(
@@ -343,11 +243,6 @@ public class VariabellonnController {
     //
     // Exception handlers
     //
-    @ExceptionHandler(EventResponseException.class)
-    public ResponseEntity handleEventResponseException(EventResponseException e) {
-        return ResponseEntity.status(e.getStatus()).body(e.getResponse());
-    }
-
     @ExceptionHandler(UpdateEntityMismatchException.class)
     public ResponseEntity handleUpdateEntityMismatch(Exception e) {
         return ResponseEntity.badRequest().body(ErrorResponse.of(e));
@@ -368,18 +263,13 @@ public class VariabellonnController {
         return ResponseEntity.status(HttpStatus.FOUND).body(ErrorResponse.of(e));
     }
 
-    @ExceptionHandler(CacheDisabledException.class)
-    public ResponseEntity handleBadRequest(Exception e) {
-        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ErrorResponse.of(e));
+    @ExceptionHandler(NameNotFoundException.class)
+    public ResponseEntity handleNameNotFound(Exception e) {
+        return ResponseEntity.badRequest().body(ErrorResponse.of(e));
     }
 
     @ExceptionHandler(UnknownHostException.class)
     public ResponseEntity handleUnkownHost(Exception e) {
-        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ErrorResponse.of(e));
-    }
-
-    @ExceptionHandler(CacheNotFoundException.class)
-    public ResponseEntity handleCacheNotFound(Exception e) {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ErrorResponse.of(e));
     }
 
