@@ -7,7 +7,6 @@ import no.fint.relations.FintLinker;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
-import java.util.stream.IntStream;
 
 import static java.util.Objects.isNull;
 import static org.springframework.util.StringUtils.isEmpty;
@@ -34,27 +33,12 @@ public class FasttilleggLinker extends FintLinker<FasttilleggResource> {
 
     @Override
     public String getSelfHref(FasttilleggResource fasttillegg) {
-        if (!isNull(fasttillegg.getKildesystemId()) && !isEmpty(fasttillegg.getKildesystemId().getIdentifikatorverdi())) {
-            return createHrefWithId(fasttillegg.getKildesystemId().getIdentifikatorverdi(), "kildesystemid");
-        }
         if (!isNull(fasttillegg.getSystemId()) && !isEmpty(fasttillegg.getSystemId().getIdentifikatorverdi())) {
             return createHrefWithId(fasttillegg.getSystemId().getIdentifikatorverdi(), "systemid");
         }
         
         return null;
     }
-
-    int[] hashCodes(FasttilleggResource fasttillegg) {
-        IntStream.Builder builder = IntStream.builder();
-        if (!isNull(fasttillegg.getKildesystemId()) && !isEmpty(fasttillegg.getKildesystemId().getIdentifikatorverdi())) {
-            builder.add(fasttillegg.getKildesystemId().getIdentifikatorverdi().hashCode());
-        }
-        if (!isNull(fasttillegg.getSystemId()) && !isEmpty(fasttillegg.getSystemId().getIdentifikatorverdi())) {
-            builder.add(fasttillegg.getSystemId().getIdentifikatorverdi().hashCode());
-        }
-        
-        return builder.build().toArray();
-    }
-
+    
 }
 
