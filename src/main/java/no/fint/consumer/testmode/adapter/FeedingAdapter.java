@@ -38,7 +38,7 @@ public class FeedingAdapter {
 
     public FeedingAdapter(RestTemplateBuilder builder,
                           FintEvents fintEvents,
-                          @Value("${fint.consumer.test.feed-uri}") String feedUri) {
+                          @Value("${fint.consumer.test.feed-uri:}") String feedUri) {
         restTemplate = builder.rootUri(feedUri).build();
         this.fintEvents = fintEvents;
     }
