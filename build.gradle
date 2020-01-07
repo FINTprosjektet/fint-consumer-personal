@@ -1,5 +1,5 @@
 buildscript {
-    apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.6.0/dependencies.gradle'
+    apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.7.0/dependencies.gradle'
     ext {
         springBootVersion = springBootVersion
     }
@@ -38,7 +38,7 @@ dependencies {
     compile("no.fint:fint-administrasjon-resource-model-java:${apiVersion}")
 
     compile('no.fint:fint-api-service-discover:1.1.0')
-    compile('no.fint:fint-audit-polling-plugin:0.1.0-alpha-1')
+    compile('no.fint:fint-audit-polling-plugin:0.1.0-alpha-3')
     compile('no.fint:fint-cache:2.4.0-alpha-2')
     compile('no.fint:fint-dependencies:0.0.3')
     compile('no.fint:fint-event-model:3.0.0')
@@ -119,4 +119,4 @@ jacocoTestReport {
     }
 }
 
-apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.6.0/dependencyReport.gradle'
+apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.7.0/dependencyReport.gradle'
