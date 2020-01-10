@@ -47,7 +47,7 @@ spec:
               valueFrom:
                 secretKeyRef: {key: mongodb, name: fint-audit}
             - {name: fint.audit.mongo.collection, value: auditEvents}
-            - {name: fint.audit.mongo.buffer-size, value: '125000'}
+            - {name: fint.audit.mongo.buffer-size, value: '250000'}
             - {name: fint.audit.mongo.rate, value: '1000'}
             - {name: fint.cache.manager, value: default}
             - {name: fint.events.orgIds, value: health.fintlabs.no}
@@ -60,7 +60,7 @@ spec:
             - {name: spring.mvc.logResolvedException,  value: 'false'}
             - {name: endpoints.sensitive, value: 'false'}
             - {name: management.security.enabled, value: 'false'}
-          image: fintlabs.azurecr.io/consumer-administrasjon-personal:PR-9.15
+          image: fintlabs.azurecr.io/consumer-administrasjon-personal:3.4.0
           name: consumer-administrasjon-personal
           ports:
             - {containerPort: 8080}
@@ -98,7 +98,7 @@ spec:
             - name: fint.audit.mongo.connection-string
               valueFrom:
                 secretKeyRef: {key: mongodb, name: fint-audit}
-            - {name: fint.audit.mongo.buffer-size, value: '125000'}
+            - {name: fint.audit.mongo.buffer-size, value: '250000'}
             - {name: fint.audit.mongo.rate, value: '1000'}
             - {name: fint.events.orgIds, value: health.fintlabs.no}
             - {name: fint.hazelcast.kubernetes.enabled, value: 'true'}
@@ -111,9 +111,10 @@ spec:
             - {name: server.context-path, value: /administrasjon/personal/provider}
             - {name: server.tomcat.max-threads, value: '400'}
             - {name: server.tomcat.max-connections, value: '30000'}
+            - {name: spring.mvc.logResolvedException,  value: 'false'}
             - {name: endpoints.sensitive, value: 'false'}
             - {name: management.security.enabled, value: 'false'}
-          image: fintlabs.azurecr.io/provider:PR-32.12
+          image: fintlabs.azurecr.io/provider:2.2.0
           name: provider-administrasjon-personal
           ports:
             - {containerPort: 8080}
