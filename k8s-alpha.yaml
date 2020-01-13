@@ -1,0 +1,133 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations: {service.beta.kubernetes.io/azure-load-balancer-internal: 'true'}
+  labels: {fint.stack: administrasjon-personal, fint.role: consumer}
+  name: consumer-administrasjon-personal
+spec:
+  type: LoadBalancer
+  ports:
+    - {name: '8080', port: 8080}
+  selector: {fint.stack: administrasjon-personal, fint.role: consumer}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations: {service.beta.kubernetes.io/azure-load-balancer-internal: 'true'}
+  labels: {fint.stack: administrasjon-personal, fint.role: provider}
+  name: provider-administrasjon-personal
+spec:
+  type: LoadBalancer
+  ports:
+    - {name: '8080', port: 8080}
+  selector: {fint.stack: administrasjon-personal, fint.role: provider}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels: {fint.stack: administrasjon-personal, fint.role: consumer}
+  name: consumer-administrasjon-personal
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {fint.stack: administrasjon-personal, fint.role: consumer}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate: {maxSurge: 1, maxUnavailable: 0}
+  template:
+    metadata:
+      labels: {fint.stack: administrasjon-personal, fint.role: consumer}
+    spec:
+      containers:
+        - env:
+            - {name: TZ, value: Europe/Oslo}
+            - {name: JAVA_TOOL_OPTIONS, value: '-XX:+ExitOnOutOfMemoryError -XX:+UseG1GC -Xmx8G -verbose:gc'}
+            - {name: fint.audit.mongo.databasename, value: fint-audit-alpha}
+            - name: fint.audit.mongo.connection-string
+              valueFrom:
+                secretKeyRef: {key: mongodb, name: fint-audit}
+            - {name: fint.audit.mongo.collection, value: auditEvents}
+            - {name: fint.audit.mongo.buffer-size, value: '250000'}
+            - {name: fint.audit.mongo.rate, value: '1000'}
+            - {name: fint.cache.manager, value: default}
+            - {name: fint.events.orgIds, value: health.fintlabs.no}
+            - {name: fint.hazelcast.kubernetes.enabled, value: 'true'}
+            - {name: fint.hazelcast.kubernetes.namespace, value: default}
+            - {name: fint.hazelcast.kubernetes.labelName, value: fint.stack}
+            - {name: fint.hazelcast.kubernetes.labelValue, value: administrasjon-personal}
+            - {name: fint.relations.default-base-url, value: 'https://alpha.felleskomponent.no'}
+            - {name: fint.cache.packer, value: DEFLATE}
+            - {name: fint.consumer.cache.disabled.variabellonn, value: "true"}
+            - {name: fint.consumer.cache.disabled.fastlonn, value: "true"}
+            - {name: fint.consumer.cache.disabled.fasttillegg, value: "true"}
+            - {name: fint.consumer.cache.disabled.fravar, value: "true"}
+            - {name: server.context-path, value: /administrasjon/personal}
+            - {name: spring.mvc.logResolvedException,  value: 'false'}
+            - {name: endpoints.sensitive, value: 'false'}
+            - {name: management.security.enabled, value: 'false'}
+          image: fintlabs.azurecr.io/consumer-administrasjon-personal:PR-14.13
+          name: consumer-administrasjon-personal
+          ports:
+            - {containerPort: 8080}
+          readinessProbe:
+            httpGet: {path: /administrasjon/personal/health, port: 8080}
+            initialDelaySeconds: 60
+            timeoutSeconds: 30
+          resources:
+            requests: {memory: 4Gi, cpu: 250m}
+            limits: {memory: 8Gi, cpu: '2'}
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels: {fint.stack: administrasjon-personal, fint.role: provider}
+  name: provider-administrasjon-personal
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {fint.stack: administrasjon-personal, fint.role: provider}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate: {maxSurge: 1, maxUnavailable: 0}
+  template:
+    metadata:
+      labels: {fint.stack: administrasjon-personal, fint.role: provider}
+    spec:
+      containers:
+        - env:
+            - {name: TZ, value: Europe/Oslo}
+            - {name: JAVA_TOOL_OPTIONS, value: '-XX:+ExitOnOutOfMemoryError -Xmx2G -verbose:gc'}
+            - {name: fint.audit.mongo.databasename, value: fint-audit-alpha}
+            - {name: fint.audit.mongo.collection, value: auditEvents}
+            - name: fint.audit.mongo.connection-string
+              valueFrom:
+                secretKeyRef: {key: mongodb, name: fint-audit}
+            - {name: fint.audit.mongo.buffer-size, value: '250000'}
+            - {name: fint.audit.mongo.rate, value: '1000'}
+            - {name: fint.events.orgIds, value: health.fintlabs.no}
+            - {name: fint.hazelcast.kubernetes.enabled, value: 'true'}
+            - {name: fint.hazelcast.kubernetes.namespace, value: default}
+            - {name: fint.hazelcast.kubernetes.labelName, value: fint.stack}
+            - {name: fint.hazelcast.kubernetes.labelValue, value: administrasjon-personal}
+            - {name: fint.provider.assets.endpoint, value: 'https://admin-beta.fintlabs.no/api/components/assets/administrasjon_personal'}
+            - {name: fint.provider.max-number-of-emitters, value: '5'}
+            - {name: fint.provider.sse.heartbeat.enabled, value: 'false'}
+            - {name: server.context-path, value: /administrasjon/personal/provider}
+            - {name: server.tomcat.max-threads, value: '400'}
+            - {name: server.tomcat.max-connections, value: '30000'}
+            - {name: spring.mvc.logResolvedException,  value: 'false'}
+            - {name: endpoints.sensitive, value: 'false'}
+            - {name: management.security.enabled, value: 'false'}
+          image: fintlabs.azurecr.io/provider:PR-38.2
+          name: provider-administrasjon-personal
+          ports:
+            - {containerPort: 8080}
+          readinessProbe:
+            httpGet: {path: /administrasjon/personal/provider/health, port: 8080}
+            initialDelaySeconds: 60
+            timeoutSeconds: 30
+          resources:
+            requests: {memory: 1Gi, cpu: 250m}
+            limits: {memory: 3Gi, cpu: 2000m}
+      restartPolicy: Always
