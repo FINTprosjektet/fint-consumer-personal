@@ -112,14 +112,14 @@ spec:
             - {name: fint.hazelcast.kubernetes.labelValue, value: administrasjon-personal}
             - {name: fint.provider.assets.endpoint, value: 'https://admin-beta.fintlabs.no/api/components/assets/administrasjon_personal'}
             - {name: fint.provider.max-number-of-emitters, value: '5'}
-            - {name: fint.provider.sse.heartbeat.enabled, value: 'false'}
+            - {name: fint.provider.sse.heartbeat.enabled, value: 'true'}
             - {name: server.context-path, value: /administrasjon/personal/provider}
             - {name: server.tomcat.max-threads, value: '400'}
             - {name: server.tomcat.max-connections, value: '30000'}
             - {name: spring.mvc.logResolvedException,  value: 'false'}
             - {name: endpoints.sensitive, value: 'false'}
             - {name: management.security.enabled, value: 'false'}
-          image: fintlabs.azurecr.io/provider:PR-38.2
+          image: fintlabs.azurecr.io/provider:PR-38.3
           name: provider-administrasjon-personal
           ports:
             - {containerPort: 8080}
