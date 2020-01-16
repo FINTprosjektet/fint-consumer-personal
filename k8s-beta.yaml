@@ -41,7 +41,7 @@ spec:
       containers:
         - env:
             - {name: TZ, value: Europe/Oslo}
-            - {name: JAVA_TOOL_OPTIONS, value: '-XX:+ExitOnOutOfMemoryError -XX:+UseG1GC -Xmx30G -verbose:gc'}
+            - {name: JAVA_TOOL_OPTIONS, value: '-XX:+ExitOnOutOfMemoryError -Xmx6G -verbose:gc'}
             - {name: fint.audit.mongo.databasename, value: fint-audit-beta}
             - name: fint.audit.mongo.connection-string
               valueFrom:
@@ -61,7 +61,7 @@ spec:
             - {name: spring.mvc.logResolvedException,  value: 'false'}
             - {name: endpoints.sensitive, value: 'false'}
             - {name: management.security.enabled, value: 'false'}
-          image: fintlabs.azurecr.io/consumer-administrasjon-personal:PR-14.15
+          image: fintlabs.azurecr.io/consumer-administrasjon-personal:PR-14.17
           name: consumer-administrasjon-personal
           ports:
             - {containerPort: 8080}
@@ -70,8 +70,8 @@ spec:
             initialDelaySeconds: 60
             timeoutSeconds: 30
           resources:
-            requests: {memory: 21Gi, cpu: 250m}
-            limits: {memory: 32Gi, cpu: '6'}
+            requests: {memory: 6Gi, cpu: 250m}
+            limits: {memory: 10Gi, cpu: '6'}
       restartPolicy: Always
 ---
 apiVersion: apps/v1
