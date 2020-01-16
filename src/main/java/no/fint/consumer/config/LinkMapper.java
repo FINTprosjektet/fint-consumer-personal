@@ -47,6 +47,8 @@ public class LinkMapper {
                 .put(Stillingskode.class.getName(), "/administrasjon/kodeverk/stillingskode")
                 .put(Uketimetall.class.getName(), "/administrasjon/kodeverk/uketimetall")
 
+                .put(Organisasjonselement.class.getName(), "/administrasjon/organisasjon/organisasjonselement")
+
                 .put(Rolle.class.getName(), "/administrasjon/fullmakt/rolle")
                 .put(Fullmakt.class.getName(), "/administrasjon/fullmakt/fullmakt")
 
