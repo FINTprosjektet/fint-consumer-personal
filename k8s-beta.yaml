@@ -56,11 +56,12 @@ spec:
             - {name: fint.hazelcast.kubernetes.labelName, value: fint.stack}
             - {name: fint.hazelcast.kubernetes.labelValue, value: administrasjon-personal}
             - {name: fint.relations.default-base-url, value: 'https://beta.felleskomponent.no'}
+            - {name: fint.cache.packer, value: DEFLATE}
             - {name: server.context-path, value: /administrasjon/personal}
             - {name: spring.mvc.logResolvedException,  value: 'false'}
             - {name: endpoints.sensitive, value: 'false'}
             - {name: management.security.enabled, value: 'false'}
-          image: fintlabs.azurecr.io/consumer-administrasjon-personal:3.4.0
+          image: fintlabs.azurecr.io/consumer-administrasjon-personal:PR-14.15
           name: consumer-administrasjon-personal
           ports:
             - {containerPort: 8080}
@@ -114,7 +115,7 @@ spec:
             - {name: spring.mvc.logResolvedException,  value: 'false'}
             - {name: endpoints.sensitive, value: 'false'}
             - {name: management.security.enabled, value: 'false'}
-          image: fintlabs.azurecr.io/provider:2.2.0
+          image: fintlabs.azurecr.io/provider:2.3.0-alpha-1
           name: provider-administrasjon-personal
           ports:
             - {containerPort: 8080}
