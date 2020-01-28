@@ -27,10 +27,13 @@ public enum Constants {
     public static final String CACHE_INITIALDELAY_PERSON = "${fint.consumer.cache.initialDelay.person:950000}";
     public static final String CACHE_FIXEDRATE_PERSON = "${fint.consumer.cache.fixedRate.person:900000}";
     
-    public static final String CACHE_INITIALDELAY_PERSONALRESSURS = "${fint.consumer.cache.initialDelay.personalressurs:960000}";
+    public static final String CACHE_INITIALDELAY_PERSONALMAPPE = "${fint.consumer.cache.initialDelay.personalmappe:960000}";
+    public static final String CACHE_FIXEDRATE_PERSONALMAPPE = "${fint.consumer.cache.fixedRate.personalmappe:900000}";
+    
+    public static final String CACHE_INITIALDELAY_PERSONALRESSURS = "${fint.consumer.cache.initialDelay.personalressurs:970000}";
     public static final String CACHE_FIXEDRATE_PERSONALRESSURS = "${fint.consumer.cache.fixedRate.personalressurs:900000}";
     
-    public static final String CACHE_INITIALDELAY_VARIABELLONN = "${fint.consumer.cache.initialDelay.variabellonn:970000}";
+    public static final String CACHE_INITIALDELAY_VARIABELLONN = "${fint.consumer.cache.initialDelay.variabellonn:980000}";
     public static final String CACHE_FIXEDRATE_VARIABELLONN = "${fint.consumer.cache.fixedRate.variabellonn:900000}";
     
 

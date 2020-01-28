@@ -1,4 +1,4 @@
-package no.fint.consumer.models.personalressurs;
+package no.fint.consumer.models.personalmappe;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -38,25 +38,25 @@ import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import no.fint.model.resource.administrasjon.personal.PersonalressursResource;
-import no.fint.model.resource.administrasjon.personal.PersonalressursResources;
+import no.fint.model.resource.administrasjon.personal.PersonalmappeResource;
+import no.fint.model.resource.administrasjon.personal.PersonalmappeResources;
 import no.fint.model.administrasjon.personal.PersonalActions;
 
 @Slf4j
-@Api(tags = {"Personalressurs"})
+@Api(tags = {"Personalmappe"})
 @CrossOrigin
 @RestController
-@RequestMapping(name = "Personalressurs", value = RestEndpoints.PERSONALRESSURS, produces = {FintRelationsMediaType.APPLICATION_HAL_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
-public class PersonalressursController {
+@RequestMapping(name = "Personalmappe", value = RestEndpoints.PERSONALMAPPE, produces = {FintRelationsMediaType.APPLICATION_HAL_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
+public class PersonalmappeController {
 
     @Autowired(required = false)
-    private PersonalressursCacheService cacheService;
+    private PersonalmappeCacheService cacheService;
 
     @Autowired
     private FintAuditService fintAuditService;
 
     @Autowired
-    private PersonalressursLinker linker;
+    private PersonalmappeLinker linker;
 
     @Autowired
     private ConsumerProps props;
@@ -76,7 +76,7 @@ public class PersonalressursController {
     @GetMapping("/last-updated")
     public Map<String, String> getLastUpdated(@RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId) {
         if (cacheService == null) {
-            throw new CacheDisabledException("Personalressurs cache is disabled.");
+            throw new CacheDisabledException("Personalmappe cache is disabled.");
         }
         if (props.isOverrideOrgId() || orgId == null) {
             orgId = props.getDefaultOrgId();
@@ -88,7 +88,7 @@ public class PersonalressursController {
     @GetMapping("/cache/size")
      public ImmutableMap<String, Integer> getCacheSize(@RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId) {
         if (cacheService == null) {
-            throw new CacheDisabledException("Personalressurs cache is disabled.");
+            throw new CacheDisabledException("Personalmappe cache is disabled.");
         }
         if (props.isOverrideOrgId() || orgId == null) {
             orgId = props.getDefaultOrgId();
@@ -97,12 +97,12 @@ public class PersonalressursController {
     }
 
     @GetMapping
-    public PersonalressursResources getPersonalressurs(
+    public PersonalmappeResources getPersonalmappe(
             @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client,
             @RequestParam(required = false) Long sinceTimeStamp) {
         if (cacheService == null) {
-            throw new CacheDisabledException("Personalressurs cache is disabled.");
+            throw new CacheDisabledException("Personalmappe cache is disabled.");
         }
         if (props.isOverrideOrgId() || orgId == null) {
             orgId = props.getDefaultOrgId();
@@ -112,26 +112,26 @@ public class PersonalressursController {
         }
         log.debug("OrgId: {}, Client: {}", orgId, client);
 
-        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_PERSONALRESSURS, client);
+        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_ALL_PERSONALMAPPE, client);
         event.setOperation(Operation.READ);
         fintAuditService.audit(event);
         fintAuditService.audit(event, Status.CACHE);
 
-        List<PersonalressursResource> personalressurs;
+        List<PersonalmappeResource> personalmappe;
         if (sinceTimeStamp == null) {
-            personalressurs = cacheService.getAll(orgId);
+            personalmappe = cacheService.getAll(orgId);
         } else {
-            personalressurs = cacheService.getAll(orgId, sinceTimeStamp);
+            personalmappe = cacheService.getAll(orgId, sinceTimeStamp);
         }
 
         fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
-        return linker.toResources(personalressurs);
+        return linker.toResources(personalmappe);
     }
 
 
-    @GetMapping("/ansattnummer/{id:.+}")
-    public PersonalressursResource getPersonalressursByAnsattnummer(
+    @GetMapping("/mappeid/{id:.+}")
+    public PersonalmappeResource getPersonalmappeByMappeId(
             @PathVariable String id,
             @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client) throws InterruptedException {
@@ -141,21 +141,21 @@ public class PersonalressursController {
         if (client == null) {
             client = props.getDefaultClient();
         }
-        log.debug("ansattnummer: {}, OrgId: {}, Client: {}", id, orgId, client);
+        log.debug("mappeId: {}, OrgId: {}, Client: {}", id, orgId, client);
 
-        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_PERSONALRESSURS, client);
+        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_PERSONALMAPPE, client);
         event.setOperation(Operation.READ);
-        event.setQuery("ansattnummer/" + id);
+        event.setQuery("mappeId/" + id);
 
         if (cacheService != null) {
             fintAuditService.audit(event);
             fintAuditService.audit(event, Status.CACHE);
 
-            Optional<PersonalressursResource> personalressurs = cacheService.getPersonalressursByAnsattnummer(orgId, id);
+            Optional<PersonalmappeResource> personalmappe = cacheService.getPersonalmappeByMappeId(orgId, id);
 
             fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
-            return personalressurs.map(linker::toResource).orElseThrow(() -> new EntityNotFoundException(id));
+            return personalmappe.map(linker::toResource).orElseThrow(() -> new EntityNotFoundException(id));
 
         } else {
             BlockingQueue<Event> queue = synchronousEvents.register(event);
@@ -166,60 +166,16 @@ public class PersonalressursController {
             if (response.getData() == null ||
                     response.getData().isEmpty()) throw new EntityNotFoundException(id);
 
-            PersonalressursResource personalressurs = objectMapper.convertValue(response.getData().get(0), PersonalressursResource.class);
+            PersonalmappeResource personalmappe = objectMapper.convertValue(response.getData().get(0), PersonalmappeResource.class);
 
             fintAuditService.audit(response, Status.SENT_TO_CLIENT);
 
-            return linker.toResource(personalressurs);
-        }    
-    }
-
-    @GetMapping("/brukernavn/{id:.+}")
-    public PersonalressursResource getPersonalressursByBrukernavn(
-            @PathVariable String id,
-            @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
-            @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client) throws InterruptedException {
-        if (props.isOverrideOrgId() || orgId == null) {
-            orgId = props.getDefaultOrgId();
-        }
-        if (client == null) {
-            client = props.getDefaultClient();
-        }
-        log.debug("brukernavn: {}, OrgId: {}, Client: {}", id, orgId, client);
-
-        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_PERSONALRESSURS, client);
-        event.setOperation(Operation.READ);
-        event.setQuery("brukernavn/" + id);
-
-        if (cacheService != null) {
-            fintAuditService.audit(event);
-            fintAuditService.audit(event, Status.CACHE);
-
-            Optional<PersonalressursResource> personalressurs = cacheService.getPersonalressursByBrukernavn(orgId, id);
-
-            fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
-
-            return personalressurs.map(linker::toResource).orElseThrow(() -> new EntityNotFoundException(id));
-
-        } else {
-            BlockingQueue<Event> queue = synchronousEvents.register(event);
-            consumerEventUtil.send(event);
-
-            Event response = EventResponses.handle(queue.poll(5, TimeUnit.MINUTES));
-
-            if (response.getData() == null ||
-                    response.getData().isEmpty()) throw new EntityNotFoundException(id);
-
-            PersonalressursResource personalressurs = objectMapper.convertValue(response.getData().get(0), PersonalressursResource.class);
-
-            fintAuditService.audit(response, Status.SENT_TO_CLIENT);
-
-            return linker.toResource(personalressurs);
+            return linker.toResource(personalmappe);
         }    
     }
 
     @GetMapping("/systemid/{id:.+}")
-    public PersonalressursResource getPersonalressursBySystemId(
+    public PersonalmappeResource getPersonalmappeBySystemId(
             @PathVariable String id,
             @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client) throws InterruptedException {
@@ -231,7 +187,7 @@ public class PersonalressursController {
         }
         log.debug("systemId: {}, OrgId: {}, Client: {}", id, orgId, client);
 
-        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_PERSONALRESSURS, client);
+        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_PERSONALMAPPE, client);
         event.setOperation(Operation.READ);
         event.setQuery("systemId/" + id);
 
@@ -239,11 +195,11 @@ public class PersonalressursController {
             fintAuditService.audit(event);
             fintAuditService.audit(event, Status.CACHE);
 
-            Optional<PersonalressursResource> personalressurs = cacheService.getPersonalressursBySystemId(orgId, id);
+            Optional<PersonalmappeResource> personalmappe = cacheService.getPersonalmappeBySystemId(orgId, id);
 
             fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
-            return personalressurs.map(linker::toResource).orElseThrow(() -> new EntityNotFoundException(id));
+            return personalmappe.map(linker::toResource).orElseThrow(() -> new EntityNotFoundException(id));
 
         } else {
             BlockingQueue<Event> queue = synchronousEvents.register(event);
@@ -254,11 +210,11 @@ public class PersonalressursController {
             if (response.getData() == null ||
                     response.getData().isEmpty()) throw new EntityNotFoundException(id);
 
-            PersonalressursResource personalressurs = objectMapper.convertValue(response.getData().get(0), PersonalressursResource.class);
+            PersonalmappeResource personalmappe = objectMapper.convertValue(response.getData().get(0), PersonalmappeResource.class);
 
             fintAuditService.audit(response, Status.SENT_TO_CLIENT);
 
-            return linker.toResource(personalressurs);
+            return linker.toResource(personalmappe);
         }    
     }
 
@@ -283,14 +239,14 @@ public class PersonalressursController {
         if (event.getResponseStatus() == null) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).build();
         }
-        List<PersonalressursResource> result;
+        List<PersonalmappeResource> result;
         switch (event.getResponseStatus()) {
             case ACCEPTED:
                 if (event.getOperation() == Operation.VALIDATE) {
                     fintAuditService.audit(event, Status.SENT_TO_CLIENT);
                     return ResponseEntity.ok(event.getResponse());
                 }
-                result = objectMapper.convertValue(event.getData(), objectMapper.getTypeFactory().constructCollectionType(List.class, PersonalressursResource.class));
+                result = objectMapper.convertValue(event.getData(), objectMapper.getTypeFactory().constructCollectionType(List.class, PersonalmappeResource.class));
                 URI location = UriComponentsBuilder.fromUriString(linker.getSelfHref(result.get(0))).build().toUri();
                 event.setMessage(location.toString());
                 fintAuditService.audit(event, Status.SENT_TO_CLIENT);
@@ -300,7 +256,7 @@ public class PersonalressursController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(event.getResponse());
             case CONFLICT:
                 fintAuditService.audit(event, Status.SENT_TO_CLIENT);
-                result = objectMapper.convertValue(event.getData(), objectMapper.getTypeFactory().constructCollectionType(List.class, PersonalressursResource.class));
+                result = objectMapper.convertValue(event.getData(), objectMapper.getTypeFactory().constructCollectionType(List.class, PersonalmappeResource.class));
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(linker.toResources(result));
             case REJECTED:
                 fintAuditService.audit(event, Status.SENT_TO_CLIENT);
@@ -310,16 +266,16 @@ public class PersonalressursController {
     }
 
     @PostMapping
-    public ResponseEntity postPersonalressurs(
+    public ResponseEntity postPersonalmappe(
             @RequestHeader(name = HeaderConstants.ORG_ID) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT) String client,
-            @RequestBody PersonalressursResource body,
+            @RequestBody PersonalmappeResource body,
             @RequestParam(name = "validate", required = false) boolean validate
     ) {
-        log.debug("postPersonalressurs, Validate: {}, OrgId: {}, Client: {}", validate, orgId, client);
+        log.debug("postPersonalmappe, Validate: {}, OrgId: {}, Client: {}", validate, orgId, client);
         log.trace("Body: {}", body);
         linker.mapLinks(body);
-        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_PERSONALRESSURS, client);
+        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_PERSONALMAPPE, client);
         event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
         event.setOperation(Operation.CREATE);
         if (validate) {
@@ -335,42 +291,18 @@ public class PersonalressursController {
     }
 
   
-    @PutMapping("/ansattnummer/{id:.+}")
-    public ResponseEntity putPersonalressursByAnsattnummer(
+    @PutMapping("/mappeid/{id:.+}")
+    public ResponseEntity putPersonalmappeByMappeId(
             @PathVariable String id,
             @RequestHeader(name = HeaderConstants.ORG_ID) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT) String client,
-            @RequestBody PersonalressursResource body
+            @RequestBody PersonalmappeResource body
     ) {
-        log.debug("putPersonalressursByAnsattnummer {}, OrgId: {}, Client: {}", id, orgId, client);
+        log.debug("putPersonalmappeByMappeId {}, OrgId: {}, Client: {}", id, orgId, client);
         log.trace("Body: {}", body);
         linker.mapLinks(body);
-        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_PERSONALRESSURS, client);
-        event.setQuery("ansattnummer/" + id);
-        event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
-        event.setOperation(Operation.UPDATE);
-        fintAuditService.audit(event);
-
-        consumerEventUtil.send(event);
-
-        statusCache.put(event.getCorrId(), event);
-
-        URI location = UriComponentsBuilder.fromUriString(linker.self()).path("status/{id}").buildAndExpand(event.getCorrId()).toUri();
-        return ResponseEntity.status(HttpStatus.ACCEPTED).location(location).build();
-    }
-  
-    @PutMapping("/brukernavn/{id:.+}")
-    public ResponseEntity putPersonalressursByBrukernavn(
-            @PathVariable String id,
-            @RequestHeader(name = HeaderConstants.ORG_ID) String orgId,
-            @RequestHeader(name = HeaderConstants.CLIENT) String client,
-            @RequestBody PersonalressursResource body
-    ) {
-        log.debug("putPersonalressursByBrukernavn {}, OrgId: {}, Client: {}", id, orgId, client);
-        log.trace("Body: {}", body);
-        linker.mapLinks(body);
-        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_PERSONALRESSURS, client);
-        event.setQuery("brukernavn/" + id);
+        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_PERSONALMAPPE, client);
+        event.setQuery("mappeid/" + id);
         event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
         event.setOperation(Operation.UPDATE);
         fintAuditService.audit(event);
@@ -384,16 +316,16 @@ public class PersonalressursController {
     }
   
     @PutMapping("/systemid/{id:.+}")
-    public ResponseEntity putPersonalressursBySystemId(
+    public ResponseEntity putPersonalmappeBySystemId(
             @PathVariable String id,
             @RequestHeader(name = HeaderConstants.ORG_ID) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT) String client,
-            @RequestBody PersonalressursResource body
+            @RequestBody PersonalmappeResource body
     ) {
-        log.debug("putPersonalressursBySystemId {}, OrgId: {}, Client: {}", id, orgId, client);
+        log.debug("putPersonalmappeBySystemId {}, OrgId: {}, Client: {}", id, orgId, client);
         log.trace("Body: {}", body);
         linker.mapLinks(body);
-        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_PERSONALRESSURS, client);
+        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_PERSONALMAPPE, client);
         event.setQuery("systemid/" + id);
         event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
         event.setOperation(Operation.UPDATE);

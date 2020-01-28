@@ -36,6 +36,7 @@ repositories {
 dependencies {
 
     compile("no.fint:fint-administrasjon-resource-model-java:${apiVersion}")
+    compile("no.fint:fint-arkiv-model-java:${arkivApiVersion}")
 
     compile('no.fint:fint-api-service-discover:1.1.0')
     compile('no.fint:fint-audit-mongo-plugin:1.7.0-rc-2')
