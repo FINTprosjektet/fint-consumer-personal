@@ -20,6 +20,7 @@ import no.fint.consumer.utils.RestEndpoints;
 
 import no.fint.event.model.*;
 
+import no.fint.model.resource.administrasjon.arkiv.SakResource;
 import no.fint.relations.FintRelationsMediaType;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,6 +130,14 @@ public class PersonalmappeController {
         return linker.toResources(personalmappe);
     }
 
+    @GetMapping("/mappeid/{ar}/{sekvensnummer}")
+    public PersonalmappeResource getPersonalmappeByMappeArSekvensnummer(
+            @PathVariable String ar,
+            @PathVariable String sekvensnummer,
+            @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
+            @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client) throws InterruptedException {
+        return getPersonalmappeByMappeId(ar + "/" + sekvensnummer, orgId, client);
+    }
 
     @GetMapping("/mappeid/{id:.+}")
     public PersonalmappeResource getPersonalmappeByMappeId(
