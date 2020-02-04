@@ -20,7 +20,6 @@ import no.fint.consumer.utils.RestEndpoints;
 
 import no.fint.event.model.*;
 
-import no.fint.model.resource.administrasjon.arkiv.SakResource;
 import no.fint.relations.FintRelationsMediaType;
 
 import org.springframework.beans.factory.annotation.Autowired;
