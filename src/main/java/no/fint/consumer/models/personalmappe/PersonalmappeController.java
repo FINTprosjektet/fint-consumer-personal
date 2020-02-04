@@ -259,6 +259,8 @@ public class PersonalmappeController {
                 URI location = UriComponentsBuilder.fromUriString(linker.getSelfHref(result.get(0))).build().toUri();
                 event.setMessage(location.toString());
                 fintAuditService.audit(event, Status.SENT_TO_CLIENT);
+                if (props.isUseCreated())
+                    return ResponseEntity.created(location).body(linker.toResource(result.get(0)));
                 return ResponseEntity.status(HttpStatus.SEE_OTHER).location(location).body(linker.toResource(result.get(0)));
             case ERROR:
                 fintAuditService.audit(event, Status.SENT_TO_CLIENT);
@@ -299,7 +301,17 @@ public class PersonalmappeController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).location(location).build();
     }
 
-  
+    @PutMapping("/mappeid/{ar}/{sekvensnummer}")
+    public ResponseEntity putPersonalmappeBySaksarSekvensnummer(
+            @PathVariable String ar,
+            @PathVariable String sekvensnummer,
+            @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
+            @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client,
+            @RequestBody PersonalmappeResource body
+    ) {
+        return putPersonalmappeByMappeId(ar + "/" + sekvensnummer, orgId, client, body);
+    }
+
     @PutMapping("/mappeid/{id:.+}")
     public ResponseEntity putPersonalmappeByMappeId(
             @PathVariable String id,
