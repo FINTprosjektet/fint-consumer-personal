@@ -58,6 +58,7 @@ public class LinkMapper {
 
                 .put("no.fint.model.utdanning.elev.Elev", "/utdanning/elev/elev")
                 .put("no.fint.model.utdanning.elev.Skoleressurs", "/utdanning/elev/skoleressurs")
+                .put("no.fint.model.utdanning.elev.Undervisningsforhold", "/utdanning/elev/undervisningsforhold")
                 .build();
     }
 
