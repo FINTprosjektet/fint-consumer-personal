@@ -16,6 +16,7 @@ import no.fint.event.model.health.Health;
 import no.fint.event.model.health.HealthStatus;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -97,6 +98,11 @@ public class AdminController {
         cacheServices.stream()
                 .filter(cacheService -> StringUtils.isBlank(model) || StringUtils.equalsIgnoreCase(cacheService.getModel(), model))
                 .forEach(cacheService -> cacheService.populateCache(orgid));
+    }
+
+    @GetMapping("/headers")
+    public HttpHeaders echoRequestHeaders(@RequestHeader HttpHeaders headers) {
+        return headers;
     }
 
 }
