@@ -101,7 +101,7 @@ public class AdminController {
     }
 
     @GetMapping("/headers")
-    public HttpHeaders echoRequestHeaders(@RequestHeader HttpHeaders headers) {
+    public HttpHeaders getRequestHeaders(@RequestHeader HttpHeaders headers) {
         return headers;
     }
 
