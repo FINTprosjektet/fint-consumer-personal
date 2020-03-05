@@ -40,7 +40,7 @@ spec:
     spec:
       containers:
         - name: consumer-administrasjon-personal
-          image: fintlabs.azurecr.io/consumer-administrasjon-personal:PR-16.8
+          image: fintlabs.azurecr.io/consumer-administrasjon-personal:PR-16.9
           envFrom:
             - configMapRef:
                 name: fint-environment
@@ -59,6 +59,7 @@ spec:
             - {name: fint.consumer.cache.disabled.fravar, value: "true"}
             - {name: fint.consumer.cache.disabled.personalmappe, value: "true"}
             - {name: server.context-path, value: /administrasjon/personal}
+            - {name: logging.level.no.fint.audit.plugin.eventhub, value: debug}
           ports:
             - {containerPort: 8080}
           readinessProbe:
@@ -88,7 +89,7 @@ spec:
     spec:
       containers:
         - name: provider-administrasjon-personal
-          image: fintlabs.azurecr.io/provider:PR-40.3
+          image: fintlabs.azurecr.io/provider:PR-40.8
           envFrom:
             - configMapRef:
                 name: fint-environment
@@ -105,6 +106,7 @@ spec:
             - {name: server.context-path, value: /administrasjon/personal/provider}
             - {name: server.tomcat.max-threads, value: '400'}
             - {name: server.tomcat.max-connections, value: '30000'}
+            - {name: logging.level.no.fint.audit.plugin.eventhub, value: debug}
           ports:
             - {containerPort: 8080}
           readinessProbe:
