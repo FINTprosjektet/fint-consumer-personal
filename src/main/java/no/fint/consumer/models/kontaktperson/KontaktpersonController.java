@@ -93,7 +93,7 @@ public class KontaktpersonController {
         if (props.isOverrideOrgId() || orgId == null) {
             orgId = props.getDefaultOrgId();
         }
-        return ImmutableMap.of("size", cacheService.getAll(orgId).size());
+        return ImmutableMap.of("size", cacheService.getCacheSize(orgId));
     }
 
     @GetMapping
@@ -206,7 +206,9 @@ public class KontaktpersonController {
                 URI location = UriComponentsBuilder.fromUriString(linker.getSelfHref(result.get(0))).build().toUri();
                 event.setMessage(location.toString());
                 fintAuditService.audit(event, Status.SENT_TO_CLIENT);
-                return ResponseEntity.status(HttpStatus.SEE_OTHER).location(location).build();
+                if (props.isUseCreated())
+                    return ResponseEntity.created(location).body(linker.toResource(result.get(0)));
+                return ResponseEntity.status(HttpStatus.SEE_OTHER).location(location).body(linker.toResource(result.get(0)));
             case ERROR:
                 fintAuditService.audit(event, Status.SENT_TO_CLIENT);
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(event.getResponse());

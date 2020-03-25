@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
 import static org.springframework.util.StringUtils.isEmpty;
-
 
 @Component
 public class FastlonnLinker extends FintLinker<FastlonnResource> {
@@ -34,14 +34,20 @@ public class FastlonnLinker extends FintLinker<FastlonnResource> {
 
     @Override
     public String getSelfHref(FastlonnResource fastlonn) {
+        return getAllSelfHrefs(fastlonn).findFirst().orElse(null);
+    }
+
+    @Override
+    public Stream<String> getAllSelfHrefs(FastlonnResource fastlonn) {
+        Stream.Builder<String> builder = Stream.builder();
         if (!isNull(fastlonn.getKildesystemId()) && !isEmpty(fastlonn.getKildesystemId().getIdentifikatorverdi())) {
-            return createHrefWithId(fastlonn.getKildesystemId().getIdentifikatorverdi(), "kildesystemid");
+            builder.add(createHrefWithId(fastlonn.getKildesystemId().getIdentifikatorverdi(), "kildesystemid"));
         }
         if (!isNull(fastlonn.getSystemId()) && !isEmpty(fastlonn.getSystemId().getIdentifikatorverdi())) {
-            return createHrefWithId(fastlonn.getSystemId().getIdentifikatorverdi(), "systemid");
+            builder.add(createHrefWithId(fastlonn.getSystemId().getIdentifikatorverdi(), "systemid"));
         }
         
-        return null;
+        return builder.build();
     }
 
     int[] hashCodes(FastlonnResource fastlonn) {
