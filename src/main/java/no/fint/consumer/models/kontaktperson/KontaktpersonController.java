@@ -236,10 +236,7 @@ public class KontaktpersonController {
         Event event = new Event(orgId, Constants.COMPONENT, FellesActions.UPDATE_KONTAKTPERSON, client);
         event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
         event.setOperation(Operation.CREATE);
-        if (validate) {
-            event.setQuery("VALIDATE");
-            event.setOperation(Operation.VALIDATE);
-        }
+        event.setOperation(validate ? Operation.VALIDATE : Operation.CREATE);
         consumerEventUtil.send(event);
 
         statusCache.put(event.getCorrId(), event);
