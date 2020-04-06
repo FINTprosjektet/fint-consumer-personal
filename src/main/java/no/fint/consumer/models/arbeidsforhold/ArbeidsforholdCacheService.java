@@ -127,7 +127,7 @@ public class ArbeidsforholdCacheService extends CacheService<ArbeidsforholdResou
                     .collect(Collectors.toList());
             updateCache(event.getOrgId(), cacheObjects);
             final Long volume = getCache(event.getOrgId()).map(Cache::volume).orElse(0L) >> 20;
-            log.info("Updated cache for {} with {} cache objects ({} MB)", event.getOrgId(), cacheObjects.size(), volume);
+            log.info("Updated cache for {} with {} cache objects ({} MiB)", event.getOrgId(), cacheObjects.size(), volume);
         }
     }
 }
