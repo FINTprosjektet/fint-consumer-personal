@@ -47,7 +47,7 @@ dependencies {
     compile('no.fint:fint-events:2.2.0')
     compile('no.fint:fint-hazelcast:1.2.0-rc-1')
     compile('no.fint:fint-model-resource:0.4.0-alpha-1')
-    compile('no.fint:fint-relations:2.0.0')
+    compile('no.fint:fint-relations:2.1.0-beta-1')
     compile('no.fint:fint-spring-secrets:0.1.0')
 
     compile('com.hazelcast:hazelcast:3.11.2')

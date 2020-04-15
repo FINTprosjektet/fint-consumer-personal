@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
 import static org.springframework.util.StringUtils.isEmpty;
-
 
 @Component
 public class PersonalressursLinker extends FintLinker<PersonalressursResource> {
@@ -34,17 +34,23 @@ public class PersonalressursLinker extends FintLinker<PersonalressursResource> {
 
     @Override
     public String getSelfHref(PersonalressursResource personalressurs) {
+        return getAllSelfHrefs(personalressurs).findFirst().orElse(null);
+    }
+
+    @Override
+    public Stream<String> getAllSelfHrefs(PersonalressursResource personalressurs) {
+        Stream.Builder<String> builder = Stream.builder();
         if (!isNull(personalressurs.getAnsattnummer()) && !isEmpty(personalressurs.getAnsattnummer().getIdentifikatorverdi())) {
-            return createHrefWithId(personalressurs.getAnsattnummer().getIdentifikatorverdi(), "ansattnummer");
+            builder.add(createHrefWithId(personalressurs.getAnsattnummer().getIdentifikatorverdi(), "ansattnummer"));
         }
         if (!isNull(personalressurs.getBrukernavn()) && !isEmpty(personalressurs.getBrukernavn().getIdentifikatorverdi())) {
-            return createHrefWithId(personalressurs.getBrukernavn().getIdentifikatorverdi(), "brukernavn");
+            builder.add(createHrefWithId(personalressurs.getBrukernavn().getIdentifikatorverdi(), "brukernavn"));
         }
         if (!isNull(personalressurs.getSystemId()) && !isEmpty(personalressurs.getSystemId().getIdentifikatorverdi())) {
-            return createHrefWithId(personalressurs.getSystemId().getIdentifikatorverdi(), "systemid");
+            builder.add(createHrefWithId(personalressurs.getSystemId().getIdentifikatorverdi(), "systemid"));
         }
         
-        return null;
+        return builder.build();
     }
 
     int[] hashCodes(PersonalressursResource personalressurs) {

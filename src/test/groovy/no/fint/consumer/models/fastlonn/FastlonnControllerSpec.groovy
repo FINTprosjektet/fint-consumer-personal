@@ -22,14 +22,14 @@ import spock.lang.Specification
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-public class FastlonnControllerSpec extends Specification {
+class FastlonnControllerSpec extends Specification {
     @LocalServerPort
-    private int port;
+    private int port
 
     @Autowired
-    private TestRestTemplate restTemplate;
+    private TestRestTemplate restTemplate
 
-    @Ignore("Jackson serializer issues with emtpy Kontostreng")
+    @Ignore("Jackson serializer issues with empty Kontostreng")
     def "POST Fastlonn"() {
         given:
         def fastlonn = new Fastlonn(

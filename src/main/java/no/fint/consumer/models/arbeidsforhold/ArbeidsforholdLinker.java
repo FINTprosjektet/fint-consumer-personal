@@ -14,7 +14,6 @@ import java.util.stream.Stream;
 import static java.util.Objects.isNull;
 import static org.springframework.util.StringUtils.isEmpty;
 
-
 @Component
 public class ArbeidsforholdLinker extends FintLinker<ArbeidsforholdResource> {
 
@@ -36,11 +35,17 @@ public class ArbeidsforholdLinker extends FintLinker<ArbeidsforholdResource> {
 
     @Override
     public String getSelfHref(ArbeidsforholdResource arbeidsforhold) {
+        return getAllSelfHrefs(arbeidsforhold).findFirst().orElse(null);
+    }
+
+    @Override
+    public Stream<String> getAllSelfHrefs(ArbeidsforholdResource arbeidsforhold) {
+        Stream.Builder<String> builder = Stream.builder();
         if (!isNull(arbeidsforhold.getSystemId()) && !isEmpty(arbeidsforhold.getSystemId().getIdentifikatorverdi())) {
-            return createHrefWithId(arbeidsforhold.getSystemId().getIdentifikatorverdi(), "systemid");
+            builder.add(createHrefWithId(arbeidsforhold.getSystemId().getIdentifikatorverdi(), "systemid"));
         }
         
-        return null;
+        return builder.build();
     }
 
     int[] hashCodes(ArbeidsforholdResource arbeidsforhold) {
