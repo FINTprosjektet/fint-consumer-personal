@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import no.fint.model.resource.administrasjon.personal.ArbeidsforholdResource;
 import no.fint.model.resource.administrasjon.personal.ArbeidsforholdResources;
@@ -86,7 +87,7 @@ public class ArbeidsforholdController {
     }
 
     @GetMapping("/cache/size")
-     public ImmutableMap<String, Integer> getCacheSize(@RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId) {
+    public ImmutableMap<String, Integer> getCacheSize(@RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId) {
         if (cacheService == null) {
             throw new CacheDisabledException("Arbeidsforhold cache is disabled.");
         }
@@ -100,7 +101,9 @@ public class ArbeidsforholdController {
     public ArbeidsforholdResources getArbeidsforhold(
             @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
             @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client,
-            @RequestParam(required = false) Long sinceTimeStamp) {
+            @RequestParam(defaultValue = "0") long sinceTimeStamp,
+            @RequestParam(defaultValue = "0") int size,
+            @RequestParam(defaultValue = "0") int offset) {
         if (cacheService == null) {
             throw new CacheDisabledException("Arbeidsforhold cache is disabled.");
         }
@@ -117,16 +120,18 @@ public class ArbeidsforholdController {
         fintAuditService.audit(event);
         fintAuditService.audit(event, Status.CACHE);
 
-        List<ArbeidsforholdResource> arbeidsforhold;
-        if (sinceTimeStamp == null) {
-            arbeidsforhold = cacheService.getAll(orgId);
+        Stream<ArbeidsforholdResource> arbeidsforhold;
+        if (size > 0 && offset >= 0) {
+            arbeidsforhold = cacheService.streamSlice(orgId, offset, size);
+        } else if (sinceTimeStamp > 0) {
+            arbeidsforhold = cacheService.streamSince(orgId, sinceTimeStamp);
         } else {
-            arbeidsforhold = cacheService.getAll(orgId, sinceTimeStamp);
+            arbeidsforhold = cacheService.streamAll(orgId);
         }
 
         fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
 
-        return linker.toResources(arbeidsforhold);
+        return linker.toResources(arbeidsforhold, offset, size, cacheService.getCacheSize(orgId));
     }
 
 
@@ -171,9 +176,8 @@ public class ArbeidsforholdController {
             fintAuditService.audit(response, Status.SENT_TO_CLIENT);
 
             return linker.toResource(arbeidsforhold);
-        }    
+        }
     }
-
 
 
     // Writable class
@@ -190,7 +194,11 @@ public class ArbeidsforholdController {
         log.debug("Event: {}", event);
         log.trace("Data: {}", event.getData());
         if (!event.getOrgId().equals(orgId)) {
-            return ResponseEntity.badRequest().body(new EventResponse() { { setMessage("Invalid OrgId"); } } );
+            return ResponseEntity.badRequest().body(new EventResponse() {
+                {
+                    setMessage("Invalid OrgId");
+                }
+            });
         }
         if (event.getResponseStatus() == null) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).build();
@@ -246,7 +254,7 @@ public class ArbeidsforholdController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).location(location).build();
     }
 
-  
+
     @PutMapping("/systemid/{id:.+}")
     public ResponseEntity putArbeidsforholdBySystemId(
             @PathVariable String id,
@@ -270,7 +278,7 @@ public class ArbeidsforholdController {
         URI location = UriComponentsBuilder.fromUriString(linker.self()).path("status/{id}").buildAndExpand(event.getCorrId()).toUri();
         return ResponseEntity.status(HttpStatus.ACCEPTED).location(location).build();
     }
-  
+
 
     //
     // Exception handlers
