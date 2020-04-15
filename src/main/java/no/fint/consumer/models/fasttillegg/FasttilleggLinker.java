@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
 import static org.springframework.util.StringUtils.isEmpty;
-
 
 @Component
 public class FasttilleggLinker extends FintLinker<FasttilleggResource> {
@@ -34,14 +34,20 @@ public class FasttilleggLinker extends FintLinker<FasttilleggResource> {
 
     @Override
     public String getSelfHref(FasttilleggResource fasttillegg) {
+        return getAllSelfHrefs(fasttillegg).findFirst().orElse(null);
+    }
+
+    @Override
+    public Stream<String> getAllSelfHrefs(FasttilleggResource fasttillegg) {
+        Stream.Builder<String> builder = Stream.builder();
         if (!isNull(fasttillegg.getKildesystemId()) && !isEmpty(fasttillegg.getKildesystemId().getIdentifikatorverdi())) {
-            return createHrefWithId(fasttillegg.getKildesystemId().getIdentifikatorverdi(), "kildesystemid");
+            builder.add(createHrefWithId(fasttillegg.getKildesystemId().getIdentifikatorverdi(), "kildesystemid"));
         }
         if (!isNull(fasttillegg.getSystemId()) && !isEmpty(fasttillegg.getSystemId().getIdentifikatorverdi())) {
-            return createHrefWithId(fasttillegg.getSystemId().getIdentifikatorverdi(), "systemid");
+            builder.add(createHrefWithId(fasttillegg.getSystemId().getIdentifikatorverdi(), "systemid"));
         }
         
-        return null;
+        return builder.build();
     }
 
     int[] hashCodes(FasttilleggResource fasttillegg) {

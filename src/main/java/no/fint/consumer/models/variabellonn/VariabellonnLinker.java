@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
 import static org.springframework.util.StringUtils.isEmpty;
-
 
 @Component
 public class VariabellonnLinker extends FintLinker<VariabellonnResource> {
@@ -34,14 +34,20 @@ public class VariabellonnLinker extends FintLinker<VariabellonnResource> {
 
     @Override
     public String getSelfHref(VariabellonnResource variabellonn) {
+        return getAllSelfHrefs(variabellonn).findFirst().orElse(null);
+    }
+
+    @Override
+    public Stream<String> getAllSelfHrefs(VariabellonnResource variabellonn) {
+        Stream.Builder<String> builder = Stream.builder();
         if (!isNull(variabellonn.getKildesystemId()) && !isEmpty(variabellonn.getKildesystemId().getIdentifikatorverdi())) {
-            return createHrefWithId(variabellonn.getKildesystemId().getIdentifikatorverdi(), "kildesystemid");
+            builder.add(createHrefWithId(variabellonn.getKildesystemId().getIdentifikatorverdi(), "kildesystemid"));
         }
         if (!isNull(variabellonn.getSystemId()) && !isEmpty(variabellonn.getSystemId().getIdentifikatorverdi())) {
-            return createHrefWithId(variabellonn.getSystemId().getIdentifikatorverdi(), "systemid");
+            builder.add(createHrefWithId(variabellonn.getSystemId().getIdentifikatorverdi(), "systemid"));
         }
         
-        return null;
+        return builder.build();
     }
 
     int[] hashCodes(VariabellonnResource variabellonn) {
