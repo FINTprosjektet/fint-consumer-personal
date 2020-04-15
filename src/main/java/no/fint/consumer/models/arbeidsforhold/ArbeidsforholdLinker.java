@@ -44,7 +44,7 @@ public class ArbeidsforholdLinker extends FintLinker<ArbeidsforholdResource> {
         if (!isNull(arbeidsforhold.getSystemId()) && !isEmpty(arbeidsforhold.getSystemId().getIdentifikatorverdi())) {
             builder.add(createHrefWithId(arbeidsforhold.getSystemId().getIdentifikatorverdi(), "systemid"));
         }
-        
+
         return builder.build();
     }
 
@@ -53,7 +53,7 @@ public class ArbeidsforholdLinker extends FintLinker<ArbeidsforholdResource> {
         if (!isNull(arbeidsforhold.getSystemId()) && !isEmpty(arbeidsforhold.getSystemId().getIdentifikatorverdi())) {
             builder.add(arbeidsforhold.getSystemId().getIdentifikatorverdi().hashCode());
         }
-        
+
         return builder.build().toArray();
     }
 
@@ -67,20 +67,25 @@ public class ArbeidsforholdLinker extends FintLinker<ArbeidsforholdResource> {
                                 .queryParam("offset", offset)
                                 .queryParam("size", size)
                                 .toUriString()));
-        resources.addPrev(
-                Link.with(
-                        UriComponentsBuilder
-                        .fromUriString(self())
-                        .queryParam("offset", offset-size)
-                        .queryParam("size", size)
-                        .toUriString()));
-        resources.addNext(
-                Link.with(
-                        UriComponentsBuilder
-                                .fromUriString(self())
-                                .queryParam("offset", offset+size)
-                                .queryParam("size", size)
-                                .toUriString()));
+        if (offset >= size) {
+            resources.addPrev(
+                    Link.with(
+                            UriComponentsBuilder
+                                    .fromUriString(self())
+                                    .queryParam("offset", offset - size)
+                                    .queryParam("size", size)
+                                    .toUriString()));
+        }
+        if (offset + size < totalItems) {
+            resources.addNext(
+                    Link.with(
+                            UriComponentsBuilder
+                                    .fromUriString(self())
+                                    .queryParam("offset", offset + size)
+                                    .queryParam("size", size)
+                                    .toUriString()));
+        }
+        resources.setOffset(offset);
         resources.setTotalItems(totalItems);
         return resources;
     }
