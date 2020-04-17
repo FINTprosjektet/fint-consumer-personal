@@ -67,12 +67,12 @@ public class ArbeidsforholdLinker extends FintLinker<ArbeidsforholdResource> {
                                 .queryParam("offset", offset)
                                 .queryParam("size", size)
                                 .toUriString()));
-        if (offset >= size) {
+        if (offset > 0) {
             resources.addPrev(
                     Link.with(
                             UriComponentsBuilder
                                     .fromUriString(self())
-                                    .queryParam("offset", offset - size)
+                                    .queryParam("offset", Math.max(0, offset - size))
                                     .queryParam("size", size)
                                     .toUriString()));
         }
