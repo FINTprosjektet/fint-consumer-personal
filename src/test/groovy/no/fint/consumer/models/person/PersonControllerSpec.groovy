@@ -10,6 +10,8 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 
+import java.util.stream.Stream
+
 class PersonControllerSpec extends MockMvcSpecification {
     private PersonController controller
     private PersonCacheService cacheService
@@ -46,8 +48,9 @@ class PersonControllerSpec extends MockMvcSpecification {
 
         then:
         1 * props.isOverrideOrgId() >> false
-        1 * cacheService.getAll('rogfk.no') >> []
-        1 * linker.toResources([]) >> new PersonResources()
+        1 * cacheService.getCacheSize('rogfk.no') >> 0
+        1 * cacheService.streamAll('rogfk.no') >> Stream.empty()
+        1 * linker.toResources(_ as Stream, 0, 0, 0) >> new PersonResources()
         response.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
     }

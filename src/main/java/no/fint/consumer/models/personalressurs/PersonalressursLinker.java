@@ -1,6 +1,5 @@
 package no.fint.consumer.models.personalressurs;
 
-import no.fint.model.resource.Link;
 import no.fint.model.resource.administrasjon.personal.PersonalressursResource;
 import no.fint.model.resource.administrasjon.personal.PersonalressursResources;
 import no.fint.relations.FintLinker;
@@ -26,9 +25,14 @@ public class PersonalressursLinker extends FintLinker<PersonalressursResource> {
 
     @Override
     public PersonalressursResources toResources(Collection<PersonalressursResource> collection) {
+        return toResources(collection.stream(), 0, 0, collection.size());
+    }
+
+    @Override
+    public PersonalressursResources toResources(Stream<PersonalressursResource> stream, int offset, int size, int totalItems) {
         PersonalressursResources resources = new PersonalressursResources();
-        collection.stream().map(this::toResource).forEach(resources::addResource);
-        resources.addSelf(Link.with(self()));
+        stream.map(this::toResource).forEach(resources::addResource);
+        addPagination(resources, offset, size, totalItems);
         return resources;
     }
 

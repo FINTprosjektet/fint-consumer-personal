@@ -46,8 +46,7 @@ dependencies {
     compile('no.fint:fint-event-model:3.0.0')
     compile('no.fint:fint-events:2.2.0')
     compile('no.fint:fint-hazelcast:1.2.0-rc-1')
-    compile('no.fint:fint-model-resource:0.4.0-alpha-1')
-    compile('no.fint:fint-relations:2.1.0-beta-1')
+    compile('no.fint:fint-relations:2.2.0-alpha-1')
     compile('no.fint:fint-spring-secrets:0.1.0')
 
     compile('com.hazelcast:hazelcast:3.11.2')
@@ -59,7 +58,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
     runtime('org.springframework.boot:spring-boot-actuator')
 
-    testCompile('no.fint:fint-test-utils:0.0.4')
+    testCompile('no.fint:fint-test-utils:0.0.5')
     testCompile("cglib:cglib-nodep:${cglibVersion}")
     testCompile("org.spockframework:spock-spring:${spockSpringVersion}")
     testCompile("org.spockframework:spock-core:${spockSpringVersion}")
