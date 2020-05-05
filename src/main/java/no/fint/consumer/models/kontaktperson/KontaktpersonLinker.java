@@ -1,5 +1,6 @@
 package no.fint.consumer.models.kontaktperson;
 
+import no.fint.model.resource.Link;
 import no.fint.model.resource.felles.KontaktpersonResource;
 import no.fint.model.resource.felles.KontaktpersonResources;
 import no.fint.relations.FintLinker;
@@ -25,14 +26,9 @@ public class KontaktpersonLinker extends FintLinker<KontaktpersonResource> {
 
     @Override
     public KontaktpersonResources toResources(Collection<KontaktpersonResource> collection) {
-        return toResources(collection.stream(), 0, 0, collection.size());
-    }
-
-    @Override
-    public KontaktpersonResources toResources(Stream<KontaktpersonResource> stream, int offset, int size, int totalItems) {
         KontaktpersonResources resources = new KontaktpersonResources();
-        stream.map(this::toResource).forEach(resources::addResource);
-        addPagination(resources, offset, size, totalItems);
+        collection.stream().map(this::toResource).forEach(resources::addResource);
+        resources.addSelf(Link.with(self()));
         return resources;
     }
 

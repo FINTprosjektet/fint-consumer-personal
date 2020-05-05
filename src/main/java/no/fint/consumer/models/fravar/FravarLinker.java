@@ -1,5 +1,6 @@
 package no.fint.consumer.models.fravar;
 
+import no.fint.model.resource.Link;
 import no.fint.model.resource.administrasjon.personal.FravarResource;
 import no.fint.model.resource.administrasjon.personal.FravarResources;
 import no.fint.relations.FintLinker;
@@ -25,14 +26,9 @@ public class FravarLinker extends FintLinker<FravarResource> {
 
     @Override
     public FravarResources toResources(Collection<FravarResource> collection) {
-        return toResources(collection.stream(), 0, 0, collection.size());
-    }
-
-    @Override
-    public FravarResources toResources(Stream<FravarResource> stream, int offset, int size, int totalItems) {
         FravarResources resources = new FravarResources();
-        stream.map(this::toResource).forEach(resources::addResource);
-        addPagination(resources, offset, size, totalItems);
+        collection.stream().map(this::toResource).forEach(resources::addResource);
+        resources.addSelf(Link.with(self()));
         return resources;
     }
 

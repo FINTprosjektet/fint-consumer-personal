@@ -1,5 +1,6 @@
 package no.fint.consumer.models.fasttillegg;
 
+import no.fint.model.resource.Link;
 import no.fint.model.resource.administrasjon.personal.FasttilleggResource;
 import no.fint.model.resource.administrasjon.personal.FasttilleggResources;
 import no.fint.relations.FintLinker;
@@ -25,14 +26,9 @@ public class FasttilleggLinker extends FintLinker<FasttilleggResource> {
 
     @Override
     public FasttilleggResources toResources(Collection<FasttilleggResource> collection) {
-        return toResources(collection.stream(), 0, 0, collection.size());
-    }
-
-    @Override
-    public FasttilleggResources toResources(Stream<FasttilleggResource> stream, int offset, int size, int totalItems) {
         FasttilleggResources resources = new FasttilleggResources();
-        stream.map(this::toResource).forEach(resources::addResource);
-        addPagination(resources, offset, size, totalItems);
+        collection.stream().map(this::toResource).forEach(resources::addResource);
+        resources.addSelf(Link.with(self()));
         return resources;
     }
 
