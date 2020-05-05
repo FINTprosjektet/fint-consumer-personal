@@ -1,6 +1,5 @@
 package no.fint.consumer.models.arbeidsforhold;
 
-import no.fint.model.resource.Link;
 import no.fint.model.resource.administrasjon.personal.ArbeidsforholdResource;
 import no.fint.model.resource.administrasjon.personal.ArbeidsforholdResources;
 import no.fint.relations.FintLinker;
@@ -26,9 +25,14 @@ public class ArbeidsforholdLinker extends FintLinker<ArbeidsforholdResource> {
 
     @Override
     public ArbeidsforholdResources toResources(Collection<ArbeidsforholdResource> collection) {
+        return toResources(collection.stream(), 0, 0, collection.size());
+    }
+
+    @Override
+    public ArbeidsforholdResources toResources(Stream<ArbeidsforholdResource> stream, int offset, int size, int totalItems) {
         ArbeidsforholdResources resources = new ArbeidsforholdResources();
-        collection.stream().map(this::toResource).forEach(resources::addResource);
-        resources.addSelf(Link.with(self()));
+        stream.map(this::toResource).forEach(resources::addResource);
+        addPagination(resources, offset, size, totalItems);
         return resources;
     }
 
