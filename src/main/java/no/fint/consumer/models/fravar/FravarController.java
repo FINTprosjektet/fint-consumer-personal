@@ -126,7 +126,9 @@ public class FravarController {
         fintAuditService.audit(event, Status.CACHE);
 
         Stream<FravarResource> resources;
-        if (size > 0 && offset >= 0) {
+        if (size > 0 && offset >= 0 && sinceTimeStamp > 0) {
+            resources = cacheService.streamSliceSince(orgId, sinceTimeStamp, offset, size);
+        } else if (size > 0 && offset >= 0) {
             resources = cacheService.streamSlice(orgId, offset, size);
         } else if (sinceTimeStamp > 0) {
             resources = cacheService.streamSince(orgId, sinceTimeStamp);
