@@ -1,6 +1,5 @@
 package no.fint.consumer.models.variabellonn;
 
-import no.fint.model.resource.Link;
 import no.fint.model.resource.administrasjon.personal.VariabellonnResource;
 import no.fint.model.resource.administrasjon.personal.VariabellonnResources;
 import no.fint.relations.FintLinker;
@@ -26,9 +25,14 @@ public class VariabellonnLinker extends FintLinker<VariabellonnResource> {
 
     @Override
     public VariabellonnResources toResources(Collection<VariabellonnResource> collection) {
+        return toResources(collection.stream(), 0, 0, collection.size());
+    }
+
+    @Override
+    public VariabellonnResources toResources(Stream<VariabellonnResource> stream, int offset, int size, int totalItems) {
         VariabellonnResources resources = new VariabellonnResources();
-        collection.stream().map(this::toResource).forEach(resources::addResource);
-        resources.addSelf(Link.with(self()));
+        stream.map(this::toResource).forEach(resources::addResource);
+        addPagination(resources, offset, size, totalItems);
         return resources;
     }
 

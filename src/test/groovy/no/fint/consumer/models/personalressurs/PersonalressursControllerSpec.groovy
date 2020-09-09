@@ -10,6 +10,8 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 
+import java.util.stream.Stream
+
 class PersonalressursControllerSpec extends MockMvcSpecification {
     private PersonalressursController controller
     private PersonalressursCacheService cacheService
@@ -46,8 +48,9 @@ class PersonalressursControllerSpec extends MockMvcSpecification {
 
         then:
         1 * props.isOverrideOrgId() >> false
-        1 * cacheService.getAll('rogfk.no') >> []
-        1 * linker.toResources([]) >> new PersonalressursResources()
+        1 * cacheService.getCacheSize('rogfk.no') >> 0
+        1 * cacheService.streamAll('rogfk.no') >> Stream.empty()
+        1 * linker.toResources(_ as Stream, 0, 0, 0) >> new PersonalressursResources()
         personalressurser.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
     }
