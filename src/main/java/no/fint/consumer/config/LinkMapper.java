@@ -5,6 +5,8 @@ import java.util.Map;
 import com.google.common.collect.ImmutableMap;
 
 import no.fint.model.administrasjon.personal.*;
+import no.fint.model.felles.Kontaktperson;
+import no.fint.model.felles.Person;
 
 public class LinkMapper {
 
