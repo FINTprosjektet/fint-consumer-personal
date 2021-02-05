@@ -87,6 +87,16 @@ public class FravarCacheService extends CacheService<FravarResource> {
     }
 
 
+    public Optional<FravarResource> getFravarByKildesystemId(String orgId, String kildesystemId) {
+        return getOne(orgId, kildesystemId.hashCode(),
+            (resource) -> Optional
+                .ofNullable(resource)
+                .map(FravarResource::getKildesystemId)
+                .map(Identifikator::getIdentifikatorverdi)
+                .map(kildesystemId::equals)
+                .orElse(false));
+    }
+
     public Optional<FravarResource> getFravarBySystemId(String orgId, String systemId) {
         return getOne(orgId, systemId.hashCode(),
             (resource) -> Optional
