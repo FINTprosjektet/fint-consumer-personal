@@ -44,6 +44,9 @@ public class FravarLinker extends FintLinker<FravarResource> {
     @Override
     public Stream<String> getAllSelfHrefs(FravarResource fravar) {
         Stream.Builder<String> builder = Stream.builder();
+        if (!isNull(fravar.getKildesystemId()) && !isEmpty(fravar.getKildesystemId().getIdentifikatorverdi())) {
+            builder.add(createHrefWithId(fravar.getKildesystemId().getIdentifikatorverdi(), "kildesystemid"));
+        }
         if (!isNull(fravar.getSystemId()) && !isEmpty(fravar.getSystemId().getIdentifikatorverdi())) {
             builder.add(createHrefWithId(fravar.getSystemId().getIdentifikatorverdi(), "systemid"));
         }
@@ -53,6 +56,9 @@ public class FravarLinker extends FintLinker<FravarResource> {
 
     int[] hashCodes(FravarResource fravar) {
         IntStream.Builder builder = IntStream.builder();
+        if (!isNull(fravar.getKildesystemId()) && !isEmpty(fravar.getKildesystemId().getIdentifikatorverdi())) {
+            builder.add(fravar.getKildesystemId().getIdentifikatorverdi().hashCode());
+        }
         if (!isNull(fravar.getSystemId()) && !isEmpty(fravar.getSystemId().getIdentifikatorverdi())) {
             builder.add(fravar.getSystemId().getIdentifikatorverdi().hashCode());
         }

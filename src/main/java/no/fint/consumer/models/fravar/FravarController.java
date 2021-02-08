@@ -142,6 +142,50 @@ public class FravarController {
     }
 
 
+    @GetMapping("/kildesystemid/{id:.+}")
+    public FravarResource getFravarByKildesystemId(
+            @PathVariable String id,
+            @RequestHeader(name = HeaderConstants.ORG_ID, required = false) String orgId,
+            @RequestHeader(name = HeaderConstants.CLIENT, required = false) String client) throws InterruptedException {
+        if (props.isOverrideOrgId() || orgId == null) {
+            orgId = props.getDefaultOrgId();
+        }
+        if (client == null) {
+            client = props.getDefaultClient();
+        }
+        log.debug("kildesystemId: {}, OrgId: {}, Client: {}", id, orgId, client);
+
+        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.GET_FRAVAR, client);
+        event.setOperation(Operation.READ);
+        event.setQuery("kildesystemId/" + id);
+
+        if (cacheService != null) {
+            fintAuditService.audit(event);
+            fintAuditService.audit(event, Status.CACHE);
+
+            Optional<FravarResource> fravar = cacheService.getFravarByKildesystemId(orgId, id);
+
+            fintAuditService.audit(event, Status.CACHE_RESPONSE, Status.SENT_TO_CLIENT);
+
+            return fravar.map(linker::toResource).orElseThrow(() -> new EntityNotFoundException(id));
+
+        } else {
+            BlockingQueue<Event> queue = synchronousEvents.register(event);
+            consumerEventUtil.send(event);
+
+            Event response = EventResponses.handle(queue.poll(5, TimeUnit.MINUTES));
+
+            if (response.getData() == null ||
+                    response.getData().isEmpty()) throw new EntityNotFoundException(id);
+
+            FravarResource fravar = objectMapper.convertValue(response.getData().get(0), FravarResource.class);
+
+            fintAuditService.audit(response, Status.SENT_TO_CLIENT);
+
+            return linker.toResource(fravar);
+        }    
+    }
+
     @GetMapping("/systemid/{id:.+}")
     public FravarResource getFravarBySystemId(
             @PathVariable String id,
@@ -219,6 +263,30 @@ public class FravarController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).location(location).build();
     }
 
+  
+    @PutMapping("/kildesystemid/{id:.+}")
+    public ResponseEntity putFravarByKildesystemId(
+            @PathVariable String id,
+            @RequestHeader(name = HeaderConstants.ORG_ID) String orgId,
+            @RequestHeader(name = HeaderConstants.CLIENT) String client,
+            @RequestBody FravarResource body
+    ) {
+        log.debug("putFravarByKildesystemId {}, OrgId: {}, Client: {}", id, orgId, client);
+        log.trace("Body: {}", body);
+        linker.mapLinks(body);
+        Event event = new Event(orgId, Constants.COMPONENT, PersonalActions.UPDATE_FRAVAR, client);
+        event.setQuery("kildesystemid/" + id);
+        event.addObject(objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).convertValue(body, Map.class));
+        event.setOperation(Operation.UPDATE);
+        fintAuditService.audit(event);
+
+        consumerEventUtil.send(event);
+
+        statusCache.put(event.getCorrId(), event);
+
+        URI location = UriComponentsBuilder.fromUriString(linker.self()).path("status/{id}").buildAndExpand(event.getCorrId()).toUri();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).location(location).build();
+    }
   
     @PutMapping("/systemid/{id:.+}")
     public ResponseEntity putFravarBySystemId(
